@@ -1,0 +1,90 @@
+{
+  "version": "QUANTSYNC_PROD_VPS_MULTI_ENGINE_V1",
+  "paths": {
+    "data_dir": "Data",
+    "history_db": "Data/stock_history.db",
+    "master_db": "Data/quantsync_master.db",
+    "ltp_cache": "Data/current_ltp.json",
+    "logs_dir": "Data/logs",
+    "reports_dir": "reports"
+  },
+  "engines": {
+    "v2": {
+      "enabled": true,
+      "name": "QuantSync-V2",
+      "capital": 300000.0,
+      "capital_per_pos": 12000.0,
+      "max_slots": 25,
+      "telegram": {
+        "enabled": true,
+        "bot_token": "YOUR_BOT_TOKEN",
+        "chat_id": "@rt1295_buyalert"
+      }
+    },
+    "v3": {
+      "enabled": true,
+      "name": "QuantSync-V3",
+      "capital": 300000.0,
+      "capital_per_pos": 12000.0,
+      "max_slots": 25,
+      "quality_guards": {
+        "max_price_deviation_pct": 0.03,
+        "min_daily_turnover": 15000000.0,
+        "max_daily_turnover": 2500000000.0,
+        "min_volume_ratio": 2.5,
+        "min_close_in_range": 0.85,
+        "max_upper_wick_pct": 0.1,
+        "min_bar_return_pct": 4.0,
+        "min_chase_pct": 1.5,
+        "max_chase_pct": 8.0,
+        "min_prior_runup_60_pct": 15.0,
+        "max_ath_dist_pct": 20.0,
+        "max_dist_sma200_pct": 30.0,
+        "min_stop_distance_pct": 8.0,
+        "min_turnover_cr": 1.5,
+        "daily_selection_mode": "TOP_2_CONVICTION_RANKED"
+      },
+      "daily_selection": {
+        "max_takes": 2,
+        "min_score": 0.0
+      },
+      "telegram": {
+        "enabled": true,
+        "bot_token": "YOUR_BOT_TOKEN",
+        "chat_id": "@rt1295_sellalert"
+      }
+    }
+  },
+  "telegram": {
+    "enabled": true,
+    "bot_token": "YOUR_BOT_TOKEN",
+    "chat_id": "@option_call_alert",
+    "debug_notifications": {
+      "buysell": true,
+      "eod": true,
+      "proof": true
+    }
+  },
+  "broker": {
+    "api_key": "YOUR_API_KEY",
+    "client_id": "YOUR_CLIENT_ID",
+    "password": "YOUR_PASSWORD",
+    "totp_secret": "YOUR_TOTP_SECRET",
+    "client_ip": "106.193.147.98",
+    "mac_address": "fe80::216:3eff:fe10:1",
+    "session_cache": "Data/angel_session.json"
+  },
+  "broker2": {
+    "api_key": "YOUR_API_KEY",
+    "client_id": "YOUR_CLIENT_ID",
+    "password": "YOUR_PASSWORD",
+    "totp_secret": "YOUR_TOTP_SECRET",
+    "client_ip": "103.115.197.45",
+    "mac_address": "fe80::216:3eff:fe10:1",
+    "session_cache": "Data/angel_session_broker2.json"
+  },
+  "wix": {
+    "enabled": true,
+    "update_url": "https://rahultiwari1295.wixstudio.com/angelapi/_functions/updateTrades"
+  }
+}

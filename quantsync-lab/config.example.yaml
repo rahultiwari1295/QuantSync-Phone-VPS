@@ -1,0 +1,19 @@
+# Copy to /opt/quantsync-lab/config.yaml. Every path is confirmable in Phase 0.
+data_dir: /opt/quantsync-lab/data
+db_path: /opt/quantsync-lab/db/lab.db
+models_dir: /opt/quantsync-lab/models
+candles_dir: /opt/quantsync-lab/data/candles   # one <SYMBOL>.parquet|csv per stock: date,open,high,low,close,volume (adjusted)
+candles_db: /root/quantsync/Data/stock_history.db   # live engine StockHistory table, opened read-only; if set it is used instead of candles_dir
+run_dir: /opt/quantsync-lab/run                # cook.lock, live-busy marker
+auth_mode: firebase        # firebase | dev (dev trusts X-Dev-Uid; never on the VPS)
+firebase_project_id: ""
+firestore_mirror: true
+train_start: "2018-01-01"
+report_start: "2023-01-01"
+select_end: "2022-12-31"
+duckdb_threads: 1
+duckdb_memory_limit: 700MB
+pricing_enabled: false
+free_ai_jobs_per_day: 5
+free_backtests_per_hour: 10
+queue_cap: 50

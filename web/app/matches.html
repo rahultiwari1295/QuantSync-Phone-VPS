@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Matches · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.bar2{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.key{display:flex;gap:14px;flex-wrap:wrap}
+.mwrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start}
+.day{font-size:13px;font-weight:700;color:var(--ink2);margin:20px 4px 8px}
+.day:first-child{margin-top:0}
+.mrow{border-left:3px solid var(--cat)}
+.mrow[aria-selected="true"]{background:color-mix(in srgb,var(--cat) 8%,var(--surface))}
+.prev{position:sticky;top:24px;padding:22px;display:grid;gap:14px}
+.prev .hd{display:flex;gap:12px;align-items:center}
+.prev .px{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini div{background:var(--sunk);border-radius:12px;padding:10px}
+.mini b{display:block;font-size:17px}
+.mini small{font-size:11.5px;color:var(--ink3);font-weight:600}
+.swg{margin-top:22px}
+.swg header{display:flex;gap:10px;align-items:center;margin-bottom:4px}
+.swg header h2{font-size:18px}
+.swg .why{font-size:13.5px;color:var(--ink2);margin-bottom:12px;max-width:70ch}
+.swrow{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.swrow:last-child{border-bottom:0}
+.swrow b{display:block}
+.swrow .s{font-size:13px;color:var(--ink2)}
+@media (max-width:1100px){.mwrap{grid-template-columns:minmax(0,1fr)}.prev{display:none}}
+</style>
+</head>
+<body data-page="matches"><main class="main">
+
+<div class="phead"><div class="txt"><span class="kicker"><i class="live"></i>Updated after each close</span><h1 class="t-1">Matches</h1>
+  <p class="lede">Stocks that fit the strategies you have switched on. The colour tells you where each match came from.</p></div></div>
+
+<div class="bar2">
+  <div class="seg" id="tab"><button data-v="latest" aria-pressed="true">Latest</button><button data-v="older" aria-pressed="false">Still open</button><button data-v="alerts" aria-pressed="false">Alert settings</button></div>
+  <div class="key" aria-label="Colour key"><span class="src cat-q">QuantSync</span><span class="src cat-y">Yours</span><span class="src cat-f">Following</span></div>
+</div>
+<div id="banner"></div>
+
+<div id="v-list" class="mwrap">
+  <div id="list"></div>
+  <aside class="panel prev" id="prev" aria-live="polite"></aside>
+</div>
+
+<div id="v-alerts" hidden>
+  <p class="small" style="max-width:70ch;margin-bottom:6px">Switch a strategy on to see its matches here. QuantSync strategies always stay on this list so you can switch them back on. Your own and followed strategies leave the list when you switch them off.</p>
+  <div id="groups"></div>
+</div>
+
+<p class="disclaim">A match means a stock fit a scan’s rules. It is information only, not advice or a recommendation to buy or sell.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,api,fmt,auth}=QD;const {icon,state,toast,line}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+let tab=location.hash==='#alerts'?'alerts':'latest',sel=null,data=null,xr={};
+const user=await auth.whenReady();
+if(!user)$('banner').innerHTML=`<div class="aicard" style="padding:14px 18px;margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:220px" class="small">You are seeing QuantSync matches. Sign in to add your own and followed strategies.</span><button class="btn ai sm" id="si">Sign in with Google</button></div>`;
+if($('si'))$('si').onclick=()=>auth.signIn().then(()=>location.reload()).catch(e=>toast(e.message));
+state($('list'),'loading',{n:6});
+try{data=await lab.matches()}catch(e){state($('list'),'error',{body:e.message,action:'Try again',onAction:()=>location.reload()});return}
+const segs=$('tab').children;segs[0].textContent=`Latest · ${data.counts.latest}`;segs[1].textContent=`Still open · ${data.counts.older}`;
+xr=await api.xray(data.rows.slice(0,60).map(r=>r.symbol));
+function draw(){
+  const rows=data.rows.filter(r=>(tab==='latest')===!!r.latest);
+  if(!rows.length){$('prev').hidden=true;state($('list'),'empty',{title:tab==='latest'?`Nothing new in the last ${data.latest_days} days`:'Nothing older is open',body:tab==='latest'?'New matches appear here after each market close. Check Still open, or switch on more strategies in Alert settings.':'When a match stays open for more than a few days, it moves here.'});$('prev').innerHTML='';return}
+  $('prev').hidden=false;const groups=[];rows.forEach(r=>{const l=fmt.rel(r.date);const g=groups[groups.length-1];if(g&&g.l===l)g.rows.push(r);else groups.push({l,rows:[r]})});
+  $('list').innerHTML=groups.map(g=>`<div class="day">${esc(g.l)}</div><div class="rows">${g.rows.map(r=>`<a class="row mrow cat-${r.cat}" href="xray.html?s=${encodeURIComponent(r.symbol)}" data-k="${esc(r.symbol+'|'+r.sid)}"><span class="av cat">${esc(r.symbol.slice(0,2))}</span><div class="grow"><div class="t">${esc(r.symbol)}</div><div class="s"><span class="src cat-${r.cat}">${esc(r.strategy)}</span> · Matched at ${fmt.inr(r.price)}</div></div><div class="r ${fmt.tone(r.chg)}">${fmt.pct(r.chg)}<small>since match</small></div></a>`).join('')}</div>`).join('');
+  const k=sel&&rows.find(r=>r.symbol+'|'+r.sid===sel)?sel:rows[0].symbol+'|'+rows[0].sid;prev(k);
+}
+async function prev(k){sel=k;const r=data.rows.find(x=>x.symbol+'|'+x.sid===k);if(!r)return;
+  $('list').querySelectorAll('.mrow').forEach(a=>a.setAttribute('aria-selected',a.dataset.k===k));
+  const x=xr[r.symbol]||{},t=QD.scoreTone(x.score);
+  $('prev').innerHTML=`<div class="hd"><span class="av cat cat-${r.cat}">${esc(r.symbol.slice(0,2))}</span><div><b style="font-size:17px">${esc(r.symbol)}</b><div class="tiny">${esc(x.name&&x.name!==r.symbol?x.name:'')}${x.sector?' · '+esc(x.sector):''}</div></div></div>
+   <div><span class="px num">${fmt.inr(r.now??x.price)}</span> <span class="${fmt.tone(r.chg)}" style="font-weight:700">${fmt.pct(r.chg)} since match</span></div>
+   <div class="chart" id="pc"><div class="skel" style="height:140px"></div></div>
+   <div class="mini"><div><small>Found by</small><b class="src cat-${r.cat}" style="font-size:13px;margin-top:4px">${esc(r.strategy)}</b></div><div><small>X-Ray</small><b style="color:${t.c}">${QD.ok(x.score)?x.score+'/100':'—'}</b></div><div><small>Matched</small><b style="font-size:14px">${fmt.date(r.date)}</b></div></div>
+   ${x.title?`<p class="small">${esc(x.title)}</p>`:''}
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn primary sm" href="xray.html?s=${encodeURIComponent(r.symbol)}">${icon('xray',15)}Open X-Ray</a><a class="btn sm" href="strategy.html?id=${r.sid}">See strategy</a></div>`;
+  try{const b=(await lab.chartBatch([r.symbol],90)).bars[r.symbol]||[];if(sel!==k)return;
+    if(b.length<5){$('pc').innerHTML='<p class="tiny">No chart data.</p>';return}
+    const d=b.map(z=>z.close),dates=b.map(z=>z.date);const mi=dates.findIndex(z=>z>=r.date);
+    line($('pc'),[{data:d,color:'var(--brand)',area:true}],{w:330,h:140,pl:2,pr:8,bare:true,marks:mi>=0?[{i:mi,c:'var(--ai-fill)',r:5}]:[],tip:i=>`${fmt.date(dates[i])} · ${fmt.inr(d[i])}`});
+  }catch{$('pc').innerHTML=''}}
+$('list').addEventListener('mouseover',e=>{const a=e.target.closest('.mrow');if(a&&a.dataset.k!==sel&&matchMedia('(min-width:1101px)').matches)prev(a.dataset.k)});
+// alerts
+async function alerts(){
+  state($('groups'),'loading',{n:3});
+  let a;try{a=await lab.alerts()}catch(e){state($('groups'),'error',{body:e.message});return}
+  const G=[['q','QuantSync','Our own strategies, enhanced by AI.',''],['y','Yours','Strategies you made.','Save a scan as a strategy, then tap “Get alerts” on its page.'],['f','Following','Public strategies you chose to follow.','Open any community strategy and tap “Get alerts” to add it here.']];
+  $('groups').innerHTML=G.map(([c,h,why,empty])=>{const L=(a.items||[]).filter(i=>i.cat===c);return `<section class="swg cat-${c}"><header><span class="src cat-${c}"></span><h2>${h}</h2></header><p class="why">${why}</p><div class="rows">${L.length?L.map(i=>`<label class="swrow"><span class="av cat cat-${c}">${esc(i.name.replace(/[^A-Za-z0-9]/g,'').slice(0,2).toUpperCase())}</span><span style="flex:1;min-width:0"><b>${esc(i.name)}</b><span class="s">${i.owner&&c==='f'?'by @'+esc(i.owner)+' · ':''}${i.tf==='1W'?'Weekly':'Daily'}</span></span><span class="sw"><input type="checkbox" ${i.on?'checked':''} data-id="${i.id}" data-c="${c}" aria-label="Alerts for ${esc(i.name)}"><i></i></span></label>`).join(''):`<div class="small" style="padding:18px">${!user&&c!=='q'?'Sign in to add your own strategies.':empty}</div>`}</div></section>`}).join('');
+}
+$('groups').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.id)return;if(!auth.user){t.checked=!t.checked;await auth.signIn().catch(x=>toast(x.message));return}
+  try{await lab.follow(t.dataset.id,t.dataset.c==='q'?true:t.checked,t.checked);toast(t.checked?'Alerts on. Its matches show here.':'Alerts off.');data=await lab.matches()}catch(x){t.checked=!t.checked;toast(x.message)}});
+function setTab(t){if(t==='latest'&&!data.counts.latest&&data.counts.older&&!setTab.done){t='older'}setTab.done=1;tab=t;$('v-alerts').hidden=t!=='alerts';$('v-list').hidden=t==='alerts';[...$('tab').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===t));if(t==='alerts')alerts();else draw()}
+$('tab').addEventListener('change',e=>setTab(e.detail));setTab(tab);
+});
+</script>
+</body></html>

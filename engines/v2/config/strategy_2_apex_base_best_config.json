@@ -1,0 +1,76 @@
+{
+  "strategy_id": "APEX_BASE_BREAKOUT",
+  "strategy_name": "Apex Base Breakout (Institutional Consolidation Compression Breakout)",
+  "version": "11.0_PRODUCTION_CANDIDATE",
+  "status": "VALIDATED_OOS",
+  "target_annual_trades": "50-65",
+  "core_screening": {
+    "min_price": 20.0,
+    "min_daily_turnover": 2500000.0,
+    "require_close_gt_open": true,
+    "min_bar_return_pct": 3.0,
+    "min_base_duration_weeks": 4.5,
+    "max_ath_dist_pct": 35.0,
+    "require_c_gt_ema50": true
+  },
+  "candle_dna_filters": {
+    "min_close_in_range": 0.90,
+    "max_upper_wick_pct": 0.05,
+    "require_bull_body": true
+  },
+  "institutional_sponsorship": {
+    "min_volume_ratio_20d": 2.5
+  },
+  "loser_blocking_hard_gates": {
+    "max_risk_pct": 4.5,
+    "max_chase_pct": 3.0,
+    "max_dist_sma200_pct": 55.0,
+    "trap_extended_wick": "dist_sma200 > 35.0 and upper_wick_pct > 0.25",
+    "trap_chase_squat": "chase_pct <= 1.0 and upper_wick_pct > 0.20",
+    "trap_chase_low_vol": "chase_pct <= 1.0 and vol_ratio20 < 2.0",
+    "min_turnover_cr": 1.0,
+    "max_base_depth_pct": 30.0
+  },
+  "dual_ml_ensemble": {
+    "lgb_model_path": "quantsync_v11/models/saved_models/lgb_apex_base.pkl",
+    "xgb_model_path": "quantsync_v11/models/saved_models/xgb_apex_base.pkl",
+    "min_ensemble_probability": 0.55,
+    "high_conviction_threshold": 0.65
+  },
+  "exit_architecture": {
+    "primary_mode": "TWO_TRANCHE_APEX_PROTECT",
+    "initial_structural_stop": "max(Candle_Low, Entry * 0.955)",
+    "max_initial_risk_pct": 4.5,
+    "breakeven_trigger_pct": 5.0,
+    "breakeven_lock_pct": 1.5,
+    "tranche_1_target_pct": 12.0,
+    "tranche_1_fraction": 0.50,
+    "tranche_2_stop_lock_pct": 6.0,
+    "tranche_2_trail_pct_off_peak": 7.0,
+    "tranche_2_ema20_exit_after_days": 10,
+    "max_holding_days": 50,
+    "slippage_buffer_pct": 0.20
+  },
+  "empirical_benchmarks": {
+    "in_sample_2020_2024": {
+      "trades_per_year": 73.4,
+      "total_trades": 367,
+      "win_rate_pct": 70.6,
+      "profit_factor": 3.30,
+      "payoff_ratio": 1.38,
+      "avg_win_pct": 6.0,
+      "avg_loss_pct": 4.4,
+      "cumulative_pnl_pct": 1086.8
+    },
+    "out_of_sample_2025_2026": {
+      "trades_per_year": 62.9,
+      "total_trades": 107,
+      "win_rate_pct": 72.0,
+      "profit_factor": 3.29,
+      "payoff_ratio": 1.28,
+      "avg_win_pct": 5.6,
+      "avg_loss_pct": 4.3,
+      "cumulative_pnl_pct": 297.7
+    }
+  }
+}

@@ -1,0 +1,50 @@
+# Large database files (tracked separately / too big for git)
+Data/stock_history.db
+Data/stock_dna_cache.db
+Data/*.db
+Data/dna_charts/
+Data/logs/
+Data/*.log
+Data/*.pid
+Data/*.out
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Venv
+venv/
+env/
+
+# Sensitive / runtime
+Data/angel_session.json
+Data/current_ltp.json
+config.json
+
+# Large / binary data files
+Data/*.json
+Data/*.pkl
+Data/*.db-shm
+Data/*.db-wal
+Data/*.fBsEWfBioG
+Data/*.fB*
+Data/v2_*.pkl
+logs/
+Data/logs/
+*.bak
+# Runtime cache & dumps
+Data/ram_cache/
+Data/.screener_batch_ts
+Data/*.sql.gz
+Data/breakout_ml_features.csv
+
+# Large research datasets in root
+/*.parquet
+
+*.db
+*.db-shm
+*.db-wal
+.DS_Store

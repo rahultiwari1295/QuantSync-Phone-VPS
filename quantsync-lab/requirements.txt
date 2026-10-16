@@ -1,0 +1,11 @@
+fastapi>=0.115
+uvicorn>=0.30
+duckdb>=1.1
+pyarrow>=17
+pandas>=2.2
+numpy>=1.26
+lightgbm>=4.5
+scikit-learn>=1.5
+firebase-admin>=6.5
+python-ulid>=3.0
+pyyaml>=6

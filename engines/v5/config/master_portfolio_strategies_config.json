@@ -1,0 +1,83 @@
+{
+  "portfolio_name": "QuantSync V11 Master 5-Strategy Production Portfolio",
+  "version": "11.0_FROZEN_PRODUCTION",
+  "status": "FROZEN_AND_LOCKED",
+  "target_annual_trades": "220-260",
+  "deduplication_policy": "STRICT_1_POSITION_PER_STOCK",
+  "strategy_priority_order": [
+    "APEX_BASE",
+    "POWER_EARNINGS_GAP",
+    "HIGH_TIGHT_FLAG",
+    "RS_LEADER",
+    "STAGE2_BASE"
+  ],
+  "strategies": {
+    "strategy_1": {
+      "id": "RS_LEADER",
+      "name": "RS Leader Refined (Cross-Sectional Momentum Breakout)",
+      "config_file": "quantsync_v11/config/strategy_1_rs_leader_best_config.json",
+      "status": "FROZEN_PRODUCTION",
+      "oos_trades_per_year": 57.1,
+      "oos_profit_factor": 1.56,
+      "win_rate_pct": 40.2,
+      "payoff_ratio": 2.31
+    },
+    "strategy_2": {
+      "id": "APEX_BASE",
+      "name": "Apex Base Breakout (Consolidation Compression Breakout)",
+      "config_file": "quantsync_v11/config/strategy_2_apex_base_best_config.json",
+      "status": "FROZEN_PRODUCTION",
+      "oos_trades_per_year": 62.9,
+      "oos_profit_factor": 3.29,
+      "win_rate_pct": 72.0,
+      "payoff_ratio": 1.28
+    },
+    "strategy_3": {
+      "id": "POWER_EARNINGS_GAP",
+      "name": "Power Earnings Gap (Post-Earnings Announcement Drift)",
+      "config_file": "quantsync_v11/config/strategy_3_power_earnings_gap_best_config.json",
+      "status": "FROZEN_PRODUCTION",
+      "oos_trades_per_year": 42.4,
+      "oos_profit_factor": 1.89,
+      "win_rate_pct": 50.0,
+      "payoff_ratio": 1.89
+    },
+    "strategy_4": {
+      "id": "HIGH_TIGHT_FLAG",
+      "name": "High Tight Flag (Bulkowski Generational Momentum Breakout)",
+      "config_file": "quantsync_v11/config/strategy_4_high_tight_flag_best_config.json",
+      "status": "FROZEN_PRODUCTION",
+      "oos_trades_per_year": 30.0,
+      "oos_profit_factor": 1.77,
+      "win_rate_pct": 45.1,
+      "payoff_ratio": 2.15
+    },
+    "strategy_5": {
+      "id": "STAGE2_BASE",
+      "name": "Stan Weinstein Stage-2 Structural Base Breakout",
+      "config_file": "quantsync_v11/config/strategy_5_stage2_base_best_config.json",
+      "status": "FROZEN_PRODUCTION",
+      "oos_trades_per_year": 54.7,
+      "oos_profit_factor": 1.54,
+      "win_rate_pct": 38.7,
+      "payoff_ratio": 2.44
+    }
+  },
+  "portfolio_benchmarks": {
+    "oos_period": "2025-01-01 to 2026-09-11",
+    "oos_years": 1.70,
+    "total_deduplicated_trades": 410,
+    "annual_trade_frequency": 241.2,
+    "win_rate_pct": 50.7,
+    "profit_factor": 1.91,
+    "payoff_ratio": 1.86,
+    "max_drawdown_pct": 11.8,
+    "worst_drawdown_recovery_days": 26,
+    "sharpe_ratio": 3.48,
+    "net_compounded_return_pct": 451.2,
+    "starting_nav": 300000.0,
+    "ending_nav": 1653691.0,
+    "avg_concurrent_positions": 10.3,
+    "peak_concurrent_positions": 24
+  }
+}

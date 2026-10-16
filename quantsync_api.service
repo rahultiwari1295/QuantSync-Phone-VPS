@@ -1,0 +1,18 @@
+[Unit]
+Description=QuantSync Production FastAPI REST Server (Wix Integration)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/quantsync
+ExecStart=/root/quantsync/venv/bin/uvicorn server:app --host 0.0.0.0 --port 8443 --workers 2 --limit-max-requests 1000 --limit-concurrency 100 --ssl-keyfile /etc/letsencrypt/live/quantsync-api.duckdns.org/privkey.pem --ssl-certfile /etc/letsencrypt/live/quantsync-api.duckdns.org/fullchain.pem
+Restart=always
+RestartSec=2
+MemoryMax=1400M
+MemoryHigh=1100M
+StandardOutput=append:/root/quantsync/logs/api_server.log
+StandardError=append:/root/quantsync/logs/api_server.log
+
+[Install]
+WantedBy=multi-user.target

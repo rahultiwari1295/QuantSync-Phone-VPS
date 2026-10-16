@@ -1,0 +1,15 @@
+[Unit]
+Description=QuantSync Lab worker (AI enhancement jobs)
+After=network.target
+[Service]
+User=qslab
+WorkingDirectory=/opt/quantsync-lab/app
+Environment=QSLAB_CONFIG=/opt/quantsync-lab/config.yaml
+ExecStart=/opt/quantsync-lab/venv/bin/python -m lab.worker ai
+Restart=always
+MemoryMax=900M
+CPUQuota=100%
+Nice=15
+NoNewPrivileges=true
+[Install]
+WantedBy=multi-user.target

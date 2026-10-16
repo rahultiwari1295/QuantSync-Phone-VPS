@@ -1,0 +1,29 @@
+{
+  "research_version": "DAILY_V2_FINAL_SPECIFICATION_V1.0",
+  "generated_timestamp": "2026-08-29T19:44:48Z",
+  "training_cutoff": "2025-12-31",
+  "forward_test_start": "2026-01-01",
+  "forward_test_end": "2026-08-27",
+  "execution_convention": "SAME_DAY_CLOSE_OPTION_B_AND_NEXT_OPEN",
+  "laboratory_universe": "600 Stocks by 50-Day Median Turnover",
+  "dataset_hashes": {
+    "raw_candidates_parquet": "143db3c52395db91a5cf3afb9ac3dcbf3744d44d9a6dfcd362aa1a0f27d33589",
+    "feature_dataset_parquet": "6ff709036ca59beee998e2d9c71bae4fb8806fe1bc1b9c919d325a54555a4ffc",
+    "outcome_dataset_parquet": "a39c6fe78f90a31e6e6e82ab4d3131ef0a018db9050f984474514c8384be30e2"
+  },
+  "model_architecture": "Model C: Global Pooled XGBoost + Strategy One-Hot + Interaction Features",
+  "model_hash": "b0ef60c3d7300fd6e4d2d30ad7060f8d09db02c6ebf6c1da9a1e3dba17b812c2",
+  "model_parameters": {
+    "max_depth": 4,
+    "learning_rate": 0.03,
+    "n_estimators": 150,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "random_state": 42,
+    "tree_method": "hist"
+  },
+  "best_training_target": "target_compounder (MFE >= 35% & MAE > -12%)",
+  "recommended_entry_threshold": "Calibrated P >= 0.20",
+  "exit_engine": "Health-Aware Dynamic 3-State Exit (HEALTHY, WARNING, INVALIDATED)",
+  "transaction_costs_assumed": "0.15% round-trip (Brokerage, STT, Slippage)"
+}

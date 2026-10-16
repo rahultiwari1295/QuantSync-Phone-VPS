@@ -1,0 +1,8 @@
+{
+  "filter_gate": "train_cutoff_90pct",
+  "breakeven_trigger_r": 0.8,
+  "target_r": 1.8,
+  "stop": "pattern_low",
+  "max_takes_per_day": 2,
+  "min_mtf_alignment": 3
+}

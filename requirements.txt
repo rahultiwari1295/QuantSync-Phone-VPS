@@ -1,0 +1,18 @@
+# Prod_VPS Multi-Engine Python Dependencies
+numpy>=1.22.0
+pandas>=1.4.0
+scipy>=1.8.0
+scikit-learn>=1.0.0
+lightgbm>=3.3.0
+xgboost>=1.6.0
+pyarrow>=10.0.0
+fastapi>=0.95.0
+uvicorn[standard]>=0.20.0
+pydantic>=1.10.0
+requests>=2.28.0
+schedule>=1.2.0
+urllib3>=1.26.0
+shap>=0.42.0
+PyJWT>=2.8.0
+cryptography>=42.0.0
+playwright>=1.44.0

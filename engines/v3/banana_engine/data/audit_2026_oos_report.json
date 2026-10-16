@@ -1,0 +1,170 @@
+{
+  "total_2026_samples": 5332,
+  "overall_summary": {
+    "GO_FOR_IT": {
+      "count": 779,
+      "share_pct": 14.6,
+      "avg_realized_mfe": 15.3,
+      "avg_realized_mae": -8.9,
+      "win_rate_pct": 48.7,
+      "hit_10pct_gain_rate": 53.7,
+      "hit_20pct_super_gain_rate": 27.9
+    },
+    "SELECTIVE": {
+      "count": 4383,
+      "share_pct": 82.2,
+      "avg_realized_mfe": 11.7,
+      "avg_realized_mae": -8.5,
+      "win_rate_pct": 38.9,
+      "hit_10pct_gain_rate": 42.0,
+      "hit_20pct_super_gain_rate": 17.3
+    },
+    "SKIP": {
+      "count": 170,
+      "share_pct": 3.2,
+      "avg_realized_mfe": 9.8,
+      "avg_realized_mae": -8.5,
+      "win_rate_pct": 28.8,
+      "hit_10pct_gain_rate": 32.9,
+      "hit_20pct_super_gain_rate": 12.9
+    }
+  },
+  "monthly_summary": {
+    "2026-01": {
+      "total_setups": 622,
+      "go_for_it": {
+        "count": 48,
+        "avg_mfe": 14.1,
+        "win_rate": 43.8
+      },
+      "selective": {
+        "count": 543,
+        "avg_mfe": 9.9
+      },
+      "skip": {
+        "count": 31,
+        "avg_mfe": 6.9,
+        "win_rate": 19.4
+      }
+    },
+    "2026-02": {
+      "total_setups": 915,
+      "go_for_it": {
+        "count": 84,
+        "avg_mfe": 8.9,
+        "win_rate": 25.0
+      },
+      "selective": {
+        "count": 788,
+        "avg_mfe": 7.0
+      },
+      "skip": {
+        "count": 43,
+        "avg_mfe": 7.6,
+        "win_rate": 20.9
+      }
+    },
+    "2026-03": {
+      "total_setups": 888,
+      "go_for_it": {
+        "count": 119,
+        "avg_mfe": 24.8,
+        "win_rate": 75.6
+      },
+      "selective": {
+        "count": 733,
+        "avg_mfe": 19.3
+      },
+      "skip": {
+        "count": 36,
+        "avg_mfe": 12.5,
+        "win_rate": 41.7
+      }
+    },
+    "2026-04": {
+      "total_setups": 518,
+      "go_for_it": {
+        "count": 151,
+        "avg_mfe": 14.5,
+        "win_rate": 48.3
+      },
+      "selective": {
+        "count": 356,
+        "avg_mfe": 14.2
+      },
+      "skip": {
+        "count": 11,
+        "avg_mfe": 21.5,
+        "win_rate": 72.7
+      }
+    },
+    "2026-05": {
+      "total_setups": 713,
+      "go_for_it": {
+        "count": 126,
+        "avg_mfe": 13.8,
+        "win_rate": 34.1
+      },
+      "selective": {
+        "count": 580,
+        "avg_mfe": 9.6
+      },
+      "skip": {
+        "count": 7,
+        "avg_mfe": 11.4,
+        "win_rate": 28.6
+      }
+    },
+    "2026-06": {
+      "total_setups": 861,
+      "go_for_it": {
+        "count": 146,
+        "avg_mfe": 16.1,
+        "win_rate": 59.6
+      },
+      "selective": {
+        "count": 704,
+        "avg_mfe": 12.6
+      },
+      "skip": {
+        "count": 11,
+        "avg_mfe": 8.9,
+        "win_rate": 27.3
+      }
+    },
+    "2026-07": {
+      "total_setups": 814,
+      "go_for_it": {
+        "count": 105,
+        "avg_mfe": 12.3,
+        "win_rate": 41.9
+      },
+      "selective": {
+        "count": 678,
+        "avg_mfe": 10.0
+      },
+      "skip": {
+        "count": 31,
+        "avg_mfe": 8.2,
+        "win_rate": 19.4
+      }
+    },
+    "2026-08": {
+      "total_setups": 1,
+      "go_for_it": {
+        "count": 0,
+        "avg_mfe": 0.0,
+        "win_rate": 0.0
+      },
+      "selective": {
+        "count": 1,
+        "avg_mfe": 28.8
+      },
+      "skip": {
+        "count": 0,
+        "avg_mfe": 0.0,
+        "win_rate": 0.0
+      }
+    }
+  }
+}

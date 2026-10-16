@@ -1,0 +1,13 @@
+[Unit]
+Description=QuantSync Lab daily cook
+[Service]
+Type=oneshot
+User=qslab
+WorkingDirectory=/opt/quantsync-lab/app
+Environment=QSLAB_CONFIG=/opt/quantsync-lab/config.yaml
+ExecStartPre=+/opt/quantsync-lab/app/deploy/snapshot.sh
+ExecStart=/opt/quantsync-lab/venv/bin/python -m lab.cli cook
+MemoryMax=1200M
+Nice=19
+IOSchedulingClass=idle
+TimeoutStartSec=3000

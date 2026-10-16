@@ -1,0 +1,53 @@
+{
+  "strategy_id": "HIGH_TIGHT_FLAG",
+  "strategy_name": "High Tight Flag (Bulkowski Generational Momentum Breakout)",
+  "version": "11.0_PRODUCTION_FROZEN",
+  "status": "VALIDATED_OOS",
+  "target_annual_trades": "25-35",
+  "core_screening": {
+    "min_price": 20.0,
+    "min_daily_turnover_cr": 2.5,
+    "pole_gain_min_pct": 70.0,
+    "pole_max_lookback_bars": 60,
+    "flag_max_pullback_pct": 20.0,
+    "flag_duration_min_bars": 8,
+    "flag_duration_max_bars": 25,
+    "require_close_gt_open": true
+  },
+  "candle_dna_filters": {
+    "min_close_in_range": 0.65,
+    "max_upper_wick_pct": 0.20
+  },
+  "institutional_sponsorship": {
+    "min_volume_ratio_20d": 1.6
+  },
+  "loser_blocking_hard_gates": {
+    "max_stop_pct": 6.5,
+    "min_turnover_cr": 2.5
+  },
+  "exit_architecture": {
+    "primary_mode": "TWO_TRANCHE_VMA_TRAIL",
+    "initial_structural_stop": "min(Candle_Low, Entry * 0.935)",
+    "max_initial_risk_pct": 6.5,
+    "breakeven_trigger_pct": 12.0,
+    "breakeven_lock_pct": 4.0,
+    "tranche_1_target_pct": 15.0,
+    "tranche_1_fraction": 0.50,
+    "tranche_2_trail_indicator": "vma7",
+    "tranche_2_min_days": 5,
+    "max_holding_days": 50,
+    "slippage_buffer_pct": 0.20
+  },
+  "empirical_benchmarks": {
+    "out_of_sample_2025_2026": {
+      "trades_per_year": 30.0,
+      "total_trades": 51,
+      "win_rate_pct": 45.1,
+      "profit_factor": 1.77,
+      "payoff_ratio": 2.15,
+      "avg_win_pct": 14.38,
+      "avg_loss_pct": 6.69,
+      "total_realized_r": 22.1
+    }
+  }
+}

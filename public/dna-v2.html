@@ -1,0 +1,4652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      let theme = params.get('theme');
+      if (!theme && window.parent !== window) {
+        try { theme = window.parent.document.documentElement.dataset.theme; } catch (_) {}
+      }
+      document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+      if (params.get('embed') === '1') document.documentElement.dataset.embedded = 'true';
+      if (params.has('stock') || params.has('symbol')) document.documentElement.dataset.reportOpen = 'true';
+    })();
+  </script>
+  <title>QuantSync DNA v2 · Next-Gen Financial Intelligence</title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. MODERN QUANTITATIVE DESIGN TOKENS & SYSTEM
+       ========================================================================== */
+    :root {
+      --bg-base: #080C14;
+      --bg-surface: #0E1524;
+      --bg-card: #131C31;
+      --bg-card-hover: #19243E;
+      --bg-elevated: #1B2744;
+      --bg-glass: rgba(19, 28, 49, 0.75);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-bright: rgba(59, 130, 246, 0.4);
+      
+      --text-white: #FFFFFF;
+      --text-body: #E2E8F0;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      
+      --primary: #3B82F6;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --primary-subtle: rgba(59, 130, 246, 0.12);
+      
+      --good: #10B981;
+      --good-glow: rgba(16, 185, 129, 0.25);
+      --good-subtle: rgba(16, 185, 129, 0.12);
+      --good-border: rgba(16, 185, 129, 0.35);
+      
+      --danger: #F43F5E;
+      --danger-glow: rgba(244, 63, 94, 0.25);
+      --danger-subtle: rgba(244, 63, 94, 0.12);
+      --danger-border: rgba(244, 63, 94, 0.35);
+      
+      --caution: #F59E0B;
+      --caution-subtle: rgba(245, 158, 11, 0.12);
+      
+      --gauge-track: #1E293B;
+      
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --r-xl: 20px;
+      --r-pill: 9999px;
+      
+      --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 24px -4px var(--primary-glow);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      background-color: var(--bg-base);
+      color: var(--text-body);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    .app-frame-wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg-base);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.85);
+      overflow-x: hidden;
+    }
+
+    .qs-top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 58px;
+      background: rgba(8, 12, 20, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .qs-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .qs-logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, #2563EB, #7C3AED);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #FFF;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.4);
+    }
+
+    .qs-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .qs-brand-title {
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qs-version-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: var(--r-pill);
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border: 1px solid var(--border-bright);
+    }
+
+    .qs-brand-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .qs-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qs-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-body);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .qs-icon-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-medium);
+      color: var(--text-white);
+    }
+
+    .app-main-content {
+      flex: 1;
+      padding-bottom: 72px;
+      width: 100%;
+    }
+
+    .search-hero-section {
+      padding: 24px 16px 14px;
+      background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .search-bar-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-input-field {
+      width: 100%;
+      height: 48px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--r-lg);
+      padding: 0 46px 0 44px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-white);
+      outline: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: var(--bg-card);
+    }
+
+    .search-lead-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: var(--r-pill);
+      background: var(--bg-elevated);
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .search-popover-dropdown {
+      position: absolute;
+      top: 54px;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--r-md);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+      z-index: 150;
+      max-height: 320px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .popover-item {
+      appearance: none;
+      width: 100%;
+      color: var(--text-body);
+      background: transparent;
+      border: 0;
+      font: inherit;
+      text-align: left;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .popover-item:last-child {
+      border-bottom: none;
+    }
+
+    .popover-item:hover, .popover-item.active {
+      background: var(--bg-card-hover);
+    }
+
+    .popover-sym-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .popover-sym {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-white);
+    }
+
+    .popover-name {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .popover-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--r-pill);
+      background: var(--primary-subtle);
+      color: var(--primary);
+    }
+
+    .quick-stocks-scroller {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .quick-stocks-scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .quick-stock-chip {
+      flex-shrink: 0;
+      appearance: none;
+      font-family: var(--font-sans);
+      padding: 7px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-pill);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .quick-stock-chip:hover {
+      background: var(--bg-card);
+      border-color: var(--border-medium);
+      color: var(--text-white);
+      transform: translateY(-1px);
+    }
+
+    .quick-stock-chip.active {
+      background: var(--primary-subtle);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .chip-score-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: var(--r-pill);
+      background: var(--good-subtle);
+      color: var(--good);
+    }
+
+    .dna-loading-view {
+      padding: 36px 16px;
+      display: none;
+    }
+
+    .scan-radar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-xl);
+      padding: 28px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .scan-radar-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(59, 130, 246, 0.15) 60deg, transparent 120deg);
+      animation: radarRotate 3.2s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes radarRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .scan-radar-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .scan-pulse-ring {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--primary-subtle);
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--primary-glow);
+      animation: pulseGlow 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 16px var(--primary-glow); }
+      50% { transform: scale(1.06); box-shadow: 0 0 28px var(--primary-glow); }
+    }
+
+    .scan-stock-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-white);
+      margin-bottom: 4px;
+    }
+
+    .scan-stock-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .scan-progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .scan-progress-fill {
+      height: 100%;
+      width: 20%;
+      background: linear-gradient(90deg, #3B82F6, #10B981);
+      border-radius: var(--r-pill);
+      transition: width 0.3s ease;
+    }
+
+    .scan-steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .scan-step-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      font-size: 12.5px;
+      color: var(--text-dim);
+      transition: all 0.25s ease;
+    }
+
+    .scan-step-item.active {
+      border-color: var(--primary);
+      color: var(--text-white);
+      background: var(--primary-subtle);
+    }
+
+    .scan-step-item.completed {
+      border-color: var(--good-border);
+      color: var(--text-body);
+    }
+
+    .scan-step-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+
+    .scan-step-status {
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .scan-step-item.completed .scan-step-status {
+      color: var(--good);
+    }
+
+    .dna-report-view {
+      display: none;
+      animation: fadeInReport 0.3s ease forwards;
+    }
+
+    @keyframes fadeInReport {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stock-hero-card {
+      padding: 16px 16px 14px;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.2) 100%);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .hero-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .hero-sym-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-symbol {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: -0.01em;
+    }
+
+    .hero-tier-tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--r-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      color: var(--text-muted);
+    }
+
+    .hero-sector-tag {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .hero-name-row {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .hero-pricing-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .hero-live-price {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+
+    .price-change-pill {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--r-pill);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .price-change-pill.pos {
+      background: var(--good-subtle);
+      color: var(--good);
+      border: 1px solid var(--good-border);
+    }
+
+    .price-change-pill.neg {
+      background: var(--danger-subtle);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .price-change-pill.neutral {
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .range-bar-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+    }
+
+    .range-bar-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .range-bar-track {
+      position: relative;
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: var(--r-pill);
+      overflow: visible;
+    }
+
+    .range-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, #F43F5E, #F59E0B, #10B981);
+      border-radius: var(--r-pill);
+    }
+
+    .range-pin-marker {
+      position: absolute;
+      top: -3px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+      transform: translateX(-50%);
+    }
+
+    .report-subnav-sticky {
+      position: sticky;
+      top: 58px;
+      z-index: 90;
+      background: rgba(14, 21, 36, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .report-subnav-sticky::-webkit-scrollbar { display: none; }
+
+    .subnav-pill {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .subnav-pill:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-white);
+    }
+
+    .subnav-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 2px 10px var(--primary-glow);
+    }
+
+    .report-tab-pane {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .citadel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .citadel-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .citadel-card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .citadel-card-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* Plain-English Institutional Thesis Card */
+    .plain-english-card {
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(19, 28, 49, 0.9) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plain-english-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #3B82F6, #10B981);
+    }
+
+    .plain-english-badge {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--r-pill);
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border: 1px solid var(--border-bright);
+    }
+
+    .plain-english-body {
+      font-size: 13px;
+      line-height: 1.68;
+      color: var(--text-body);
+      margin-bottom: 14px;
+    }
+
+    .plain-english-body p {
+      margin-bottom: 10px;
+    }
+
+    .plain-english-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .plain-english-highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .pe-highlight-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .pe-highlight-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .pe-highlight-val {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-white);
+      font-family: var(--font-mono);
+    }
+
+    .citadel-analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .citadel-analytics-grid {
+        grid-template-columns: 240px 1fr;
+      }
+    }
+
+    .speedometer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .gauge-wrapper {
+      position: relative;
+      width: 170px;
+      height: 95px;
+      margin: 8px 0 2px;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .gauge-needle {
+      transform-box: view-box;
+      transform-origin: 50% 90%;
+      transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .gauge-score-value {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-white);
+      line-height: 1;
+      margin-top: -6px;
+    }
+
+    .gauge-score-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .gauge-verdict-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--r-pill);
+      background: var(--good-subtle);
+      color: var(--good);
+      border: 1px solid var(--good-border);
+    }
+
+    .pillars-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .pillar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pillar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .pillar-score-val {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .pillar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+    }
+
+    .pillar-fill {
+      height: 100%;
+      border-radius: var(--r-pill);
+      transition: width 0.8s ease;
+    }
+
+    .pillar-desc-sub {
+      font-size: 10.5px;
+      color: var(--text-dim);
+    }
+
+    .key-facts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 520px) {
+      .key-facts-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .fact-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .fact-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .fact-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .fact-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .ownership-cap-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .ownership-cap-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .donut-holder-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: 16px;
+    }
+
+    .donut-chart-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .donut-canvas-wrap {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .donut-canvas-wrap canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .donut-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-center-val {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-white);
+      line-height: 1;
+    }
+
+    .donut-center-sub {
+      font-size: 8.5px;
+      color: var(--text-dim);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .donut-legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .legend-dot-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .legend-val {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .cap-structure-bars-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .cap-bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cap-bar-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .cap-bar-track {
+      height: 8px;
+      background: var(--bg-surface);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+    }
+
+    .cap-bar-fill {
+      height: 100%;
+      border-radius: var(--r-pill);
+    }
+
+    .waterfall-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: 16px;
+    }
+
+    .chart-canvas-wrap {
+      width: 100%;
+      height: 190px;
+      position: relative;
+    }
+
+    .chart-canvas-wrap canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .cases-trio-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .cases-trio-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .case-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .case-box.bull { border-left: 3px solid var(--good); }
+    .case-box.bear { border-left: 3px solid var(--danger); }
+    .case-box.base { border-left: 3px solid var(--primary); }
+
+    .case-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .case-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .case-box.bull .case-title { color: var(--good); }
+    .case-box.bear .case-title { color: var(--danger); }
+    .case-box.base .case-title { color: var(--primary); }
+
+    .case-price-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .case-headline {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .case-body {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .statement-toggle-bar {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-surface);
+      padding: 4px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border-subtle);
+      width: fit-content;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .stmt-toggle-btn {
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .stmt-toggle-btn.active {
+      background: var(--bg-card);
+      color: var(--text-white);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-bright);
+    }
+
+    .financial-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      margin-top: 10px;
+    }
+
+    .financial-table-wrapper::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .financial-table-wrapper::-webkit-scrollbar-thumb {
+      background: var(--border-medium);
+      border-radius: var(--r-pill);
+    }
+
+    .financial-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      white-space: nowrap;
+    }
+
+    .financial-table th {
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      color: var(--text-dim);
+      font-weight: 600;
+      text-align: right;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .financial-table th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      text-align: left;
+      background: var(--bg-surface);
+      font-family: var(--font-sans);
+      min-width: 160px;
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    .financial-table td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-body);
+    }
+
+    .financial-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      text-align: left;
+      background: var(--bg-card);
+      font-family: var(--font-sans);
+      font-weight: 500;
+      color: var(--text-white);
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    .financial-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .financial-table tr:hover td:first-child {
+      background: var(--bg-card-hover);
+    }
+
+    .financial-table tr.highlight-row td {
+      background: rgba(59, 130, 246, 0.08);
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .financial-table tr.highlight-row td:first-child {
+      background: #152238;
+      color: var(--primary);
+    }
+
+    .val-negative {
+      color: var(--danger) !important;
+    }
+
+    .val-positive {
+      color: var(--good) !important;
+    }
+
+    .compounded-growth-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 520px) {
+      .compounded-growth-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .cgrowth-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cgrowth-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cgrowth-rows-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cgrowth-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .cgrowth-period {
+      color: var(--text-muted);
+    }
+
+    .cgrowth-rate-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--r-pill);
+    }
+
+    .cgrowth-rate-badge.pos {
+      background: var(--good-subtle);
+      color: var(--good);
+    }
+
+    .cgrowth-rate-badge.neg {
+      background: var(--danger-subtle);
+      color: var(--danger);
+    }
+
+    .dividend-hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 560px) {
+      .dividend-hero-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .div-hero-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .earnings-momentum-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .momentum-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .qs-dock-bar {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: calc(100% - 32px);
+      max-width: 440px;
+      background: rgba(14, 21, 36, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--r-pill);
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .dock-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      color: var(--text-dim);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--r-pill);
+      transition: all 0.15s ease;
+    }
+
+    .dock-nav-item:hover, .dock-nav-item.active {
+      color: var(--text-white);
+      background: var(--primary-subtle);
+    }
+
+    .dock-nav-item.active {
+      color: var(--primary);
+    }
+
+    .dock-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* QuantSync V2 report: luminous, responsive data canvas. */
+    :root[data-theme="light"] {
+      --bg-base: #F3F6FC;
+      --bg-surface: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F5F8FF;
+      --bg-elevated: #EEF3FC;
+      --bg-glass: rgba(255, 255, 255, .78);
+      --border-subtle: rgba(28, 43, 72, .10);
+      --border-medium: rgba(28, 43, 72, .16);
+      --border-bright: rgba(59, 130, 246, .35);
+      --text-white: #10182B;
+      --text-body: #26344E;
+      --text-muted: #596984;
+      --text-dim: #73819A;
+      --primary: #356FF6;
+      --primary-glow: rgba(53, 111, 246, .18);
+      --primary-subtle: rgba(53, 111, 246, .10);
+      --good: #138A62;
+      --good-glow: rgba(19, 138, 98, .16);
+      --good-subtle: rgba(19, 138, 98, .09);
+      --good-border: rgba(19, 138, 98, .25);
+      --danger: #D9435C;
+      --danger-glow: rgba(217, 67, 92, .14);
+      --danger-subtle: rgba(217, 67, 92, .08);
+      --danger-border: rgba(217, 67, 92, .22);
+      --caution: #B7790A;
+      --caution-subtle: rgba(183, 121, 10, .10);
+      --gauge-track: #DCE4F1;
+      --shadow-card: 0 10px 30px rgba(26, 45, 79, .08), 0 2px 6px rgba(26, 45, 79, .05), inset 0 1px rgba(255,255,255,.9);
+      --shadow-glow: 0 0 24px -4px var(--primary-glow);
+    }
+
+    html, body { min-height: 100%; }
+    body {
+      background:
+        radial-gradient(ellipse at 6% 4%, rgba(59, 130, 246, .13), transparent 30rem),
+        radial-gradient(ellipse at 95% 20%, rgba(139, 92, 246, .09), transparent 28rem),
+        var(--bg-base);
+      background-attachment: fixed;
+    }
+    .app-frame-wrapper {
+      width: 100%;
+      max-width: 1240px;
+      min-height: 100vh;
+      overflow: visible;
+      background: transparent;
+      box-shadow: none;
+    }
+    .app-main-content { padding-bottom: 92px; }
+    .search-hero-section {
+      padding: 26px clamp(16px, 3vw, 36px) 18px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 86%, var(--primary) 14%), var(--bg-card));
+      border: 1px solid var(--border-subtle);
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 14px 38px rgba(0,0,0,.13), inset 0 1px rgba(255,255,255,.08);
+    }
+    .search-input-field {
+      height: 54px;
+      border-radius: 15px;
+      border-color: var(--border-medium);
+      box-shadow: 0 8px 22px rgba(0,0,0,.12), inset 0 1px rgba(255,255,255,.07);
+    }
+    .search-input-field:focus { transform: translateY(-1px); }
+    .quick-stock-chip {
+      min-height: 38px;
+      border-radius: 12px;
+      border-color: var(--border-subtle);
+      background: color-mix(in srgb, var(--bg-card) 88%, var(--primary) 12%);
+    }
+    .quick-stock-chip.active { box-shadow: 0 5px 16px var(--primary-glow); }
+    #dnaHomeView { padding: clamp(14px, 3vw, 30px) !important; }
+    #dnaHomeView > .citadel-card:first-child {
+      border-radius: 22px !important;
+      padding: clamp(20px, 3vw, 30px) !important;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 80%, #3B82F6 20%), color-mix(in srgb, var(--bg-card) 88%, #8B5CF6 12%)) !important;
+      box-shadow: 0 18px 38px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.18);
+    }
+    #dnaHomeView > div:last-child > .citadel-card {
+      border-radius: 16px;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+    #dnaHomeView > div:last-child > .citadel-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-bright);
+      box-shadow: 0 14px 28px rgba(0,0,0,.16), var(--shadow-glow);
+    }
+    .dna-loading-view, #dnaErrorView { padding: clamp(16px, 4vw, 38px) !important; }
+    .scan-radar-card {
+      border-radius: 24px;
+      border-color: var(--border-bright);
+      background: linear-gradient(145deg, var(--bg-card), color-mix(in srgb, var(--bg-card) 88%, var(--primary) 12%));
+      box-shadow: 0 24px 60px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.1);
+    }
+    .stock-hero-card {
+      margin: 18px clamp(12px, 2vw, 24px) 14px;
+      padding: clamp(18px, 3vw, 28px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(59,130,246,.17), transparent 46%),
+        radial-gradient(ellipse at 0% 100%, rgba(16,185,129,.09), transparent 44%),
+        linear-gradient(145deg, var(--bg-card), color-mix(in srgb, var(--bg-card) 90%, var(--primary) 10%));
+      box-shadow: 0 18px 44px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.12);
+    }
+    .hero-symbol { font-size: clamp(24px, 3vw, 34px); }
+    .hero-name-row { font-size: 15px; }
+    .hero-live-price { font-size: clamp(30px, 4vw, 42px); font-variant-numeric: tabular-nums; }
+    .price-change-pill { min-height: 32px; padding: 6px 11px; }
+    .range-bar-box { border-radius: 14px; padding: 14px 16px; box-shadow: inset 0 1px rgba(255,255,255,.08); }
+    .range-bar-head { font-size: 12px; }
+    .report-subnav-sticky {
+      top: 58px;
+      padding: 10px clamp(12px, 2vw, 24px);
+      gap: 8px;
+      background: color-mix(in srgb, var(--bg-base) 90%, transparent);
+      border-block: 1px solid var(--border-subtle);
+    }
+    .subnav-pill {
+      min-height: 42px;
+      padding: 8px 15px;
+      border-radius: 13px;
+      background: var(--bg-card);
+      font-size: 12px;
+      box-shadow: 0 3px 9px rgba(0,0,0,.08), inset 0 1px rgba(255,255,255,.06);
+    }
+    .subnav-pill.active { box-shadow: 0 7px 18px var(--primary-glow), inset 0 1px rgba(255,255,255,.2); }
+    .report-tab-pane {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: clamp(14px, 2.6vw, 30px);
+      gap: 18px;
+    }
+    .citadel-card, .speedometer-card, .pillars-card, .donut-holder-card, .waterfall-card {
+      border-color: var(--border-subtle);
+      border-radius: 20px;
+      background: linear-gradient(145deg, var(--bg-card), color-mix(in srgb, var(--bg-card) 93%, var(--primary) 7%));
+      box-shadow: 0 12px 28px rgba(0,0,0,.14), inset 0 1px rgba(255,255,255,.07);
+    }
+    .citadel-card { padding: clamp(16px, 2vw, 23px); transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+    .citadel-card:hover { transform: translateY(-2px); border-color: var(--border-medium); box-shadow: 0 18px 38px rgba(0,0,0,.18), var(--shadow-glow); }
+    .citadel-card-title { font-size: 15px; }
+    .plain-english-card {
+      background: radial-gradient(ellipse at 100% 0%, rgba(59,130,246,.12), transparent 48%), linear-gradient(145deg, var(--bg-card), color-mix(in srgb, var(--bg-card) 92%, var(--primary) 8%));
+      border-color: color-mix(in srgb, var(--primary) 34%, var(--border-subtle));
+    }
+    .plain-english-body { font-size: 14px; }
+    .citadel-analytics-grid { gap: 14px; }
+    .speedometer-card, .pillars-card { padding: 20px; }
+    .fact-card, .case-box, .cgrowth-card, .div-hero-card, .momentum-card {
+      border-radius: 15px;
+      border-color: var(--border-subtle);
+      background: linear-gradient(145deg, var(--bg-surface), color-mix(in srgb, var(--bg-surface) 92%, var(--primary) 8%));
+      box-shadow: inset 0 1px rgba(255,255,255,.05), 0 5px 14px rgba(0,0,0,.08);
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .fact-card:hover, .case-box:hover, .cgrowth-card:hover, .div-hero-card:hover, .momentum-card:hover { transform: translateY(-2px); border-color: var(--border-bright); }
+    .fact-label { font-size: 11px; }
+    .fact-val { font-size: 16px; font-variant-numeric: tabular-nums; }
+    .fact-sub { font-size: 11px; }
+    .ownership-cap-grid, .cases-trio-grid { gap: 14px; }
+    .chart-canvas-wrap { height: 240px; }
+    .financial-table-wrapper { border-radius: 14px; }
+    .financial-table { font-size: 12px; }
+    .financial-table th, .financial-table td { padding: 11px 15px; }
+    .financial-table tr:nth-child(even) td { background: color-mix(in srgb, var(--bg-card) 90%, var(--primary) 10%); }
+    .financial-table tr:nth-child(even) td:first-child { background: var(--bg-card-hover); }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .qs-dock-bar { border-color: var(--border-medium); box-shadow: 0 14px 38px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.1); }
+    html[data-embedded="true"] body { background: var(--bg-base); background-attachment: scroll; }
+    html[data-embedded="true"] .app-frame-wrapper { max-width: none; min-height: 100%; }
+    html[data-embedded="true"] .qs-top-bar,
+    html[data-embedded="true"] .qs-dock-bar { display: none; }
+    html[data-embedded="true"] .app-main-content { padding-bottom: 24px; }
+    html[data-embedded="true"] .report-subnav-sticky { top: 56px; }
+    [data-theme="light"] .qs-top-bar { background: rgba(255,255,255,.86); }
+    [data-theme="light"] .report-subnav-sticky { background: rgba(243,246,252,.9); }
+    [data-theme="light"] .plain-english-card { background: radial-gradient(ellipse at 100% 0%, rgba(59,130,246,.1), transparent 48%), linear-gradient(145deg,#fff,#f7f9ff); }
+    [data-theme="light"] .financial-table tr.highlight-row td:first-child { background: #EAF1FF; }
+
+    /* Guided research home and continuous report reading experience. */
+    .search-intro { max-width: 850px; margin: 0 auto 18px; }
+    .search-eyebrow, .section-kicker { display:block; color:var(--primary); font:700 10px/1.4 var(--font-mono); letter-spacing:.12em; text-transform:uppercase; }
+    .search-intro h1 { color:var(--text-white); font-size:clamp(26px,4vw,42px); line-height:1.12; letter-spacing:-.045em; margin:7px 0 8px; }
+    .search-intro p { color:var(--text-muted); font-size:14px; }
+    .search-bar-wrap { max-width:850px; margin-inline:auto; }
+    .quick-stocks-scroller { max-width:850px; margin:12px auto 0; }
+    .search-hero-section { padding-top:clamp(26px,5vw,52px); padding-bottom:24px; }
+    #dnaHomeView { max-width:1040px; margin:0 auto; padding:clamp(18px,4vw,38px) !important; }
+    .research-guide-card { padding:clamp(19px,3vw,28px); border:1px solid var(--border-subtle); border-radius:22px; background:linear-gradient(140deg,color-mix(in srgb,var(--bg-card) 84%,var(--primary) 16%),var(--bg-card) 66%,color-mix(in srgb,var(--bg-card) 90%,#8B5CF6 10%)); box-shadow:0 18px 38px rgba(0,0,0,.13),inset 0 1px rgba(255,255,255,.14); }
+    .research-guide-heading { display:flex; align-items:flex-start; gap:14px; }
+    .research-guide-icon { display:grid; place-items:center; width:40px; height:40px; flex:0 0 40px; border-radius:13px; color:#fff; font-size:19px; background:linear-gradient(140deg,#4f7ff7,#855cf5); box-shadow:0 8px 20px var(--primary-glow); }
+    .research-guide-title { color:var(--text-white); font-size:18px; font-weight:800; letter-spacing:-.025em; }
+    .research-guide-heading p { color:var(--text-muted); margin-top:3px; font-size:13px; }
+    .research-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:22px; }
+    .research-steps > div { display:grid; grid-template-columns:30px 1fr; align-items:start; column-gap:9px; padding:13px 12px; border:1px solid var(--border-subtle); border-radius:14px; background:color-mix(in srgb,var(--bg-surface) 80%,transparent); }
+    .research-steps > div > span { grid-row:span 2; display:grid; place-items:center; width:28px; height:28px; border-radius:9px; color:var(--primary); background:var(--primary-subtle); font:700 10px var(--font-mono); }
+    .research-steps strong { color:var(--text-white); font-size:12px; }
+    .research-steps small { color:var(--text-dim); font-size:11px; margin-top:2px; }
+    .explore-heading { display:flex; align-items:end; justify-content:space-between; gap:12px; margin:30px 0 13px; }
+    .explore-heading h2 { color:var(--text-white); font-size:20px; letter-spacing:-.035em; margin-top:5px; }
+    .explore-heading > span { color:var(--text-dim); font-size:11px; }
+    .explore-stock-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; }
+    .explore-stock-grid > .citadel-card { display:flex; flex-direction:column; min-height:142px; padding:17px; }
+    .explore-stock-card { width:100%; text-align:left; color:var(--text-body); cursor:pointer; }
+    .explore-stock-card:active { transform:translateY(0) scale(.99); }
+    .explore-stock-grid > .citadel-card > div:first-child { flex:1; }
+    .explore-stock-grid .hero-tier-tag { font-size:10px; }
+    .explore-arrow { display:grid; place-items:center; width:29px; height:29px; flex:0 0 29px; border-radius:10px; color:var(--primary); background:var(--primary-subtle); font-size:16px; }
+    .explore-cta { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:11px; border-top:1px solid var(--border-subtle); color:var(--primary); font-size:11px; font-weight:700; }
+    html[data-report-open="true"] .search-intro,
+    html[data-report-open="true"] .quick-stocks-scroller { display:none; }
+    html[data-report-open="true"] .search-hero-section { padding:10px clamp(12px,2vw,24px); border:0; border-radius:0; background:color-mix(in srgb,var(--bg-base) 90%,transparent); box-shadow:none; }
+    html[data-report-open="true"] .search-input-field { height:44px; }
+    html[data-report-open="true"] .search-bar-wrap { max-width:1180px; }
+    .report-welcome { max-width:1180px; margin:12px auto 0; padding:0 clamp(14px,2.6vw,30px); }
+    .report-welcome h1 { color:var(--text-white); font-size:clamp(20px,3vw,28px); letter-spacing:-.04em; margin:4px 0; }
+    .report-welcome p { color:var(--text-muted); font-size:12px; }
+    .report-tab-pane { scroll-margin-top:132px; }
+    .report-section-heading { padding:6px 2px 2px; }
+    .report-section-heading h2 { margin:4px 0; color:var(--text-white); font-size:clamp(22px,3vw,30px); letter-spacing:-.045em; }
+    .report-section-heading p { max-width:760px; color:var(--text-muted); font-size:13px; line-height:1.65; }
+    .metric-guide { overflow:hidden; border:1px solid var(--border-subtle); border-radius:16px; background:linear-gradient(135deg,var(--bg-card),color-mix(in srgb,var(--bg-card) 90%,var(--primary) 10%)); }
+    .metric-guide summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:54px; padding:12px 16px; color:var(--text-white); font-size:12px; font-weight:700; cursor:pointer; list-style:none; }
+    .metric-guide summary::-webkit-details-marker { display:none; }
+    .metric-guide-action { color:var(--primary); font-size:11px; }
+    .metric-guide[open] .metric-guide-action span { display:inline-block; transform:rotate(45deg); }
+    .metric-guide-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:0 16px 16px; }
+    .metric-guide-grid > div { display:flex; flex-direction:column; gap:4px; padding:12px; border-radius:12px; background:var(--bg-elevated); }
+    .metric-guide-grid strong { color:var(--text-white); font-size:12px; }
+    .metric-guide-grid span { color:var(--text-muted); font-size:11px; line-height:1.5; }
+    .score-explainer { max-width:260px; margin:5px auto 0; color:var(--text-muted); font-size:10px; line-height:1.5; text-align:center; }
+    .scenario-intro { display:flex; align-items:end; justify-content:space-between; gap:14px; margin:2px 0 -5px; }
+    .scenario-intro h3 { margin-top:4px; color:var(--text-white); font-size:19px; letter-spacing:-.035em; }
+    .scenario-intro p { max-width:430px; color:var(--text-muted); font-size:11px; line-height:1.55; text-align:right; }
+    .metric-unavailable { color:var(--text-dim) !important; font:600 10px var(--font-sans) !important; }
+    .report-subnav-sticky { scroll-margin-top:58px; }
+    .subnav-pill { white-space:nowrap; }
+    @media (min-width:900px) {
+      .research-guide-card { margin-top:3px; }
+      .report-welcome { margin-top:18px; }
+    }
+    @media (min-width: 900px) {
+      .stock-hero-card { margin-top: 24px; }
+      .citadel-analytics-grid { grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); }
+      .key-facts-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .ownership-cap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cases-trio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .app-main-content { padding-bottom: 80px; }
+      .search-hero-section { padding: 24px 12px 16px; border-radius: 0 0 18px 18px; }
+      .search-intro h1 { font-size:29px; }
+      .search-intro p { font-size:12px; }
+      .research-guide-heading { gap:10px; }
+      .research-guide-title { font-size:15px; }
+      .research-steps { grid-template-columns:1fr; gap:8px; margin-top:16px; }
+      .research-steps > div { padding:10px; }
+      .explore-heading { align-items:flex-start; flex-direction:column; gap:4px; margin-top:24px; }
+      .explore-heading h2 { font-size:18px; }
+      .explore-stock-grid { grid-template-columns:1fr; gap:10px; }
+      .explore-stock-grid > .citadel-card { min-height:124px; }
+      html[data-report-open="true"] .search-hero-section { padding:8px 10px; }
+      .report-welcome { padding:0 13px; margin-top:10px; }
+      .report-welcome p { font-size:11px; }
+      .report-tab-pane { scroll-margin-top:118px; }
+      .metric-guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:0 12px 12px; }
+      .metric-guide summary { padding-inline:12px; }
+      .report-subnav-sticky { scroll-padding-inline:10px; }
+      .scenario-intro { align-items:flex-start; flex-direction:column; gap:5px; }
+      .scenario-intro p { text-align:left; }
+      .stock-hero-card { margin: 12px 10px; padding: 16px 14px; border-radius: 19px; }
+      .hero-meta-row { align-items: flex-start; gap: 6px; }
+      .hero-sector-tag { text-align: right; max-width: 42%; }
+      .hero-pricing-row { flex-wrap: wrap; gap: 5px 10px; }
+      .report-subnav-sticky { padding: 8px 10px; gap: 6px; }
+      .subnav-pill { min-height: 40px; padding: 7px 11px; font-size: 11px; }
+      .report-tab-pane { padding: 12px 10px 24px; gap: 13px; }
+      .citadel-card { border-radius: 17px; padding: 15px; }
+      .plain-english-highlights-grid { grid-template-columns: 1fr; gap: 10px; }
+      .plain-english-highlights-grid .pe-highlight-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }
+      .fact-card { padding: 10px; }
+      .fact-label { font-size: 10px; }
+      .fact-val { font-size: 14px; overflow-wrap: anywhere; }
+      .fact-sub { font-size: 10px; }
+      .donut-chart-row { flex-wrap: wrap; justify-content: center; }
+      .donut-legend-list { min-width: 130px; }
+      .earnings-momentum-grid { grid-template-columns: 1fr; }
+      .chart-canvas-wrap { height: 205px; }
+      .financial-table { font-size: 11px; }
+      .financial-table th, .financial-table td { padding: 9px 11px; }
+      .scan-step-item { gap: 10px; }
+      .scan-step-label { font-size: 12px; }
+      .scan-step-status { flex-shrink: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
+    /* Quiet luxury refresh: editorial ink, warm ivory and restrained brass. */
+    :root {
+      --primary: #D4B477;
+      --primary-glow: rgba(212,180,119,.20);
+      --primary-subtle: rgba(212,180,119,.12);
+      --border-bright: rgba(212,180,119,.42);
+      --caution: #D4B477;
+      --caution-subtle: rgba(212,180,119,.13);
+    }
+    :root[data-theme="light"] {
+      --bg-base: #F6F3ED;
+      --bg-surface: #FBFAF7;
+      --bg-card: #FFFEFC;
+      --bg-card-hover: #F7F2E8;
+      --bg-elevated: #F1EBDD;
+      --bg-glass: rgba(255,254,252,.86);
+      --border-subtle: rgba(45,39,29,.10);
+      --border-medium: rgba(45,39,29,.17);
+      --border-bright: rgba(151,117,57,.42);
+      --text-white: #171914;
+      --text-body: #34352E;
+      --text-muted: #68675E;
+      --text-dim: #858276;
+      --primary: #98743A;
+      --primary-glow: rgba(152,116,58,.18);
+      --primary-subtle: rgba(152,116,58,.10);
+      --good: #23755A;
+      --good-glow: rgba(35,117,90,.16);
+      --good-subtle: rgba(35,117,90,.09);
+      --good-border: rgba(35,117,90,.23);
+      --danger: #B44448;
+      --danger-glow: rgba(180,68,72,.14);
+      --danger-subtle: rgba(180,68,72,.08);
+      --danger-border: rgba(180,68,72,.22);
+      --caution: #98743A;
+      --caution-subtle: rgba(152,116,58,.10);
+      --gauge-track: #E7E0D3;
+      --shadow-card: 0 16px 42px rgba(53,45,31,.08), 0 2px 7px rgba(53,45,31,.04), inset 0 1px rgba(255,255,255,.9);
+      --shadow-glow: 0 0 24px -4px var(--primary-glow);
+    }
+    :root:not([data-theme="light"]) {
+      --bg-base: #10120F;
+      --bg-surface: #171A15;
+      --bg-card: #1D211A;
+      --bg-card-hover: #272B22;
+      --bg-elevated: #292B22;
+      --bg-glass: rgba(29,33,26,.82);
+      --border-subtle: rgba(238,228,204,.09);
+      --border-medium: rgba(238,228,204,.16);
+      --text-white: #F7F2E8;
+      --text-body: #E2DDCF;
+      --text-muted: #B2AD9E;
+      --text-dim: #898577;
+      --primary: #D4B477;
+      --primary-glow: rgba(212,180,119,.20);
+      --primary-subtle: rgba(212,180,119,.12);
+      --good: #70C3A0;
+      --good-glow: rgba(112,195,160,.18);
+      --good-subtle: rgba(112,195,160,.10);
+      --good-border: rgba(112,195,160,.26);
+      --danger: #E1847F;
+      --danger-glow: rgba(225,132,127,.15);
+      --danger-subtle: rgba(225,132,127,.09);
+      --danger-border: rgba(225,132,127,.24);
+      --caution: #D4B477;
+      --caution-subtle: rgba(212,180,119,.12);
+      --gauge-track: #34362D;
+      --shadow-card: 0 18px 46px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.035);
+      --shadow-glow: 0 0 24px -4px var(--primary-glow);
+    }
+    body {
+      background: radial-gradient(ellipse at 50% -18%, rgba(212,180,119,.10), transparent 42rem), var(--bg-base);
+      background-attachment: fixed;
+    }
+    .qs-top-bar { background: color-mix(in srgb,var(--bg-base) 88%,transparent); border-color:var(--border-subtle); }
+    .qs-logo-badge { background:linear-gradient(145deg,#E4CC98,#92713D); color:#171914; box-shadow:0 5px 18px rgba(212,180,119,.22); }
+    .search-hero-section {
+      position:relative; isolation:isolate; overflow:hidden;
+      max-width:1180px; margin:18px auto 0; padding:clamp(28px,5vw,58px) clamp(20px,5vw,64px) 24px;
+      border:1px solid var(--border-subtle); border-radius:26px;
+      background:linear-gradient(115deg,color-mix(in srgb,var(--bg-card) 92%,var(--primary) 8%),var(--bg-card) 54%,color-mix(in srgb,var(--bg-card) 92%,#899B87 8%));
+      box-shadow:var(--shadow-card);
+    }
+    .search-hero-section::after {
+      content:""; position:absolute; z-index:-1; width:290px; height:290px; right:-78px; top:-112px;
+      border:1px solid color-mix(in srgb,var(--primary) 25%,transparent); border-radius:50%;
+      box-shadow:0 0 0 28px color-mix(in srgb,var(--primary) 5%,transparent),0 0 0 58px color-mix(in srgb,var(--primary) 3%,transparent);
+      pointer-events:none;
+    }
+    .search-intro { margin-bottom:24px; }
+    .search-eyebrow,.section-kicker { color:var(--primary); letter-spacing:.18em; }
+    .search-intro h1 { max-width:680px; font-size:clamp(36px,6vw,64px); line-height:1.02; letter-spacing:-.065em; }
+    .search-intro p { max-width:560px; color:var(--text-muted); font-size:15px; line-height:1.7; }
+    .search-bar-wrap { position:relative; max-width:760px; }
+    .search-input-field { height:62px; padding-inline:52px 48px; border-radius:16px; background:var(--bg-surface); border-color:var(--border-medium); box-shadow:0 12px 26px rgba(0,0,0,.10),inset 0 1px rgba(255,255,255,.10); font-size:15px; }
+    .search-lead-icon { left:18px; }
+    .quick-stocks-scroller { max-width:760px; margin-top:16px; }
+    .quick-stock-chip { min-height:42px; padding-inline:15px; border-radius:var(--r-pill); background:color-mix(in srgb,var(--bg-card) 90%,var(--primary) 10%); font-size:11px; letter-spacing:.04em; }
+    #dnaHomeView { max-width:1180px; padding:22px clamp(16px,3vw,36px) 48px !important; }
+    .research-guide-card { position:relative; overflow:hidden; border-radius:22px; padding:clamp(20px,3vw,30px); background:linear-gradient(130deg,color-mix(in srgb,var(--bg-card) 90%,var(--primary) 10%),var(--bg-card) 70%); box-shadow:var(--shadow-card); }
+    .research-guide-icon { background:linear-gradient(145deg,#E4CC98,#92713D); color:#171914; box-shadow:0 8px 22px var(--primary-glow); }
+    .research-guide-title { font-size:20px; letter-spacing:-.04em; }
+    .research-steps > div { min-height:68px; border-radius:13px; background:color-mix(in srgb,var(--bg-surface) 82%,transparent); }
+    .research-steps > div > span { color:var(--primary); background:var(--primary-subtle); }
+    .explore-heading { margin-top:34px; }
+    .explore-heading h2 { font-size:24px; letter-spacing:-.05em; }
+    .explore-stock-grid > .citadel-card { min-height:158px; }
+    .explore-stock-card { border:1px solid var(--border-subtle); box-shadow:var(--shadow-card); }
+    .explore-stock-card:hover { border-color:var(--border-bright); }
+    html[data-report-open="true"] .search-hero-section { max-width:none; margin:0; padding:7px clamp(12px,2vw,24px); background:color-mix(in srgb,var(--bg-base) 94%,transparent); }
+    html[data-report-open="true"] .search-input-field { height:42px; border-radius:12px; font-size:13px; box-shadow:none; }
+    .stock-hero-card {
+      display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:8px 18px;
+      max-width:1180px; margin:18px auto 0; padding:22px clamp(18px,3vw,34px);
+      border:1px solid var(--border-medium); border-radius:22px;
+      background:radial-gradient(ellipse at 96% 0%,color-mix(in srgb,var(--primary) 15%,transparent),transparent 42%),linear-gradient(145deg,var(--bg-card),color-mix(in srgb,var(--bg-card) 94%,#71856D 6%));
+      box-shadow:var(--shadow-card);
+    }
+    .hero-primary-row { grid-column:1 / -1; display:flex; min-width:0; align-items:center; justify-content:space-between; gap:12px; }
+    .hero-meta-row { display:contents; }
+    .hero-symbol { font-size:clamp(24px,3vw,34px); letter-spacing:-.055em; }
+    .hero-tier-tag { padding:5px 10px; color:var(--text-muted); background:var(--bg-elevated); border-color:var(--border-subtle); }
+    .hero-secondary-row { grid-column:1 / -1; display:flex; min-width:0; align-items:flex-start; gap:8px; margin-top:-2px; }
+    .hero-secondary-row .hero-name-row { min-width:0; flex:1; margin:0; font-size:12px; line-height:1.4; color:var(--text-muted); }
+    .hero-secondary-row .hero-tier-tag { flex:none; white-space:nowrap; }
+    .hero-pricing-row { display:contents; }
+    .hero-price-label { display:none; }
+    .hero-live-price { margin-left:auto; font-size:clamp(28px,4vw,40px); letter-spacing:-.05em; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .price-change-pill { display:none !important; }
+    .range-bar-box { grid-column:1 / -1; min-width:0; padding:14px 16px; border-radius:14px; background:color-mix(in srgb,var(--bg-surface) 86%,transparent); }
+    .range-bar-head { display:grid; grid-template-columns:1fr 1fr; gap:10px; color:var(--text-muted); font-size:10px; line-height:1.4; }
+    .range-bar-head span:last-child { text-align:right; }
+    .range-bar-head strong { display:inline-block; white-space:nowrap; }
+    .report-welcome { max-width:1180px; margin:23px auto 10px; padding:0 clamp(16px,3vw,36px); }
+    .report-welcome h1 { font-size:20px; letter-spacing:-.04em; }
+    .report-welcome p { max-width:780px; line-height:1.6; }
+    .report-subnav-sticky { gap:7px; padding:9px max(16px,calc((100vw - 1180px)/2)); border-block:1px solid var(--border-subtle); background:color-mix(in srgb,var(--bg-base) 92%,transparent); }
+    .subnav-pill { border-radius:var(--r-pill); min-height:44px; padding-inline:16px; background:var(--bg-card); }
+    .subnav-pill.active { color:#211B10; border-color:transparent; background:linear-gradient(135deg,#E4CC98,#C7A665); box-shadow:0 7px 20px rgba(152,116,58,.20); }
+    .report-tab-pane { max-width:1180px; padding:clamp(18px,3vw,38px); gap:18px; }
+    .cgrowth-card { padding:18px; border-radius:16px; background:linear-gradient(145deg,var(--bg-card),color-mix(in srgb,var(--bg-card) 95%,var(--primary) 5%)); box-shadow:var(--shadow-card); }
+    .cgrowth-title { min-height:24px; font-size:13px; letter-spacing:-.02em; }
+    .cgrowth-values-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:6px; }
+    .cgrowth-value-cell { display:flex; min-width:0; flex-direction:column; align-items:flex-start; gap:6px; padding:10px 9px; border:1px solid var(--border-subtle); border-radius:12px; background:color-mix(in srgb,var(--bg-surface) 88%,var(--primary) 12%); }
+    .cgrowth-period { color:var(--text-dim); font:700 9px/1.2 var(--font-mono); letter-spacing:.04em; text-transform:uppercase; }
+    .cgrowth-rate-badge { display:inline-flex; align-items:center; min-height:27px; padding:4px 7px; border:1px solid transparent; border-radius:8px; font:700 12px/1 var(--font-mono); font-variant-numeric:tabular-nums; }
+    .cgrowth-rate-badge.pos { color:var(--good); background:var(--good-subtle); border-color:var(--good-border); }
+    .cgrowth-rate-badge.neg { color:var(--danger); background:var(--danger-subtle); border-color:var(--danger-border); }
+    .cgrowth-rate-badge.unreported { color:var(--text-muted); background:var(--bg-elevated); border-color:var(--border-subtle); font:600 9px/1.25 var(--font-sans); }
+    .cgrowth-empty-state { grid-column:1/-1; padding:12px; color:var(--text-muted); font-size:11px; border-radius:10px; background:var(--bg-elevated); }
+    .report-section-heading { padding:4px 0 2px; }
+    .report-section-heading h2 { font-size:clamp(26px,4vw,36px); letter-spacing:-.055em; }
+    .report-section-heading p { font-size:14px; }
+    .citadel-card,.speedometer-card,.pillars-card,.donut-holder-card,.waterfall-card { background:linear-gradient(145deg,var(--bg-card),color-mix(in srgb,var(--bg-card) 97%,var(--primary) 3%)); box-shadow:var(--shadow-card); }
+    .citadel-card { border-radius:18px; }
+    .cgrowth-card { background:linear-gradient(145deg,var(--bg-card),color-mix(in srgb,var(--bg-card) 95%,var(--primary) 5%)); box-shadow:var(--shadow-card); }
+    .plain-english-card { border-color:color-mix(in srgb,var(--primary) 38%,var(--border-subtle)); }
+    .fact-card,.case-box,.cgrowth-card,.div-hero-card,.momentum-card { background:var(--bg-surface); box-shadow:inset 0 1px rgba(255,255,255,.045),0 5px 16px rgba(0,0,0,.06); }
+    .financial-table-wrapper { background:var(--bg-card); border:1px solid var(--border-subtle); }
+    .price-history-card .citadel-card-header { align-items:center; gap:12px; }
+    .price-history-card .citadel-card-title { font-size:14px; }
+    .price-history-card .citadel-card-header > div:last-child { display:flex; flex-wrap:wrap; gap:8px; line-height:1.4; }
+    .financial-table th { color:var(--primary); }
+    .qs-dock-bar { background:color-mix(in srgb,var(--bg-base) 86%,transparent); border-color:var(--border-medium); }
+    [data-theme="light"] .qs-top-bar { background:rgba(246,243,237,.88); }
+    [data-theme="light"] .report-subnav-sticky { background:rgba(246,243,237,.92); }
+    [data-theme="light"] .range-bar-box { box-shadow:inset 0 1px rgba(255,255,255,.95),0 5px 14px rgba(53,45,31,.04); }
+    @media (max-width:899px) {
+      .stock-hero-card { grid-template-columns:minmax(0,1fr); gap:8px; margin:14px 12px 0; padding:17px 16px; }
+      .hero-primary-row,.hero-secondary-row,.range-bar-box { grid-column:1; }
+      .hero-primary-row { gap:8px; }
+      .hero-secondary-row { margin-top:-2px; }
+      .hero-live-price { justify-self:end; font-size:clamp(27px,7.5vw,36px); }
+      .range-bar-box { min-width:0; width:100%; margin-top:4px; padding:12px 14px; }
+      .report-welcome { margin:16px auto 8px; }
+      .report-welcome h1 { font-size:18px; }
+      .report-welcome p { display:none; }
+      .report-subnav-sticky { padding-inline:12px; }
+      .subnav-pill { min-height:44px; padding-inline:13px; }
+      .report-tab-pane { padding:18px 14px 30px; gap:14px; }
+      .report-section-heading h2 { font-size:28px; }
+      .price-history-card .citadel-card-header { align-items:flex-start; flex-direction:column; gap:6px; }
+      #dnaHomeView { padding:16px 14px 36px !important; }
+      .explore-stock-grid { grid-template-columns:repeat(3,minmax(0,1fr)); overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory; }
+      .explore-stock-grid > .citadel-card { min-width:240px; scroll-snap-align:start; }
+    }
+    @media (max-width:600px) {
+      .search-hero-section { margin:10px 10px 0; padding:27px 18px 19px; border-radius:22px; }
+      .search-intro { margin-bottom:18px; }
+      .search-intro h1 { max-width:350px; font-size:37px; }
+      .search-intro p { max-width:320px; font-size:13px; line-height:1.6; }
+      .search-input-field { height:56px; font-size:12px; letter-spacing:-.015em; }
+      .quick-stocks-scroller { margin-top:12px; }
+      .quick-stock-chip { min-height:40px; }
+      .research-guide-card { padding:18px; border-radius:18px; }
+      .research-guide-title { font-size:17px; }
+      .research-steps { gap:7px; margin-top:14px; }
+      .research-steps > div { min-height:58px; padding:9px 10px; }
+      .research-steps small { font-size:10px; }
+      .explore-heading { margin:25px 2px 12px; }
+      .explore-heading h2 { font-size:21px; }
+      .explore-stock-grid { display:grid; grid-auto-columns:82%; grid-auto-flow:column; grid-template-columns:none; overflow-x:auto; margin-inline:-2px; padding:0 2px 10px; scroll-snap-type:x mandatory; }
+      .explore-stock-grid > .citadel-card { width:100%; min-width:0; min-height:138px; scroll-snap-align:start; }
+      .explore-stock-grid .hero-tier-tag { max-width:98px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .cgrowth-card { padding:14px; }
+      .cgrowth-values-grid { gap:6px; }
+      .cgrowth-value-cell { padding:8px 6px; }
+      .cgrowth-rate-badge { font-size:11px; }
+      html[data-report-open="true"] .search-hero-section { margin:0; padding:6px 10px; border:0; border-radius:0; }
+      html[data-report-open="true"] .search-input-field { height:40px; }
+      .stock-hero-card { margin:10px 10px 0; padding:15px 14px; border-radius:18px; gap:7px; }
+      .hero-symbol { font-size:27px; }
+      .hero-tier-tag { font-size:10px; }
+      .hero-sector-tag { max-width:45%; font-size:10px; text-align:right; }
+      .hero-secondary-row .hero-name-row { font-size:11px; }
+      .hero-live-price { font-size:clamp(25px,7vw,32px); }
+      .range-bar-head { font-size:9px; gap:4px; }
+      .range-bar-head strong { display:block; font-size:11px; }
+      .range-bar-track { height:5px; }
+      .range-pin-marker { width:10px; height:10px; }
+      .report-welcome { margin:14px auto 7px; padding:0 15px; }
+      .report-welcome h1 { font-size:17px; }
+      .report-subnav-sticky { padding:7px 10px; gap:6px; }
+      .subnav-pill { min-height:42px; padding-inline:12px; font-size:10px; }
+      .report-tab-pane { padding:16px 12px 28px; }
+      .report-section-heading h2 { font-size:26px; }
+      .report-section-heading p { font-size:12px; }
+      .price-history-card .citadel-card-title { font-size:13px; }
+      .metric-guide { border-radius:14px; }
+      .metric-guide summary { min-height:50px; }
+      .citadel-card { border-radius:16px; }
+      .app-main-content { padding-bottom:84px; }
+    }
+
+    /* Embedded DNA surfaces align to the native app's 14px screen gutter. */
+    html[data-embedded="true"] .app-frame-wrapper { max-width:none; }
+    html[data-embedded="true"] #dnaHomeView {
+      width:100%;
+      max-width:none;
+      margin-inline:0;
+      padding:14px 14px 40px !important;
+    }
+    html[data-embedded="true"] .search-hero-section { margin-inline:14px; }
+    html[data-embedded="true"][data-report-open="true"] .search-hero-section {
+      margin-inline:0;
+      padding-inline:14px;
+    }
+    html[data-embedded="true"] .dna-report-view {
+      width:100%;
+      padding-inline:14px;
+    }
+    html[data-embedded="true"] .stock-hero-card {
+      width:100%;
+      max-width:none;
+      margin:14px 0 10px;
+    }
+    html[data-embedded="true"] .report-welcome {
+      width:100%;
+      max-width:none;
+      margin-inline:0;
+      padding-inline:0;
+    }
+    html[data-embedded="true"] .report-subnav-sticky { padding-inline:0; }
+    html[data-embedded="true"] .report-tab-pane {
+      width:100%;
+      max-width:none;
+      margin-inline:0;
+      padding-inline:0;
+    }
+
+    /* Premium report presentation: pearl by day, midnight by night. */
+    :root[data-report-open="true"][data-theme="light"] {
+      --bg-base:#F6F4EF;
+      --bg-surface:#FFFEFC;
+      --bg-card:#FFFFFF;
+      --bg-card-hover:#FBF8F1;
+      --bg-elevated:#F0EADF;
+      --bg-glass:rgba(255,254,251,.88);
+      --border-subtle:rgba(63,51,32,.10);
+      --border-medium:rgba(63,51,32,.16);
+      --border-bright:rgba(151,112,45,.38);
+      --text-white:#1B1A16;
+      --text-body:#34332E;
+      --text-muted:#68665D;
+      --text-dim:#716D62;
+      --primary:#805D23;
+      --primary-glow:rgba(161,123,54,.19);
+      --primary-subtle:rgba(161,123,54,.10);
+      --good:#176B51;
+      --good-glow:rgba(23,107,81,.16);
+      --good-subtle:rgba(23,107,81,.09);
+      --good-border:rgba(23,107,81,.25);
+      --danger:#A53E43;
+      --danger-glow:rgba(165,62,67,.14);
+      --danger-subtle:rgba(165,62,67,.08);
+      --danger-border:rgba(165,62,67,.22);
+      --caution:#805D23;
+      --caution-subtle:rgba(161,123,54,.11);
+      --gauge-track:#E7E1D5;
+      --shadow-card:0 18px 46px rgba(48,40,27,.085),0 3px 9px rgba(48,40,27,.045),inset 0 1px rgba(255,255,255,.96);
+      --shadow-glow:0 0 28px -5px var(--primary-glow);
+    }
+    :root[data-report-open="true"]:not([data-theme="light"]) {
+      --bg-base:#0B101B;
+      --bg-surface:#111A2A;
+      --bg-card:#141F32;
+      --bg-card-hover:#1A2940;
+      --bg-elevated:#202D43;
+      --bg-glass:rgba(17,26,42,.88);
+      --border-subtle:rgba(224,232,245,.085);
+      --border-medium:rgba(224,232,245,.15);
+      --border-bright:rgba(222,190,121,.42);
+      --text-white:#F5F1E8;
+      --text-body:#E0DFD9;
+      --text-muted:#ADB7C7;
+      --text-dim:#8792A3;
+      --primary:#E2C27D;
+      --primary-glow:rgba(226,194,125,.20);
+      --primary-subtle:rgba(226,194,125,.12);
+      --good:#69C7A4;
+      --good-glow:rgba(105,199,164,.18);
+      --good-subtle:rgba(105,199,164,.11);
+      --good-border:rgba(105,199,164,.28);
+      --danger:#F08B86;
+      --danger-glow:rgba(240,139,134,.16);
+      --danger-subtle:rgba(240,139,134,.10);
+      --danger-border:rgba(240,139,134,.27);
+      --caution:#E2C27D;
+      --caution-subtle:rgba(226,194,125,.12);
+      --gauge-track:#344156;
+      --shadow-card:0 22px 56px rgba(0,0,0,.30),0 3px 12px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.055);
+      --shadow-glow:0 0 30px -6px var(--primary-glow);
+    }
+    html[data-report-open="true"] body {
+      background:
+        radial-gradient(ellipse at 7% 0%,color-mix(in srgb,var(--primary) 9%,transparent),transparent 34rem),
+        radial-gradient(ellipse at 98% 24%,color-mix(in srgb,#4C76C8 8%,transparent),transparent 30rem),
+        var(--bg-base);
+      background-attachment:scroll;
+    }
+    html[data-report-open="true"] .dna-report-view {
+      animation:dnaReportArrival .52s cubic-bezier(.2,.75,.25,1) both;
+    }
+    @keyframes dnaReportArrival {
+      from { opacity:0; }
+      to { opacity:1; }
+    }
+    html[data-report-open="true"] .stock-hero-card {
+      position:relative;
+      isolation:isolate;
+      overflow:hidden;
+      border-color:color-mix(in srgb,var(--primary) 28%,var(--border-medium));
+      background:
+        radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--primary) 15%,transparent),transparent 43%),
+        radial-gradient(ellipse at 0% 100%,color-mix(in srgb,var(--good) 8%,transparent),transparent 42%),
+        linear-gradient(145deg,var(--bg-card),color-mix(in srgb,var(--bg-card) 91%,#64799E 9%));
+      box-shadow:var(--shadow-card),inset 0 1px rgba(255,255,255,.12);
+      transition:transform .3s cubic-bezier(.2,.75,.25,1),box-shadow .3s ease,border-color .3s ease;
+      animation:dnaHeroArrival .7s .06s cubic-bezier(.2,.75,.25,1) both;
+    }
+    @keyframes dnaHeroArrival {
+      from { opacity:0; }
+      to { opacity:1; }
+    }
+    html[data-report-open="true"] .report-welcome { animation:dnaReportArrival .48s .10s both; }
+    html[data-report-open="true"] .report-subnav-sticky {
+      backdrop-filter:blur(18px) saturate(145%);
+      -webkit-backdrop-filter:blur(18px) saturate(145%);
+      box-shadow:0 9px 24px rgba(18,23,33,.055);
+    }
+    html[data-report-open="true"] .subnav-pill {
+      transition:transform .2s cubic-bezier(.2,.75,.25,1),background .2s ease,color .2s ease,box-shadow .2s ease,border-color .2s ease;
+    }
+    html[data-report-open="true"] .subnav-pill.active {
+      background:linear-gradient(135deg,#E8D5A7,#C5A466);
+      box-shadow:0 8px 20px rgba(152,116,58,.22),inset 0 1px rgba(255,255,255,.45);
+    }
+    html[data-report-open="true"] .citadel-card,
+    html[data-report-open="true"] .speedometer-card,
+    html[data-report-open="true"] .pillars-card,
+    html[data-report-open="true"] .donut-holder-card,
+    html[data-report-open="true"] .waterfall-card,
+    html[data-report-open="true"] .fact-card,
+    html[data-report-open="true"] .case-box,
+    html[data-report-open="true"] .cgrowth-card,
+    html[data-report-open="true"] .div-hero-card,
+    html[data-report-open="true"] .momentum-card {
+      transition:transform .24s cubic-bezier(.2,.75,.25,1),border-color .24s ease,box-shadow .24s ease,background-color .24s ease;
+    }
+    @media (hover:hover) and (prefers-reduced-motion:no-preference) {
+      html[data-report-open="true"] .stock-hero-card:hover {
+        transform:translateY(-3px);
+        border-color:var(--border-bright);
+        box-shadow:0 26px 60px rgba(0,0,0,.16),var(--shadow-glow),inset 0 1px rgba(255,255,255,.14);
+      }
+      html[data-report-open="true"] .subnav-pill:hover { transform:translateY(-2px); }
+      html[data-report-open="true"] .citadel-card:hover,
+      html[data-report-open="true"] .speedometer-card:hover,
+      html[data-report-open="true"] .pillars-card:hover,
+      html[data-report-open="true"] .donut-holder-card:hover,
+      html[data-report-open="true"] .waterfall-card:hover,
+      html[data-report-open="true"] .fact-card:hover,
+      html[data-report-open="true"] .case-box:hover,
+      html[data-report-open="true"] .cgrowth-card:hover,
+      html[data-report-open="true"] .div-hero-card:hover,
+      html[data-report-open="true"] .momentum-card:hover {
+        transform:translateY(-3px);
+        border-color:var(--border-bright);
+        box-shadow:0 18px 38px rgba(0,0,0,.13),var(--shadow-glow);
+      }
+    }
+    html[data-report-open="true"] button:focus-visible,
+    html[data-report-open="true"] a:focus-visible,
+    html[data-report-open="true"] input:focus-visible {
+      outline:3px solid var(--primary);
+      outline-offset:3px;
+      box-shadow:0 0 0 5px var(--primary-subtle);
+    }
+    @media (prefers-reduced-motion:reduce) {
+      html[data-report-open="true"] *,
+      html[data-report-open="true"] *::before,
+      html[data-report-open="true"] *::after {
+        animation-duration:.01ms !important;
+        animation-delay:0s !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+        transition-duration:.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-frame-wrapper">
+
+    <!-- TOP APP BAR -->
+    <header class="qs-top-bar">
+      <div class="qs-brand-group" onclick="resetToHome()">
+        <div class="qs-logo-badge">Q</div>
+        <div class="qs-brand-text">
+          <div class="qs-brand-title">
+            <span>QuantSync</span>
+            <span class="qs-version-tag">DNA v2</span>
+          </div>
+          <span class="qs-brand-sub">Institutional Terminal</span>
+        </div>
+      </div>
+
+      <div class="qs-header-actions">
+        <button class="qs-icon-btn" id="qsBackBtn" style="display:none;" onclick="resetToHome()" title="Back to Radars">
+          <span>←</span>
+        </button>
+        <button class="qs-icon-btn" onclick="openSearchInput()" title="Search Symbol">
+          <span>🔍</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main-content">
+
+      <!-- SEARCH HERO SECTION -->
+      <section class="search-hero-section">
+        <div class="search-intro">
+          <span class="search-eyebrow">QUANTSYNC · COMPANY RESEARCH</span>
+          <h1>Understand a company, clearly.</h1>
+          <p>Start with the overview. Explore the financial details when you’re ready.</p>
+        </div>
+        <div class="search-bar-wrap">
+          <span class="search-lead-icon">🔍</span>
+          <input 
+            type="text" 
+            id="dnaSearchInput" 
+            class="search-input-field" 
+            aria-label="Search a company or NSE ticker symbol"
+            placeholder="Search a company or ticker symbol"
+            autocomplete="off" 
+            autocapitalize="characters"
+            spellcheck="false"
+          />
+          <button id="searchClearBtn" class="search-clear-btn" onclick="clearSearchInput()">✕</button>
+
+          <!-- Autocomplete Popover -->
+          <div id="homeSearchPopover" class="search-popover-dropdown"></div>
+        </div>
+
+        <!-- Curated Radars Scroller -->
+        <div class="quick-stocks-scroller" id="quickStocksContainer">
+          <button type="button" class="quick-stock-chip" aria-label="Research MOREPENLAB" onclick="handleStockClick('MOREPENLAB')">
+            <span>MOREPENLAB</span>
+          </button>
+          <button type="button" class="quick-stock-chip" aria-label="Research IRCON" onclick="handleStockClick('IRCON')">
+            <span>IRCON</span>
+          </button>
+          <button type="button" class="quick-stock-chip" aria-label="Research TITAN" onclick="handleStockClick('TITAN')">
+            <span>TITAN</span>
+          </button>
+          <button type="button" class="quick-stock-chip" aria-label="Research TCS" onclick="handleStockClick('TCS')">
+            <span>TCS</span>
+          </button>
+          <button type="button" class="quick-stock-chip" aria-label="Research TATAMOTORS" onclick="handleStockClick('TATAMOTORS')">
+            <span>TATAMOTORS</span>
+          </button>
+          <button type="button" class="quick-stock-chip" aria-label="Research RELIANCE" onclick="handleStockClick('RELIANCE')">
+            <span>RELIANCE</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- VIEW A: HOME VIEW -->
+      <div id="dnaHomeView" style="padding: 16px;">
+        <div class="research-guide-card">
+          <div class="research-guide-heading">
+            <span class="research-guide-icon">✦</span>
+            <div>
+              <div class="research-guide-title">A clearer way to research stocks</div>
+              <p>Get the main picture first, then explore the numbers behind it.</p>
+            </div>
+          </div>
+          <div class="research-steps">
+            <div><span>01</span><strong>Choose a company</strong><small>Search by name or ticker</small></div>
+            <div><span>02</span><strong>Start with the overview</strong><small>See the score and key facts</small></div>
+            <div><span>03</span><strong>Explore the details</strong><small>Review statements and trends</small></div>
+          </div>
+        </div>
+
+        <div class="explore-heading">
+          <div><span class="search-eyebrow">A PLACE TO BEGIN</span><h2>Popular companies to explore</h2></div>
+          <span>Examples for research</span>
+        </div>
+
+        <div class="explore-stock-grid">
+          <div role="button" tabindex="0" aria-label="Explore MOREPENLAB, Morepen Laboratories" class="citadel-card explore-stock-card" onclick="handleStockClick('MOREPENLAB')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleStockClick('MOREPENLAB')}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-family:var(--font-mono); font-weight:800; font-size:15px; color:var(--text-white);">MOREPENLAB</span>
+                <span class="hero-tier-tag">Pharma & Healthcare</span>
+              </div>
+              <span class="explore-arrow" aria-hidden="true">↗</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted);">
+              Morepen Laboratories Ltd
+            </div>
+            <span class="explore-cta">Explore company <span aria-hidden="true">→</span></span>
+          </div>
+
+          <div role="button" tabindex="0" aria-label="Explore IRCON, Ircon International" class="citadel-card explore-stock-card" onclick="handleStockClick('IRCON')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleStockClick('IRCON')}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-family:var(--font-mono); font-weight:800; font-size:15px; color:var(--text-white);">IRCON</span>
+                <span class="hero-tier-tag">Rail Infrastructure · PSU</span>
+              </div>
+              <span class="explore-arrow" aria-hidden="true">↗</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted);">
+              Ircon International Ltd
+            </div>
+            <span class="explore-cta">Explore company <span aria-hidden="true">→</span></span>
+          </div>
+
+          <div role="button" tabindex="0" aria-label="Explore TITAN, Titan Company" class="citadel-card explore-stock-card" onclick="handleStockClick('TITAN')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleStockClick('TITAN')}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-family:var(--font-mono); font-weight:800; font-size:15px; color:var(--text-white);">TITAN</span>
+                <span class="hero-tier-tag">Consumer Luxury · Tata</span>
+              </div>
+              <span class="explore-arrow" aria-hidden="true">↗</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted);">
+              Titan Company Ltd
+            </div>
+            <span class="explore-cta">Explore company <span aria-hidden="true">→</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW B: LIVE DATA SCAN VIEW -->
+      <div id="dnaLoadingView" class="dna-loading-view">
+        <div class="scan-radar-card">
+          <div class="scan-radar-content">
+            <div class="scan-pulse-ring">
+              <span style="font-size:24px;">⚡</span>
+            </div>
+            <div class="scan-stock-title" id="scanStockTitle">Preparing your report…</div>
+            <div class="scan-stock-sub">Gathering company information. This usually takes a moment.</div>
+
+            <div class="scan-progress-track">
+              <div class="scan-progress-fill" id="scanProgressFill"></div>
+            </div>
+
+            <div class="scan-steps-list">
+              <div class="scan-step-item active" id="step1">
+                <div class="scan-step-label">
+                  <span>📑</span>
+                  <span>Financial statements</span>
+                </div>
+                <span class="scan-step-status">Fetching...</span>
+              </div>
+
+              <div class="scan-step-item" id="step2">
+                <div class="scan-step-label">
+                  <span>📈</span>
+                  <span>Growth and financial ratios</span>
+                </div>
+                <span class="scan-step-status">Pending</span>
+              </div>
+
+              <div class="scan-step-item" id="step3">
+                <div class="scan-step-label">
+                  <span>💰</span>
+                  <span>Dividend history</span>
+                </div>
+                <span class="scan-step-status">Pending</span>
+              </div>
+
+              <div class="scan-step-item" id="step4">
+                <div class="scan-step-label">
+                  <span>🧠</span>
+                  <span>Company overview</span>
+                </div>
+                <span class="scan-step-status">Pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW C: ERROR STATE -->
+      <div id="dnaErrorView" style="padding: 36px 16px; display: none; text-align: center;">
+        <div class="citadel-card" style="padding: 32px 20px;">
+          <div style="font-size: 36px; margin-bottom: 12px;">⚠️</div>
+          <div style="font-size: 16px; font-weight: 800; color: var(--text-white); margin-bottom: 6px;" id="errorTitle">
+            Analysis Unavailable
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;" id="errorDesc">
+            Could not retrieve data for the requested symbol.
+          </div>
+          <button class="subnav-pill active" style="margin: 0 auto;" onclick="resetToHome()">
+            <span>Return to company search</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW D: FULL CITADEL REPORT VIEW (5 TABS) -->
+      <div id="dnaReportView" class="dna-report-view">
+
+        <!-- HERO IDENTITY & LIVE LTP -->
+        <section class="stock-hero-card">
+          <div class="hero-primary-row">
+            <div class="hero-sym-badges">
+              <span class="hero-symbol" id="heroSymbol">--</span>
+            </div>
+            <div class="hero-live-price" id="heroPrice">₹0.00</div>
+          </div>
+
+          <div class="hero-secondary-row">
+            <div class="hero-name-row" id="heroName">--</div>
+            <span class="hero-tier-tag" id="heroTier">--</span>
+          </div>
+
+          <!-- 52-Week Range -->
+          <div class="range-bar-box">
+            <div class="range-bar-head">
+              <span>52-week low: <strong id="val52Low" style="color:var(--text-white);">--</strong></span>
+              <span>52-week high: <strong id="val52High" style="color:var(--text-white);">--</strong></span>
+            </div>
+            <div class="range-bar-track">
+              <div class="range-bar-fill" id="bar52Range" style="width:50%;"></div>
+              <div class="range-pin-marker" id="pin52Range" style="left:50%;"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="report-welcome">
+          <span class="search-eyebrow">YOUR COMPANY RESEARCH</span>
+          <h1>A clear view, backed by the details.</h1>
+          <p>Start with the overview, then follow the section guide to explore statements, growth, dividends and quarterly results.</p>
+        </div>
+
+        <!-- Sticky section guide for the complete, scrollable report -->
+        <nav class="report-subnav-sticky" aria-label="Report sections">
+          <button type="button" class="subnav-pill active" aria-controls="tab-overview" aria-current="location" onclick="switchReportTab('overview', this, event)">
+            <span>01&nbsp; Overview</span>
+          </button>
+          <button type="button" class="subnav-pill" aria-controls="tab-statements" onclick="switchReportTab('statements', this, event)">
+            <span>02&nbsp; Statements</span>
+          </button>
+          <button type="button" class="subnav-pill" aria-controls="tab-statistics" onclick="switchReportTab('statistics', this, event)">
+            <span>03&nbsp; Growth &amp; ratios</span>
+          </button>
+          <button type="button" class="subnav-pill" aria-controls="tab-dividends" onclick="switchReportTab('dividends', this, event)">
+            <span>04&nbsp; Dividends</span>
+          </button>
+          <button type="button" class="subnav-pill" aria-controls="tab-earnings" onclick="switchReportTab('earnings', this, event)">
+            <span>05&nbsp; Earnings</span>
+          </button>
+        </nav>
+
+        <!-- ==============================================================
+             TAB 1: 📊 OVERVIEW
+             ============================================================== -->
+        <section id="tab-overview" class="report-tab-pane" aria-label="Company overview">
+
+          <header class="report-section-heading">
+            <span class="section-kicker">01 · QUICK READ</span>
+            <h2>The company at a glance</h2>
+            <p>A plain-language overview first, followed by the measures that shape the DNA score.</p>
+          </header>
+
+          <details class="metric-guide">
+            <summary><span>New to stock research?</span><span class="metric-guide-action">A few terms, explained <span aria-hidden="true">＋</span></span></summary>
+            <div class="metric-guide-grid">
+              <div><strong>P/E</strong><span>Price compared with a company’s earnings.</span></div>
+              <div><strong>ROCE</strong><span>How efficiently the business uses its capital.</span></div>
+              <div><strong>EPS</strong><span>The company’s earnings attributed to each share.</span></div>
+              <div><strong>Dividend yield</strong><span>Annual dividend relative to the share price.</span></div>
+              <div><strong>CAGR</strong><span>The average annual growth rate across a period.</span></div>
+              <div><strong>Operating margin</strong><span>The share of sales left after operating costs.</span></div>
+            </div>
+          </details>
+
+          <!-- Plain-English Institutional Thesis Card -->
+          <section class="citadel-card plain-english-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+            <span>🧠 Company overview</span>
+              </div>
+              <span class="plain-english-badge" id="peBadge">DATA-BACKED SUMMARY</span>
+            </div>
+
+            <div class="plain-english-body" id="peBodyText">
+              <!-- Dynamically populated from verified data only -->
+            </div>
+
+            <div class="plain-english-highlights-grid">
+              <div class="pe-highlight-item">
+                <span class="pe-highlight-label">Balance Sheet</span>
+                <span class="pe-highlight-val" id="peSolvency">--</span>
+              </div>
+              <div class="pe-highlight-item">
+                <span class="pe-highlight-label">Capital Return</span>
+                <span class="pe-highlight-val" id="peMoat">--</span>
+              </div>
+              <div class="pe-highlight-item">
+                <span class="pe-highlight-label">Score interpretation</span>
+                <span class="pe-highlight-val" style="color:var(--good);" id="peVerdict">--</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Speedometer & 4 Health Pillars -->
+          <div class="citadel-analytics-grid">
+            <div class="speedometer-card">
+                <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-dim); text-transform:uppercase; letter-spacing:0.04em;">DNA Score</span>
+                <span class="score-explainer">A 0–100 summary of the trend, momentum, volume and financial quality signals below. It is not a probability.</span>
+              <div class="gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 180 100" role="img" aria-label="DNA score gauge">
+                  <path d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="var(--gauge-track)" stroke-width="12" stroke-linecap="round"/>
+                  <path d="M 20 90 A 70 70 0 0 1 60 38" fill="none" stroke="#F43F5E" stroke-width="12" stroke-linecap="round" opacity="0.8"/>
+                  <path d="M 62 36 A 70 70 0 0 1 118 36" fill="none" stroke="#F59E0B" stroke-width="12" opacity="0.8"/>
+                  <path d="M 120 38 A 70 70 0 0 1 160 90" fill="none" stroke="#10B981" stroke-width="12" stroke-linecap="round" opacity="0.8"/>
+                  <g class="gauge-needle" id="gaugeNeedle" style="transform: rotate(-90deg);">
+                    <polygon points="90,86 87,20 93,20" fill="var(--primary)" stroke="var(--bg-card)" stroke-width="1.5" stroke-linejoin="round"/>
+                    <circle cx="90" cy="90" r="7" fill="var(--primary)" stroke="var(--bg-card)" stroke-width="2"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="gauge-score-value" id="gaugeScoreVal">—</div>
+              <div class="gauge-score-sub">OUT OF 100</div>
+              <div class="gauge-verdict-pill" id="gaugeVerdictTag">Calculating...</div>
+            </div>
+
+            <div class="pillars-card">
+              <div class="pillar-row">
+                <div class="pillar-head">
+                  <span>Price trend</span>
+                  <span class="pillar-score-val" id="pillarTrendVal">-- / 30</span>
+                </div>
+                <div class="pillar-track"><div class="pillar-fill" id="pillarTrendBar" style="width:0%; background:#3B82F6;"></div></div>
+                <div class="pillar-desc-sub" id="pillarTrendDesc">How price compares with key moving averages</div>
+              </div>
+
+              <div class="pillar-row">
+                <div class="pillar-head">
+                  <span>Momentum</span>
+                  <span class="pillar-score-val" id="pillarMomVal">-- / 25</span>
+                </div>
+                <div class="pillar-track"><div class="pillar-fill" id="pillarMomBar" style="width:0%; background:#8B5CF6;"></div></div>
+                <div class="pillar-desc-sub" id="pillarMomDesc">Relative strength and recent price momentum</div>
+              </div>
+
+              <div class="pillar-row">
+                <div class="pillar-head">
+                  <span>Trading activity</span>
+                  <span class="pillar-score-val" id="pillarVolVal">-- / 25</span>
+                </div>
+                <div class="pillar-track"><div class="pillar-fill" id="pillarVolBar" style="width:0%; background:#10B981;"></div></div>
+                <div class="pillar-desc-sub" id="pillarVolDesc">Volume, delivery and accumulation signals</div>
+              </div>
+
+              <div class="pillar-row">
+                <div class="pillar-head">
+                  <span>Financial quality</span>
+                  <span class="pillar-score-val" id="pillarQualVal">-- / 20</span>
+                </div>
+                <div class="pillar-track"><div class="pillar-fill" id="pillarQualBar" style="width:0%; background:#F59E0B;"></div></div>
+                <div class="pillar-desc-sub" id="pillarQualDesc">Balance-sheet strength and capital efficiency</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Facts Bento Grid (8 Facts) -->
+          <section class="citadel-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+                <span>📋 Key Facts</span>
+              </div>
+              <span class="citadel-card-sub">Exchange Audited Metrics</span>
+            </div>
+
+            <div class="key-facts-grid">
+              <div class="fact-card">
+                <span class="fact-label">Market Cap</span>
+                <span class="fact-val" id="factMcap">--</span>
+                <span class="fact-sub">Total Valuation</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">P/E Ratio (TTM)</span>
+                <span class="fact-val" id="factPE">--</span>
+                <span class="fact-sub">Earnings Multiple</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Dividend Yield</span>
+                <span class="fact-val" style="color:var(--good);" id="factDiv">--</span>
+                <span class="fact-sub">Annual Cash Return</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Basic EPS (TTM)</span>
+                <span class="fact-val" id="factEPS">--</span>
+                <span class="fact-sub">Earnings Per Share</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Book Value</span>
+                <span class="fact-val" id="factBV">--</span>
+                <span class="fact-sub">Net Asset / Share</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">ROCE</span>
+                <span class="fact-val" id="factROCE">--</span>
+                <span class="fact-sub">Return on Capital</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">ROE</span>
+                <span class="fact-val" id="factROE">--</span>
+                <span class="fact-sub">Return on Equity</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Face Value</span>
+                <span class="fact-val" id="factFV">--</span>
+                <span class="fact-sub">Statutory Par</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Ownership Donut & Capital Structure -->
+          <div class="ownership-cap-grid">
+            <div class="donut-holder-card">
+              <div class="citadel-card-header" style="margin-bottom:4px;">
+                <div class="citadel-card-title">
+                  <span>🍩 Ownership Breakdown</span>
+                </div>
+                <span class="citadel-card-sub" id="shareholdersCount">--</span>
+              </div>
+
+              <div class="donut-chart-row">
+                <div class="donut-canvas-wrap">
+                  <canvas id="ownershipCanvas"></canvas>
+                  <div class="donut-center-text">
+                    <div class="donut-center-val" id="donutCenterVal">--</div>
+                    <div class="donut-center-sub">Promoter</div>
+                  </div>
+                </div>
+
+                <div class="donut-legend-list">
+                  <div class="legend-item">
+                    <span class="legend-dot-label"><span class="legend-dot" style="background:#3B82F6;"></span> Promoters</span>
+                    <span class="legend-val" id="legPromoter">--</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot-label"><span class="legend-dot" style="background:#F59E0B;"></span> Public</span>
+                    <span class="legend-val" id="legFloat">--</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot-label"><span class="legend-dot" style="background:#10B981;"></span> FII Whales</span>
+                    <span class="legend-val" id="legFII">--</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot-label"><span class="legend-dot" style="background:#8B5CF6;"></span> Domestic DII</span>
+                    <span class="legend-val" id="legDII">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="donut-holder-card">
+              <div class="citadel-card-header" style="margin-bottom:4px;">
+                <div class="citadel-card-title">
+                  <span>⚖️ Capital Structure</span>
+                </div>
+                <span class="citadel-card-sub">Audited Baseline</span>
+              </div>
+
+              <div class="cap-structure-bars-wrap">
+                <div class="cap-bar-item">
+                  <div class="cap-bar-head">
+                    <span style="color:var(--text-muted); font-weight:600;">Market Capitalization</span>
+                    <span class="fact-val" style="font-size:12px;" id="capBarMcapVal">--</span>
+                  </div>
+                  <div class="cap-bar-track">
+                    <div class="cap-bar-fill" id="capBarMcapFill" style="width:100%; background:#10B981;"></div>
+                  </div>
+                </div>
+
+                <div class="cap-bar-item">
+                  <div class="cap-bar-head">
+                    <span style="color:var(--text-muted); font-weight:600;">Enterprise Value</span>
+                    <span class="fact-val" style="font-size:12px;" id="capBarEVVal">--</span>
+                  </div>
+                  <div class="cap-bar-track">
+                    <div class="cap-bar-fill" id="capBarEVFill" style="width:100%; background:#3B82F6;"></div>
+                  </div>
+                </div>
+
+                <div class="cap-bar-item">
+                  <div class="cap-bar-head">
+                    <span style="color:var(--text-muted); font-weight:600;">Reserves vs Total Borrowings</span>
+                    <span class="fact-val" style="font-size:12px;" id="capBarNetDebt">--</span>
+                  </div>
+                  <div class="cap-bar-track" style="display:flex;">
+                    <div id="barReservesSeg" style="width:50%; height:100%; background:#10B981;"></div>
+                    <div id="barDebtSeg" style="width:50%; height:100%; background:#F43F5E;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue to Profit Waterfall Bridge -->
+          <section class="waterfall-card">
+            <div class="citadel-card-header">
+              <div>
+                <div class="citadel-card-title">
+                  <span>🌊 Revenue to Profit Conversion (Waterfall)</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                  Audited bridge: Revenue ➔ Operating Expenses ➔ Operating Income ➔ Taxes ➔ Net PAT
+                </div>
+              </div>
+              <span class="citadel-card-sub" id="waterfallQuarterTag">--</span>
+            </div>
+
+            <div class="chart-canvas-wrap" style="height:210px;">
+              <canvas id="waterfallCanvas"></canvas>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:14px;">
+              <div class="fact-card">
+                <span class="fact-label">Gross Margin</span>
+                <span class="fact-val" style="color:var(--primary);" id="wfGrossMargin">--</span>
+                <span class="fact-sub">Operating Spread</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Operating Margin (OPM)</span>
+                <span class="fact-val" style="color:var(--good);" id="wfOPM">--</span>
+                <span class="fact-sub">Core Profitability</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Net Profit Margin</span>
+                <span class="fact-val" style="color:#A78BFA;" id="wfNetMargin">--</span>
+                <span class="fact-sub">Final Bottomline</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- 60-Day Price Trend & 20-EMA Chart -->
+          <section class="citadel-card price-history-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+                <span>📈 Closing price · last 60 sessions</span>
+              </div>
+              <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim);">
+                <span style="color:var(--primary);">■ Closing price</span> &nbsp; <span style="color:var(--caution);">- - 20-session average</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap" style="height:210px;">
+              <canvas id="priceCandlesCanvas" role="img" aria-label="Recent closing price chart"></canvas>
+            </div>
+          </section>
+
+          <div class="scenario-intro">
+            <div><span class="section-kicker">MODEL CONTEXT</span><h3>Possible scenarios</h3></div>
+            <p>References and reasons appear only when supplied by the report. They are not predictions.</p>
+          </div>
+
+          <!-- Report scenario references -->
+          <div class="cases-trio-grid">
+            <div class="case-box bull">
+              <div class="case-head">
+                <span class="case-title">↗ Potential upside</span>
+                <span class="case-price-tag" id="bullPriceTag">--</span>
+              </div>
+              <div class="case-headline" id="bullHeadline">Growth Trajectory</div>
+              <div class="case-body" id="bullBody">--</div>
+            </div>
+
+            <div class="case-box bear">
+              <div class="case-head">
+                <span class="case-title">↓ Potential risks</span>
+                <span class="case-price-tag" id="bearPriceTag">--</span>
+              </div>
+              <div class="case-headline" id="bearHeadline">Downside Risks</div>
+              <div class="case-body" id="bearBody">--</div>
+            </div>
+
+            <div class="case-box base">
+              <div class="case-head">
+                <span class="case-title">• Current reference</span>
+                <span class="case-price-tag" id="basePriceTag">--</span>
+              </div>
+              <div class="case-headline" id="baseHeadline">Core Compounding</div>
+              <div class="case-body" id="baseBody">--</div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==============================================================
+             TAB 2: 📑 STATEMENTS
+             ============================================================== -->
+        <section id="tab-statements" class="report-tab-pane" aria-label="Financial statements">
+
+          <header class="report-section-heading">
+            <span class="section-kicker">02 · COMPANY FINANCIALS</span>
+            <h2>Financial statements</h2>
+            <p>Review the company’s reported income, balance sheet and cash flow over time. Values are shown in ₹ crores.</p>
+          </header>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div class="statement-toggle-bar">
+              <button class="stmt-toggle-btn active" id="stmtBtnIncome" onclick="switchStatementSubTab('income')">
+                <span>📊 Profit &amp; Loss</span>
+              </button>
+              <button class="stmt-toggle-btn" id="stmtBtnBS" onclick="switchStatementSubTab('balancesheet')">
+                <span>🏛️ Balance Sheet</span>
+              </button>
+              <button class="stmt-toggle-btn" id="stmtBtnCF" onclick="switchStatementSubTab('cashflow')">
+                <span>💵 Cash Flow</span>
+              </button>
+            </div>
+            <span class="citadel-card-sub" style="color:var(--primary);">Values in ₹ Crores</span>
+          </div>
+
+          <section class="citadel-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+                <span id="stmtChartTitle">📊 Income Statement Trajectory (₹ Cr)</span>
+              </div>
+              <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim);" id="stmtChartLegend">
+                <span style="color:#3B82F6;">■ Metric A</span> &nbsp; <span style="color:#10B981;">■ Metric B</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap" style="height:210px;">
+              <canvas id="statementCanvas"></canvas>
+            </div>
+          </section>
+
+          <section class="citadel-card" style="padding:12px;">
+            <div class="citadel-card-header" style="margin-bottom:8px;">
+              <div>
+                <div class="citadel-card-title" id="stmtTableTitle">
+                  <span>Audited Annual Financial Results</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">
+                  Scroll sideways to compare years
+                </div>
+              </div>
+              <span class="plain-english-badge">SEBI / MCA AUDITED</span>
+            </div>
+
+            <div class="financial-table-wrapper" id="stmtTableWrapper">
+              <table class="financial-table" id="statementTable">
+                <!-- Dynamically rendered -->
+              </table>
+            </div>
+          </section>
+
+        </section>
+
+        <!-- ==============================================================
+             TAB 3: 📈 STATISTICS
+             ============================================================== -->
+        <section id="tab-statistics" class="report-tab-pane" aria-label="Growth and financial ratios">
+
+          <header class="report-section-heading">
+            <span class="section-kicker">03 · LONG-TERM VIEW</span>
+            <h2>Growth &amp; financial ratios</h2>
+            <p>See how growth, operating efficiency and valuation measures have changed across the reported periods.</p>
+          </header>
+
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--text-white); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+              <span>🚀 Compounded Growth Track Record</span>
+            </div>
+
+            <div class="compounded-growth-grid" id="compoundedGrowthGrid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <section class="citadel-card" style="padding:12px;">
+            <div class="citadel-card-header" style="margin-bottom:8px;">
+              <div>
+                <div class="citadel-card-title">
+                  <span>⚙️ Operating Efficiency & Working Capital Ratios</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">
+                  Cash conversion cycle, debtor collection days & operating capital velocity
+                </div>
+              </div>
+              <span class="plain-english-badge">ANNUAL RATIOS</span>
+            </div>
+
+            <div class="financial-table-wrapper">
+              <table class="financial-table" id="efficiencyRatiosTable">
+                <!-- Dynamically rendered -->
+              </table>
+            </div>
+          </section>
+
+          <section class="citadel-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+                <span>⚖️ Valuation & Solvency Multiples</span>
+              </div>
+              <span class="citadel-card-sub">Relative Pricing</span>
+            </div>
+
+            <div class="key-facts-grid">
+              <div class="fact-card">
+                <span class="fact-label">P/E Multiple</span>
+                <span class="fact-val" id="statPE">--</span>
+                <span class="fact-sub">Earnings Multiple</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Price-to-Book</span>
+                <span class="fact-val" id="statPB">--</span>
+                <span class="fact-sub">vs Book Value</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Debt-to-Equity</span>
+                <span class="fact-val" id="statDE">--</span>
+                <span class="fact-sub">Leverage Buffer</span>
+              </div>
+              <div class="fact-card">
+                <span class="fact-label">Earnings Yield</span>
+                <span class="fact-val" style="color:var(--good);" id="statEarningsYield">--</span>
+                <span class="fact-sub">vs 7.0% G-Sec Bond</span>
+              </div>
+            </div>
+          </section>
+
+        </section>
+
+        <!-- ==============================================================
+             TAB 4: 💰 DIVIDENDS
+             ============================================================== -->
+        <section id="tab-dividends" class="report-tab-pane" aria-label="Dividends">
+
+          <header class="report-section-heading">
+            <span class="section-kicker">04 · SHAREHOLDER RETURNS</span>
+            <h2>Dividends</h2>
+            <p>Explore reported dividend payments, payout measures and the available cash-flow coverage information.</p>
+          </header>
+
+          <div class="dividend-hero-grid">
+            <div class="div-hero-card">
+              <span class="fact-label">Dividend Yield</span>
+              <span class="fact-val" style="color:var(--good);" id="divHeroYield">--</span>
+              <span class="fact-sub">Annual Cash Yield</span>
+            </div>
+            <div class="div-hero-card">
+              <span class="fact-label">Payout Ratio</span>
+              <span class="fact-val" id="divHeroPayout">--</span>
+              <span class="fact-sub">% of Net Profit</span>
+            </div>
+            <div class="div-hero-card">
+              <span class="fact-label">Annual DPS</span>
+              <span class="fact-val" id="divHeroDPS">--</span>
+              <span class="fact-sub">Dividend / Share</span>
+            </div>
+            <div class="div-hero-card">
+                <span class="fact-label">Yield reporting</span>
+              <span class="fact-val" style="color:var(--primary);" id="divHeroSafety">--</span>
+                <span class="fact-sub">Available data status</span>
+            </div>
+          </div>
+
+          <section class="citadel-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+                <span>💰 10-Year Dividend Per Share (DPS) Trajectory</span>
+              </div>
+              <span class="citadel-card-sub">₹ Per Share Paid</span>
+            </div>
+            <div class="chart-canvas-wrap" style="height:210px;">
+              <canvas id="dividendCanvas"></canvas>
+            </div>
+          </section>
+
+          <section class="citadel-card" style="padding:12px;">
+            <div class="citadel-card-header" style="margin-bottom:8px;">
+              <div class="citadel-card-title">
+                <span>📜 Historical Dividend Payment Track Record</span>
+              </div>
+              <span class="plain-english-badge">PROVENANCE AUDITED</span>
+            </div>
+
+            <div class="financial-table-wrapper">
+              <table class="financial-table" id="dividendTable">
+                <!-- Dynamically rendered -->
+              </table>
+            </div>
+          </section>
+
+          <section class="citadel-card" style="background:linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-card) 100%); border-color:var(--good-border);">
+            <div style="font-size:13px; font-weight:700; color:var(--text-white); margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+              <span>🛡️ Dividend Safety & Cash Flow Coverage</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-body); line-height:1.6;" id="divSafetyAnalysis">
+              --
+            </div>
+          </section>
+
+        </section>
+
+        <!-- ==============================================================
+             TAB 5: ⚡ EARNINGS
+             ============================================================== -->
+        <section id="tab-earnings" class="report-tab-pane" aria-label="Quarterly earnings">
+
+          <header class="report-section-heading">
+            <span class="section-kicker">05 · RECENT PERFORMANCE</span>
+            <h2>Quarterly earnings</h2>
+            <p>Compare quarterly sales, net profit and operating margins, then review the reported figures below.</p>
+          </header>
+
+          <section class="citadel-card">
+            <div class="citadel-card-header">
+              <div class="citadel-card-title">
+                <span>📊 Multi-Quarter Sales & Net Profit Performance</span>
+              </div>
+              <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim);">
+                <span style="color:#3B82F6;">■ Sales</span> &nbsp; <span style="color:#10B981;">■ Net Profit</span> &nbsp; <span style="color:#F59E0B;">- - OPM %</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap" style="height:220px;">
+              <canvas id="earningsCanvas"></canvas>
+            </div>
+          </section>
+
+          <div class="earnings-momentum-grid">
+            <div class="momentum-card">
+              <span class="fact-label">QoQ Sales</span>
+              <span class="fact-val" id="earningQoQSales">--</span>
+              <span class="fact-sub">Sequential Trend</span>
+            </div>
+            <div class="momentum-card">
+              <span class="fact-label">YoY Sales</span>
+              <span class="fact-val" id="earningYoYSales">--</span>
+              <span class="fact-sub">Annual Base Growth</span>
+            </div>
+            <div class="momentum-card">
+              <span class="fact-label">OPM Margin</span>
+              <span class="fact-val" style="color:var(--caution);" id="earningLatestOPM">--</span>
+              <span class="fact-sub">Core Operating Margin</span>
+            </div>
+          </div>
+
+          <section class="citadel-card" style="padding:12px;">
+            <div class="citadel-card-header" style="margin-bottom:8px;">
+              <div>
+                <div class="citadel-card-title">
+                  <span>📑 Quarterly Earnings Breakdown</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">
+                  Scroll sideways to compare quarters
+                </div>
+              </div>
+              <span class="plain-english-badge">QUARTERLY AUDIT</span>
+            </div>
+
+            <div class="financial-table-wrapper">
+              <table class="financial-table" id="earningsTable">
+                <!-- Dynamically rendered -->
+              </table>
+            </div>
+          </section>
+
+          <section class="citadel-card">
+            <div class="citadel-card-title" style="margin-bottom:6px;">
+              <span>⚡ Quarterly Earnings Takeaway</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); line-height:1.55;" id="earningsTakeawayText">
+              --
+            </div>
+          </section>
+
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- FLOATING DOCK NAVIGATION -->
+    <nav class="qs-dock-bar">
+      <a href="/dna-v2.html" class="dock-nav-item active">
+        <span class="dock-icon">🧬</span>
+        <span>DNA v2</span>
+      </a>
+      <a href="/screener.html" class="dock-nav-item">
+        <span class="dock-icon">⚡</span>
+        <span>Screener</span>
+      </a>
+      <a href="/stock-detail.html" class="dock-nav-item">
+        <span class="dock-icon">📊</span>
+        <span>Legacy</span>
+      </a>
+      <a href="/chat.html" class="dock-nav-item">
+        <span class="dock-icon">💬</span>
+        <span>AI Copilot</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <!-- ====================================================================
+       CLIENT JAVASCRIPT CONTROLLER (STRICT ZERO-HARDCODE DATA PIPELINE)
+       ==================================================================== -->
+  <script>
+    let activeStockSymbol = null;
+    let currentReportData = null;
+    let currentFundamentals = null;
+    let activeStatementTab = 'income'; // 'income', 'balancesheet', 'cashflow'
+    let currentActiveTab = 'overview';
+    let searchDebounce = null;
+    let scanInterval = null;
+    let priceHistoryRequestToken = 0;
+
+    // Reset to Home View
+    function resetToHome() {
+      activeStockSymbol = null;
+      currentReportData = null;
+      currentFundamentals = null;
+      if (scanInterval) clearInterval(scanInterval);
+      delete document.documentElement.dataset.reportOpen;
+
+      document.getElementById('dnaHomeView').style.display = 'block';
+      document.getElementById('dnaLoadingView').style.display = 'none';
+      document.getElementById('dnaReportView').style.display = 'none';
+      document.getElementById('dnaErrorView').style.display = 'none';
+      document.getElementById('qsBackBtn').style.display = 'none';
+
+      const popover = document.getElementById('homeSearchPopover');
+      if (popover) popover.style.display = 'none';
+
+      if (window.history && window.history.pushState) {
+        window.history.pushState({}, '', window.location.pathname);
+      }
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'DNA_BACK_TO_SEARCH' }, '*');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Switch Top Report Tabs
+    function switchReportTab(tabKey, btnEl, clickEvent) {
+      if (clickEvent) {
+        clickEvent.preventDefault();
+        clickEvent.stopPropagation();
+      }
+      currentActiveTab = tabKey;
+      if (btnEl) setActiveReportSection(btnEl);
+      const pane = document.getElementById(`tab-${tabKey}`);
+      if (!pane) return;
+
+      // Scroll inside the report iframe only. scrollIntoView may also scroll the host app.
+      const scrollMargin = Number.parseFloat(window.getComputedStyle(pane).scrollMarginTop) || 0;
+      const targetTop = window.scrollY + pane.getBoundingClientRect().top - scrollMargin;
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      window.scrollTo({ top: Math.max(0, targetTop), behavior });
+    }
+
+    function setActiveReportSection(activeButton) {
+      document.querySelectorAll('.report-subnav-sticky .subnav-pill').forEach(button => {
+        const isActive = button === activeButton;
+        button.classList.toggle('active', isActive);
+        if (isActive) button.setAttribute('aria-current', 'location');
+        else button.removeAttribute('aria-current');
+      });
+    }
+
+    function updateReportSectionFromScroll() {
+      const headings = Array.from(document.querySelectorAll('.report-section-heading'));
+      const current = headings.filter(heading => heading.getBoundingClientRect().top <= 190).pop();
+      if (!current) return;
+      const sectionId = current.closest('.report-tab-pane')?.id;
+      const button = document.querySelector(`.report-subnav-sticky [aria-controls="${sectionId}"]`);
+      if (button) setActiveReportSection(button);
+    }
+
+    window.addEventListener('scroll', () => {
+      if (window.reportSectionScrollFrame) return;
+      window.reportSectionScrollFrame = requestAnimationFrame(() => {
+        updateReportSectionFromScroll();
+        window.reportSectionScrollFrame = 0;
+      });
+    }, { passive: true });
+
+    function markUnavailableMetrics() {
+      document.querySelectorAll('#dnaReportView .fact-val, #dnaReportView .legend-val, #dnaReportView .pe-highlight-val, #dnaReportView .case-price-tag').forEach(element => {
+        element.classList.remove('metric-unavailable');
+        element.removeAttribute('title');
+        if (element.textContent.trim() === '--') {
+          element.textContent = 'Not reported';
+          element.classList.add('metric-unavailable');
+          element.title = 'This value was not present in the available report data.';
+        }
+      });
+    }
+
+    // Switch Statements Sub-Tab
+    function switchStatementSubTab(subTab) {
+      activeStatementTab = subTab;
+      document.getElementById('stmtBtnIncome').className = 'stmt-toggle-btn ' + (subTab === 'income' ? 'active' : '');
+      document.getElementById('stmtBtnBS').className = 'stmt-toggle-btn ' + (subTab === 'balancesheet' ? 'active' : '');
+      document.getElementById('stmtBtnCF').className = 'stmt-toggle-btn ' + (subTab === 'cashflow' ? 'active' : '');
+      renderStatementView();
+    }
+
+    // Handle Quick Stock Click
+    function handleStockClick(symbol) {
+      document.querySelectorAll('.quick-stock-chip').forEach(c => c.classList.remove('active'));
+      const found = Array.from(document.querySelectorAll('.quick-stock-chip')).find(el => el.textContent.includes(symbol));
+      if (found) found.classList.add('active');
+      fetchDnaReport(symbol);
+    }
+
+    function openSearchInput() {
+      const input = document.getElementById('dnaSearchInput');
+      input.focus();
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function clearSearchInput() {
+      const input = document.getElementById('dnaSearchInput');
+      input.value = '';
+      document.getElementById('searchClearBtn').style.display = 'none';
+      document.getElementById('homeSearchPopover').style.display = 'none';
+    }
+
+    const searchInput = document.getElementById('dnaSearchInput');
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toUpperCase();
+      const clearBtn = document.getElementById('searchClearBtn');
+      clearBtn.style.display = q ? 'flex' : 'none';
+
+      if (!q) {
+        document.getElementById('homeSearchPopover').style.display = 'none';
+        return;
+      }
+
+      if (searchDebounce) clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/dna/search?q=${encodeURIComponent(q)}`);
+          if (!res.ok) return;
+          const items = await res.json();
+          renderSearchPopover(items, q);
+        } catch (err) {
+          renderFallbackPopover(q);
+        }
+      }, 150);
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const q = searchInput.value.trim().toUpperCase();
+        if (q) {
+          document.getElementById('homeSearchPopover').style.display = 'none';
+          searchInput.blur();
+          fetchDnaReport(q);
+        }
+      }
+    });
+
+    function renderSearchPopover(items, query) {
+      const popover = document.getElementById('homeSearchPopover');
+      popover.innerHTML = '';
+
+      const list = (Array.isArray(items) && items.length > 0) 
+        ? items.slice(0, 8) 
+        : [{ symbol: query, name: 'NSE Equity Analysis', sector: 'NSE' }];
+
+      list.forEach(item => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.setAttribute('aria-label', `View ${item.symbol}, ${item.name || item.symbol}`);
+        row.className = 'popover-item';
+        row.innerHTML = `
+          <div class="popover-sym-col">
+            <span class="popover-sym">${item.symbol}</span>
+            <span class="popover-name">${item.name || item.symbol}</span>
+          </div>
+          <span class="popover-badge">${item.sector || 'NSE'}</span>
+        `;
+        row.onclick = () => {
+          popover.style.display = 'none';
+          searchInput.value = item.symbol;
+          fetchDnaReport(item.symbol);
+        };
+        popover.appendChild(row);
+      });
+
+      popover.style.display = 'block';
+    }
+
+    function renderFallbackPopover(query) {
+      renderSearchPopover([{ symbol: query, name: 'Direct Quantitative Analysis', sector: 'EQUITY' }], query);
+    }
+
+    // ==========================================================================
+    // CORE ASYNC DATA FETCHER (STRICT RESET + ZERO LEAKAGE)
+    // ==========================================================================
+    async function fetchDnaReport(symbol, fromParent = false) {
+      if (!symbol) return;
+      const cleanSym = symbol.trim().toUpperCase();
+      document.documentElement.dataset.reportOpen = 'true';
+      if (!fromParent && window.parent !== window) {
+        window.parent.postMessage({ type: 'DNA_STOCK_SELECTED', stock: cleanSym }, '*');
+      }
+      
+      // STRICT STATE PURGE: Wipe all state so previous stock data NEVER leaks
+      activeStockSymbol = cleanSym;
+      currentReportData = null;
+      currentFundamentals = null;
+
+      // Update URL query parameter
+      if (window.history && window.history.pushState) {
+        window.history.pushState({}, '', `?stock=${encodeURIComponent(cleanSym)}`);
+      }
+
+      // Hide Home / Error, Show Scan View
+      document.getElementById('dnaHomeView').style.display = 'none';
+      document.getElementById('dnaReportView').style.display = 'none';
+      document.getElementById('dnaErrorView').style.display = 'none';
+      document.getElementById('qsBackBtn').style.display = 'flex';
+
+      const loadingView = document.getElementById('dnaLoadingView');
+      loadingView.style.display = 'block';
+      document.getElementById('scanStockTitle').textContent = cleanSym;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const fill = document.getElementById('scanProgressFill');
+      fill.style.width = '15%';
+
+      ['step1', 'step2', 'step3', 'step4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.className = 'scan-step-item';
+          const st = el.querySelector('.scan-step-status');
+          if (st) st.textContent = 'Pending';
+        }
+      });
+
+      setScanActive('step1');
+
+      let currentStep = 1;
+      if (scanInterval) clearInterval(scanInterval);
+      scanInterval = setInterval(() => {
+        currentStep++;
+        if (currentStep === 2) {
+          setScanDone('step1', '0.24s');
+          setScanActive('step2');
+          fill.style.width = '45%';
+        } else if (currentStep === 3) {
+          setScanDone('step2', '0.18s');
+          setScanActive('step3');
+          fill.style.width = '75%';
+        } else if (currentStep === 4) {
+          setScanDone('step3', '0.12s');
+          setScanActive('step4');
+          fill.style.width = '90%';
+        }
+      }, 250);
+
+      // Concurrent fetch: report AND fundamentals companion
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 35000);
+
+        const [reportRes, fundRes] = await Promise.allSettled([
+          fetch(`/api/dna/report/${encodeURIComponent(cleanSym)}`, { signal: controller.signal }),
+          fetch(`/api/fundamentals/${encodeURIComponent(cleanSym)}`, { signal: controller.signal })
+        ]);
+        clearTimeout(timeoutId);
+
+        let rep = null;
+        if (reportRes.status === 'fulfilled' && reportRes.value.ok) {
+          rep = await reportRes.value.json();
+        }
+
+        let fund = null;
+        if (fundRes.status === 'fulfilled' && fundRes.value.ok) {
+          fund = await fundRes.value.json();
+        }
+
+        // STRICT VALIDATION: Ensure incoming fundamentals belong to the exact requested symbol
+        if (fund && !fund.error && (fund.symbol === cleanSym || !fund.symbol)) {
+          fund.symbol = cleanSym;
+          currentFundamentals = fund;
+          if (rep) {
+            rep.fundamentals = Object.assign({}, rep.fundamentals || {}, fund);
+          } else {
+            rep = {
+              symbol: cleanSym,
+              company_name: cleanSym,
+              fundamentals: fund,
+              current_metrics: {
+                price: null,
+                dist_20ema: null
+              }
+            };
+          }
+        } else if (rep && rep.fundamentals && (rep.fundamentals.symbol === cleanSym || rep.symbol === cleanSym)) {
+          currentFundamentals = rep.fundamentals;
+        }
+
+        if (!rep || (!rep.current_metrics && !rep.symbol && !rep.fundamentals)) {
+          throw new Error('Incomplete data payload returned for symbol.');
+        }
+
+        currentReportData = rep;
+
+        setTimeout(() => {
+          clearInterval(scanInterval);
+          setScanDone('step4', '0.15s');
+          fill.style.width = '100%';
+
+          renderFullReport(rep);
+
+          setTimeout(() => {
+            loadingView.style.display = 'none';
+            document.getElementById('dnaReportView').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            setTimeout(() => {
+              renderStatementView();
+              renderStatisticsView();
+              renderDividendsView();
+              renderEarningsView();
+              drawOwnershipDonut(currentFundamentals?.shareholding_pattern);
+              drawWaterfallConversion(currentFundamentals?.quarterly_performance, currentFundamentals?.annual_income_statement);
+              const reportCandles = [rep.recent_candles, rep.daily_bars, rep.candles]
+                .find(rows => Array.isArray(rows) && rows.length > 0) || [];
+              loadAndDrawPriceCandles(cleanSym, reportCandles, rep.current_metrics);
+              markUnavailableMetrics();
+              updateReportSectionFromScroll();
+            }, 60);
+          }, 200);
+        }, 800);
+
+      } catch (err) {
+        clearInterval(scanInterval);
+        console.warn(`[DNA Live Engine] Failed to fetch report for ${cleanSym}:`, err);
+        loadingView.style.display = 'none';
+        const errView = document.getElementById('dnaErrorView');
+        errView.style.display = 'block';
+        document.getElementById('errorTitle').textContent = `Analysis Unavailable for ${cleanSym}`;
+        document.getElementById('errorDesc').textContent = err.name === 'AbortError'
+          ? `Analysis for ${cleanSym} timed out. Please check your connection.`
+          : `Could not retrieve live institutional metrics for ${cleanSym}.`;
+      }
+    }
+
+    function setScanDone(id, duration) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = 'scan-step-item completed';
+      const st = el.querySelector('.scan-step-status');
+      if (st) st.textContent = duration;
+    }
+
+    function setScanActive(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = 'scan-step-item active';
+      const st = el.querySelector('.scan-step-status');
+      if (st) st.textContent = 'Ingesting...';
+    }
+
+    // ==========================================================================
+    // RENDER FULL REPORT VIEW (STRICT ZERO-HARDCODE PROVENANCE)
+    // ==========================================================================
+    function renderFullReport(rep) {
+      const reqSym = (rep.symbol || activeStockSymbol || '').trim().toUpperCase();
+
+      // Guard: Ensure fundamentals belong strictly to this stock
+      if (currentFundamentals && currentFundamentals.symbol && currentFundamentals.symbol !== reqSym) {
+        currentFundamentals = null;
+      }
+
+      const m = rep.current_metrics || {};
+      const f = currentFundamentals || rep.fundamentals || {};
+      const kr = f.key_ratios || {};
+      const sh = f.shareholding_pattern || {};
+      const bs = f.balance_sheet || {};
+      const qp = f.quarterly_performance || [];
+      const ui = rep.ui_report || {};
+      const pillars = ui.score_breakdown?.pillars || {};
+      const exec = ui.trade_execution_card || {};
+
+      // 1. Hero Identity & LTP
+      document.getElementById('heroSymbol').textContent = reqSym || '--';
+      document.getElementById('heroName').textContent = rep.company_name || reqSym;
+      const mcap = f.market_cap_cr || null;
+      let tier = 'Market cap unavailable';
+      if (mcap && mcap >= 60000) tier = 'Large Cap';
+      else if (mcap && mcap >= 20000) tier = 'Mid Cap';
+      else if (mcap) tier = 'Small Cap';
+      document.getElementById('heroTier').textContent = tier;
+
+      const priceVal = m.price || null;
+      document.getElementById('heroPrice').textContent = (priceVal !== null && priceVal !== undefined)
+        ? '₹' + Number(priceVal).toLocaleString('en-IN', { minimumFractionDigits: 1, maximumFractionDigits: 2 })
+        : '--';
+
+      // 52-Week Range
+      const low52 = m.w52_low || null;
+      const high52 = m.w52_high || null;
+      document.getElementById('val52Low').textContent = low52 ? '₹' + Number(low52).toLocaleString('en-IN', { maximumFractionDigits: 1 }) : '--';
+      document.getElementById('val52High').textContent = high52 ? '₹' + Number(high52).toLocaleString('en-IN', { maximumFractionDigits: 1 }) : '--';
+
+      let rangePct = 50;
+      if (high52 && low52 && high52 > low52 && priceVal) {
+        rangePct = Math.max(3, Math.min(97, Math.round(((priceVal - low52) / (high52 - low52)) * 100)));
+      }
+      document.getElementById('bar52Range').style.width = rangePct + '%';
+      document.getElementById('pin52Range').style.left = rangePct + '%';
+
+      // 2. Plain-English Institutional Thesis
+      renderPlainEnglishNarrative(rep, f);
+
+      // 3. Speedometer & 4 Pillars
+      const score = ui.dna_health_score ?? f.internal_model_score?.score ?? null;
+      document.getElementById('gaugeScoreVal').textContent = score !== null ? score : '—';
+      const scoreSub = document.querySelector('.gauge-score-sub');
+      if (scoreSub) scoreSub.textContent = score !== null ? 'OUT OF 100' : 'NOT REPORTED';
+
+      const boundedScore = score !== null ? Math.max(0, Math.min(100, Number(score))) : 0;
+      const needleDeg = -90 + (boundedScore / 100) * 180;
+      document.getElementById('gaugeNeedle').style.transform = `rotate(${needleDeg}deg)`;
+      document.querySelector('.gauge-svg')?.setAttribute('aria-label', score !== null ? `DNA score ${score} out of 100` : 'DNA score not reported');
+
+      const verdictTag = document.getElementById('gaugeVerdictTag');
+      if (score !== null) {
+        if (score >= 65) {
+          verdictTag.textContent = '🟢 Institutional Accumulation';
+          verdictTag.style.background = 'var(--good-subtle)';
+          verdictTag.style.color = 'var(--good)';
+        } else if (score <= 35) {
+          verdictTag.textContent = '🔴 Capital Protection / Exit';
+          verdictTag.style.background = 'var(--danger-subtle)';
+          verdictTag.style.color = 'var(--danger)';
+        } else {
+          verdictTag.textContent = '🟡 Consolidation Range';
+          verdictTag.style.background = 'var(--caution-subtle)';
+          verdictTag.style.color = 'var(--caution)';
+        }
+      } else {
+        verdictTag.textContent = 'Score not available';
+      }
+
+      if (pillars.trend) {
+        document.getElementById('pillarTrendVal').textContent = `${pillars.trend.score} / ${pillars.trend.max}`;
+        document.getElementById('pillarTrendBar').style.width = Math.round((pillars.trend.score / pillars.trend.max) * 100) + '%';
+        document.getElementById('pillarTrendDesc').textContent = pillars.trend.summary || '--';
+      } else {
+        document.getElementById('pillarTrendVal').textContent = 'Not reported';
+        document.getElementById('pillarTrendDesc').textContent = 'No trend data reported.';
+      }
+      if (pillars.momentum) {
+        document.getElementById('pillarMomVal').textContent = `${pillars.momentum.score} / ${pillars.momentum.max}`;
+        document.getElementById('pillarMomBar').style.width = Math.round((pillars.momentum.score / pillars.momentum.max) * 100) + '%';
+        document.getElementById('pillarMomDesc').textContent = pillars.momentum.summary || '--';
+      } else {
+        document.getElementById('pillarMomVal').textContent = 'Not reported';
+        document.getElementById('pillarMomDesc').textContent = 'No momentum data reported.';
+      }
+      if (pillars.volume) {
+        document.getElementById('pillarVolVal').textContent = `${pillars.volume.score} / ${pillars.volume.max}`;
+        document.getElementById('pillarVolBar').style.width = Math.round((pillars.volume.score / pillars.volume.max) * 100) + '%';
+        document.getElementById('pillarVolDesc').textContent = pillars.volume.summary || '--';
+      } else {
+        document.getElementById('pillarVolVal').textContent = 'Not reported';
+        document.getElementById('pillarVolDesc').textContent = 'No trading activity data reported.';
+      }
+      if (pillars.quality) {
+        document.getElementById('pillarQualVal').textContent = `${pillars.quality.score} / ${pillars.quality.max}`;
+        document.getElementById('pillarQualBar').style.width = Math.round((pillars.quality.score / pillars.quality.max) * 100) + '%';
+        document.getElementById('pillarQualDesc').textContent = pillars.quality.summary || '--';
+      } else {
+        document.getElementById('pillarQualVal').textContent = 'Not reported';
+        document.getElementById('pillarQualDesc').textContent = 'No financial quality data reported.';
+      }
+
+      // 4. Key Facts 8-Card Grid (ZERO HARDCODED NUMBERS)
+      document.getElementById('factMcap').textContent = mcap 
+        ? (mcap >= 10000 ? (mcap / 100).toFixed(1) + ' B INR' : '₹' + Number(mcap).toLocaleString('en-IN') + ' Cr')
+        : '--';
+
+      const peVal = (kr.stock_pe !== undefined && kr.stock_pe !== null) ? Number(kr.stock_pe).toFixed(2) : '--';
+      document.getElementById('factPE').textContent = peVal;
+
+      const divVal = (kr.dividend_yield_pct !== undefined && kr.dividend_yield_pct !== null) 
+        ? Number(kr.dividend_yield_pct).toFixed(2) + '%' 
+        : ((f.dividends?.dividend_yield_pct !== undefined && f.dividends?.dividend_yield_pct !== null) ? Number(f.dividends.dividend_yield_pct).toFixed(2) + '%' : '--');
+      document.getElementById('factDiv').textContent = divVal;
+
+      let epsVal = '--';
+      if (qp.length > 0 && qp[qp.length - 1].eps !== undefined && qp[qp.length - 1].eps !== null) {
+        epsVal = '₹' + Number(qp[qp.length - 1].eps).toFixed(2);
+      }
+      document.getElementById('factEPS').textContent = epsVal;
+
+      document.getElementById('factBV').textContent = (kr.book_value !== undefined && kr.book_value !== null) 
+        ? '₹' + Number(kr.book_value).toFixed(1) 
+        : '--';
+
+      document.getElementById('factROCE').textContent = (kr.roce_pct !== undefined && kr.roce_pct !== null) 
+        ? Number(kr.roce_pct).toFixed(1) + '%' 
+        : '--';
+
+      document.getElementById('factROE').textContent = (kr.roe_pct !== undefined && kr.roe_pct !== null) 
+        ? Number(kr.roe_pct).toFixed(1) + '%' 
+        : '--';
+
+      document.getElementById('factFV').textContent = (kr.face_value !== undefined && kr.face_value !== null) 
+        ? '₹' + Number(kr.face_value).toFixed(1) 
+        : '--';
+
+      // 5. Ownership & Capital Structure
+      const promPct = sh.Promoters?.holding_pct || null;
+      const fiiPct = sh.FIIs?.holding_pct || null;
+      const diiPct = sh.DIIs?.holding_pct || null;
+      const pubPct = sh.Public?.holding_pct || null;
+
+      document.getElementById('donutCenterVal').textContent = promPct !== null ? Number(promPct).toFixed(1) + '%' : '--';
+      document.getElementById('legPromoter').textContent = promPct !== null ? Number(promPct).toFixed(1) + '%' : '--';
+      document.getElementById('legFloat').textContent = pubPct !== null ? Number(pubPct).toFixed(1) + '%' : '--';
+      document.getElementById('legFII').textContent = fiiPct !== null ? Number(fiiPct).toFixed(1) + '%' : '--';
+      document.getElementById('legDII').textContent = diiPct !== null ? Number(diiPct).toFixed(1) + '%' : '--';
+
+      if (sh['No. of Shareholders']?.holding_pct) {
+        const hCount = sh['No. of Shareholders'].holding_pct;
+        document.getElementById('shareholdersCount').textContent = (hCount / 1000000).toFixed(2) + 'M holders';
+      } else {
+        document.getElementById('shareholdersCount').textContent = '--';
+      }
+
+      const debtNum = parseFloat(String(bs.Borrowings || '0').replace(/[^0-9.]/g, '')) || 0;
+      const resNum = parseFloat(String(bs.Reserves || '0').replace(/[^0-9.]/g, '')) || 0;
+      const mcapNum = mcap || null;
+      const evNum = mcapNum ? (mcapNum + debtNum) : null;
+
+      document.getElementById('capBarMcapVal').textContent = mcapNum ? '₹' + Number(mcapNum).toLocaleString('en-IN') + ' Cr' : '--';
+      document.getElementById('capBarEVVal').textContent = evNum ? '₹' + Number(evNum).toLocaleString('en-IN') + ' Cr' : '--';
+      
+      let netDebtLabel = '--';
+      if (resNum > 0 || debtNum > 0) {
+        netDebtLabel = debtNum === 0 ? 'Virtually Debt-Free' : (debtNum < resNum ? 'Reserves Cushion > Borrowings' : 'Leverage Buffer Required');
+      }
+      document.getElementById('capBarNetDebt').textContent = netDebtLabel;
+
+      const totalCapRes = (resNum + debtNum) || 0;
+      if (totalCapRes > 0) {
+        document.getElementById('barReservesSeg').style.width = Math.round((resNum / totalCapRes) * 100) + '%';
+        document.getElementById('barDebtSeg').style.width = Math.round((debtNum / totalCapRes) * 100) + '%';
+      }
+
+      // 6. Strategy Playbooks
+      const target1Num = exec.target_1 || null;
+      const stopNum = exec.stop_loss || null;
+
+      document.getElementById('bullPriceTag').textContent = target1Num ? `Target reference: ₹${Number(target1Num).toFixed(1)}` : '--';
+      const buyReasons = Array.isArray(ui.why_buy_reasons) ? ui.why_buy_reasons : [];
+      const avoidReasons = Array.isArray(ui.why_avoid_reasons) ? ui.why_avoid_reasons : [];
+      document.getElementById('bullHeadline').textContent = buyReasons[0] || 'No positive case supplied';
+      document.getElementById('bullBody').textContent = buyReasons.slice(1, 3).join(' · ') || 'The current report does not include additional evidence for this scenario.';
+
+      document.getElementById('bearPriceTag').textContent = stopNum ? `Stop reference: ₹${Number(stopNum).toFixed(1)}` : '--';
+      document.getElementById('bearHeadline').textContent = avoidReasons[0] || 'No risk case supplied';
+      document.getElementById('bearBody').textContent = avoidReasons.slice(1, 3).join(' · ') || 'The current report does not include additional evidence for this scenario.';
+
+      document.getElementById('basePriceTag').textContent = priceVal ? `Current price: ₹${Number(priceVal).toFixed(1)}` : '--';
+      document.getElementById('baseHeadline').textContent = 'Current reference';
+      document.getElementById('baseBody').textContent = priceVal ? 'This is the price reported in the company overview. No separate base-case forecast is provided.' : 'No current price is available in this report.';
+    }
+
+    // ==========================================================================
+    // PLAIN-ENGLISH LLM NARRATIVE GENERATOR (ZERO-HARDCODE)
+    // ==========================================================================
+    function renderPlainEnglishNarrative(rep, f) {
+      const sym = rep.symbol || 'The company';
+      const cName = rep.company_name || sym;
+      const kr = f.key_ratios || {};
+      const bs = f.balance_sheet || {};
+      const score = rep.ui_report?.dna_health_score ?? f.internal_model_score?.score ?? null;
+
+      const peVal = (kr.stock_pe !== undefined && kr.stock_pe !== null) ? Number(kr.stock_pe).toFixed(1) + 'x' : 'not reported';
+      const roceVal = (kr.roce_pct !== undefined && kr.roce_pct !== null) ? Number(kr.roce_pct).toFixed(1) + '%' : 'not reported';
+      const divYieldValue = kr.dividend_yield_pct ?? f.dividends?.dividend_yield_pct;
+      const divYield = divYieldValue !== undefined && divYieldValue !== null ? Number(divYieldValue).toFixed(2) + '%' : 'not reported';
+      const debtEq = kr.debt_to_equity;
+
+      let solvencyDesc = '--';
+      if (debtEq !== null && debtEq !== undefined) {
+        solvencyDesc = debtEq <= 0.3 ? 'Virtually Debt-Free' : (debtEq <= 0.8 ? 'Manageable Leverage' : 'Elevated Borrowings');
+      } else if (bs.Borrowings && bs.Reserves) {
+        const b = parseFloat(String(bs.Borrowings).replace(/,/g, '')) || 0;
+        const r = parseFloat(String(bs.Reserves).replace(/,/g, '')) || 0;
+        solvencyDesc = b < r ? 'Reserves Exceed Debt' : 'Moderate Leverage';
+      }
+
+      let verdictDesc = score !== null 
+        ? (score >= 65 ? 'Institutional Accumulation' : (score <= 35 ? 'Capital Protection' : 'Consolidating Range'))
+        : 'Observing Structure';
+
+      document.getElementById('peMoat').textContent = divYield !== 'not reported' ? `Cash Yield: ${divYield}` : 'Not reported';
+      document.getElementById('peSolvency').textContent = solvencyDesc;
+      document.getElementById('peVerdict').textContent = verdictDesc;
+
+      const sector = rep.sector ? ` in the ${rep.sector} sector` : '';
+      const p1 = `<strong>Company profile:</strong> <em>${cName}</em> is listed on the National Stock Exchange${sector}. The available report shows a return on capital (ROCE) of <strong>${roceVal}</strong> and a price-to-earnings (P/E) ratio of <strong>${peVal}</strong>.`;
+
+      const solvencyText = solvencyDesc === '--' ? 'not reported' : solvencyDesc;
+      const p2 = `<strong>Financial health:</strong> Available balance-sheet measures indicate <strong>${solvencyText}</strong>. The reported dividend yield is <strong>${divYield}</strong>. These figures describe reported measures; check the detailed sections for their periods and source data.`;
+
+      const scoreText = score !== null ? `<strong>${score}/100</strong> · ${verdictDesc}` : 'not available';
+      const p3 = `<strong>DNA score:</strong> ${scoreText}. This model summary combines the trend, momentum, trading activity and financial quality signals shown below. It is a screening measure, not a probability or a forecast.`;
+
+      document.getElementById('peBodyText').innerHTML = `<p>${p1}</p><p>${p2}</p><p>${p3}</p>`;
+    }
+
+    // ==========================================================================
+    // TAB 2: STATEMENTS RENDERER (100% REAL AUDITED TABLES)
+    // ==========================================================================
+    function renderStatementView() {
+      const f = currentFundamentals || {};
+      let stmtData = null;
+      let title = '';
+      let highlightRows = [];
+
+      if (activeStatementTab === 'income') {
+        stmtData = f.annual_income_statement;
+        title = 'Audited Annual Profit & Loss (Income Statement)';
+        highlightRows = ['Sales', 'Operating Profit', 'Profit before tax', 'Net Profit', 'EPS in Rs'];
+        document.getElementById('stmtChartTitle').textContent = '📊 Revenue & Net Profit Trajectory (₹ Cr)';
+        document.getElementById('stmtChartLegend').innerHTML = '<span style="color:#3B82F6;">■ Revenue (Sales)</span> &nbsp; <span style="color:#10B981;">■ Net Profit</span>';
+        drawStatementBarChart(stmtData, 'Sales', 'Net Profit');
+      } else if (activeStatementTab === 'balancesheet') {
+        stmtData = f.annual_balance_sheet;
+        title = 'Audited Annual Balance Sheet (Assets & Liabilities)';
+        highlightRows = ['Total Liabilities', 'Fixed Assets', 'Investments', 'Total Assets'];
+        document.getElementById('stmtChartTitle').textContent = '🏛️ Total Assets vs Borrowings Trajectory (₹ Cr)';
+        document.getElementById('stmtChartLegend').innerHTML = '<span style="color:#3B82F6;">■ Total Assets</span> &nbsp; <span style="color:#F43F5E;">■ Borrowings</span>';
+        drawStatementBarChart(stmtData, 'Total Assets', 'Borrowings');
+      } else {
+        stmtData = f.annual_cash_flow;
+        title = 'Audited Annual Cash Flow Statements';
+        highlightRows = ['Cash from Operating Activity', 'Net Cash Flow', 'Free Cash Flow'];
+        document.getElementById('stmtChartTitle').textContent = '💵 Operating vs Free Cash Flow Trajectory (₹ Cr)';
+        document.getElementById('stmtChartLegend').innerHTML = '<span style="color:#10B981;">■ Operating Cash Flow</span> &nbsp; <span style="color:#3B82F6;">■ Free Cash Flow</span>';
+        drawStatementBarChart(stmtData, 'Cash from Operating Activity', 'Free Cash Flow');
+      }
+
+      document.getElementById('stmtTableTitle').innerHTML = `<span>${title}</span>`;
+
+      const tableEl = document.getElementById('statementTable');
+      tableEl.innerHTML = '';
+
+      if (!stmtData || !stmtData.years || !stmtData.rows || stmtData.rows.length === 0) {
+        tableEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-dim);">No audited statements on record for this symbol.</td></tr>';
+        return;
+      }
+
+      let thead = '<thead><tr><th>Line Item</th>';
+      stmtData.years.forEach(yr => {
+        thead += `<th>${yr}</th>`;
+      });
+      thead += '</tr></thead>';
+
+      let tbody = '<tbody>';
+      stmtData.rows.forEach(r => {
+        const isHighlight = highlightRows.some(h => r.metric.toLowerCase().includes(h.toLowerCase()));
+        tbody += `<tr class="${isHighlight ? 'highlight-row' : ''}">`;
+        tbody += `<td>${r.metric}</td>`;
+        (r.values || []).forEach(val => {
+          const isNeg = String(val).trim().startsWith('-');
+          const cleanVal = isNeg ? `(${String(val).replace('-', '').trim()})` : val;
+          tbody += `<td class="${isNeg ? 'val-negative' : ''}">${cleanVal || '--'}</td>`;
+        });
+        tbody += '</tr>';
+      });
+      tbody += '</tbody>';
+
+      tableEl.innerHTML = thead + tbody;
+    }
+
+    function drawStatementBarChart(stmtData, metric1Name, metric2Name) {
+      const canvas = document.getElementById('statementCanvas');
+      if (!canvas || !canvas.parentElement) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      if (!stmtData || !stmtData.years || !stmtData.rows || stmtData.rows.length === 0) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '11px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('Statement data not reported for this symbol.', width / 2, height / 2);
+        return;
+      }
+
+      const m1Row = stmtData.rows.find(r => r.metric.toLowerCase().includes(metric1Name.toLowerCase()));
+      const m2Row = stmtData.rows.find(r => r.metric.toLowerCase().includes(metric2Name.toLowerCase()));
+
+      const years = stmtData.years.filter(y => y.toUpperCase() !== 'TTM').slice(-6);
+      const m1Vals = (m1Row?.values || []).slice(-years.length).map(v => parseFloat(String(v).replace(/,/g, '')) || 0);
+      const m2Vals = (m2Row?.values || []).slice(-years.length).map(v => parseFloat(String(v).replace(/,/g, '')) || 0);
+
+      const allVals = [...m1Vals, ...m2Vals];
+      const maxValRaw = Math.max(...allVals, 0);
+      if (maxValRaw === 0) return;
+      const maxVal = maxValRaw * 1.25;
+
+      const padding = { top: 16, right: 16, bottom: 24, left: 45 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 3; i++) {
+        const y = padding.top + (chartH / 3) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        const v = Math.round(maxVal - (maxVal / 3) * i);
+        ctx.fillStyle = '#64748B';
+        ctx.font = '9.5px JetBrains Mono';
+        ctx.textAlign = 'right';
+        ctx.fillText(v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v, padding.left - 5, y + 3);
+      }
+
+      const groupW = chartW / years.length;
+      const barW = Math.min(14, groupW * 0.28);
+
+      years.forEach((yr, idx) => {
+        const groupX = padding.left + groupW * idx + groupW / 2;
+
+        const v1 = m1Vals[idx] || 0;
+        const h1 = Math.max(2, (Math.abs(v1) / maxVal) * chartH);
+        const y1 = v1 >= 0 ? padding.top + chartH - h1 : padding.top + chartH;
+        ctx.fillStyle = '#3B82F6';
+        ctx.beginPath();
+        ctx.roundRect(groupX - barW - 2, y1, barW, h1, [3, 3, 0, 0]);
+        ctx.fill();
+
+        const v2 = m2Vals[idx] || 0;
+        const h2 = Math.max(2, (Math.abs(v2) / maxVal) * chartH);
+        const y2 = v2 >= 0 ? padding.top + chartH - h2 : padding.top + chartH;
+        ctx.fillStyle = v2 >= 0 ? '#10B981' : '#F43F5E';
+        ctx.beginPath();
+        ctx.roundRect(groupX + 2, y2, barW, h2, [3, 3, 0, 0]);
+        ctx.fill();
+
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9.5px JetBrains Mono';
+        ctx.textAlign = 'center';
+        ctx.fillText(yr.replace('Mar ', "'"), groupX, height - 6);
+      });
+    }
+
+    // ==========================================================================
+    // TAB 3: STATISTICS RENDERER (REAL PROVENANCE DATA)
+    // ==========================================================================
+    function renderStatisticsView() {
+      const f = currentFundamentals || {};
+      const cg = f.compounded_growth || {};
+      const ratios = f.efficiency_ratios;
+      const kr = f.key_ratios || {};
+
+      const cgGrid = document.getElementById('compoundedGrowthGrid');
+      cgGrid.innerHTML = '';
+
+      const categories = [
+        { key: 'sales_growth', title: '📈 Compounded Sales Growth', color: '#3B82F6' },
+        { key: 'profit_growth', title: '💼 Compounded Profit Growth', color: '#10B981' },
+        { key: 'price_cagr', title: '🚀 Stock Price CAGR', color: '#F59E0B' },
+        { key: 'roe', title: '🏛️ Return on Equity (ROE)', color: '#8B5CF6' }
+      ];
+
+      categories.forEach(cat => {
+        const items = Array.isArray(cg[cat.key]) ? cg[cat.key] : [];
+        const card = document.createElement('div');
+        card.className = 'cgrowth-card';
+
+        card.innerHTML = `
+          <div class="cgrowth-title">
+            <span>${cat.title}</span>
+          </div>
+          <div class="cgrowth-values-grid"></div>
+        `;
+        const valuesGrid = card.querySelector('.cgrowth-values-grid');
+        if (items.length > 0) {
+          items.forEach(item => {
+            const rawValue = String(item?.value ?? '').trim();
+            const isReported = /\d/.test(rawValue);
+            const numericValue = isReported ? Number(rawValue.replace(/[^\d.+-]/g, '')) : NaN;
+            const periodText = String(item?.period ?? 'Period').trim()
+              .replace(/\s+Years?\b/i, 'Y')
+              .replace(/\s+Months?\b/i, 'M')
+              .replace(/\s+Quarters?\b/i, 'Q');
+            const cell = document.createElement('div');
+            cell.className = 'cgrowth-value-cell';
+            const period = document.createElement('span');
+            period.className = 'cgrowth-period';
+            period.textContent = periodText;
+            const value = document.createElement('strong');
+            value.className = `cgrowth-rate-badge ${!isReported ? 'unreported' : (numericValue < 0 ? 'neg' : 'pos')}`;
+            value.textContent = isReported ? rawValue : 'Not reported';
+            cell.append(period, value);
+            valuesGrid.appendChild(cell);
+          });
+        } else {
+          const empty = document.createElement('div');
+          empty.className = 'cgrowth-empty-state';
+          empty.textContent = 'No growth figures are available for this measure.';
+          valuesGrid.appendChild(empty);
+        }
+        cgGrid.appendChild(card);
+      });
+
+      const rTable = document.getElementById('efficiencyRatiosTable');
+      rTable.innerHTML = '';
+
+      if (ratios && ratios.years && ratios.rows && ratios.rows.length > 0) {
+        let thead = '<thead><tr><th>Operating Ratio</th>';
+        ratios.years.forEach(y => thead += `<th>${y}</th>`);
+        thead += '</tr></thead><tbody>';
+
+        ratios.rows.forEach(r => {
+          thead += `<tr><td>${r.metric}</td>`;
+          (r.values || []).forEach(v => {
+            thead += `<td>${v || '--'}</td>`;
+          });
+          thead += '</tr>';
+        });
+        thead += '</tbody>';
+        rTable.innerHTML = thead;
+      } else {
+        rTable.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:16px; color:var(--text-dim);">Efficiency ratios not reported in statutory filings.</td></tr>';
+      }
+
+      // Multiples Matrix (NO FAKE DEFAULTS)
+      const pe = (kr.stock_pe !== undefined && kr.stock_pe !== null) ? Number(kr.stock_pe).toFixed(1) + 'x' : '--';
+      const bv = (kr.book_value !== undefined && kr.book_value !== null) ? Number(kr.book_value).toFixed(1) : null;
+      const curP = currentReportData?.current_metrics?.price;
+      const pb = (bv && curP) ? (curP / parseFloat(bv)).toFixed(2) + 'x' : '--';
+      const de = (kr.debt_to_equity !== undefined && kr.debt_to_equity !== null) ? Number(kr.debt_to_equity).toFixed(2) : '--';
+
+      document.getElementById('statPE').textContent = pe;
+      document.getElementById('statPB').textContent = pb;
+      document.getElementById('statDE').textContent = de;
+
+      const earningsYield = (pe !== '--' && parseFloat(pe) > 0) ? ((1 / parseFloat(pe)) * 100).toFixed(1) + '%' : '--';
+      document.getElementById('statEarningsYield').textContent = earningsYield;
+    }
+
+    // ==========================================================================
+    // TAB 4: DIVIDENDS RENDERER (100% REAL AUDITED DIVIDENDS)
+    // ==========================================================================
+    function renderDividendsView() {
+      const f = currentFundamentals || {};
+      const divs = f.dividends || {};
+      const kr = f.key_ratios || {};
+      const hist = divs.history || [];
+
+      // Hero Cards (NO HARDCODED NUMBERS)
+      const yld = (kr.dividend_yield_pct !== undefined && kr.dividend_yield_pct !== null) 
+        ? Number(kr.dividend_yield_pct).toFixed(2) + '%' 
+        : ((divs.dividend_yield_pct !== undefined && divs.dividend_yield_pct !== null) ? Number(divs.dividend_yield_pct).toFixed(2) + '%' : '--');
+      
+      document.getElementById('divHeroYield').textContent = yld;
+      document.getElementById('divHeroPayout').textContent = divs.latest_payout_pct ?? '--';
+      document.getElementById('divHeroDPS').textContent = (divs.latest_dps !== undefined && divs.latest_dps !== null) 
+        ? '₹' + Number(divs.latest_dps).toFixed(2) 
+        : '--';
+
+      const numYld = parseFloat(yld);
+      document.getElementById('divHeroSafety').textContent = Number.isNaN(numYld)
+        ? 'Not reported'
+        : (numYld > 0 ? 'Dividend yield reported' : '0% yield reported');
+
+      // Draw DPS Canvas Chart
+      drawDividendBarChart(hist);
+
+      // Render Historical Dividend Table
+      const dTable = document.getElementById('dividendTable');
+      dTable.innerHTML = '';
+
+      if (hist.length > 0) {
+        let thead = `
+          <thead>
+            <tr>
+              <th>Financial Year</th>
+              <th>Basic EPS (₹)</th>
+              <th>Payout Ratio (%)</th>
+              <th>Dividend / Share (₹)</th>
+              <th>Net Profit (₹ Cr)</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+        hist.slice().reverse().forEach(row => {
+          const dpsNum = row.dps !== null && row.dps !== undefined ? Number(row.dps).toFixed(2) : '--';
+          thead += `
+            <tr>
+              <td>${row.year}</td>
+              <td>${row.eps !== null && row.eps !== undefined ? '₹' + row.eps : 'Not reported'}</td>
+              <td>${row.payout_pct !== null && row.payout_pct !== undefined ? row.payout_pct : 'Not reported'}</td>
+              <td style="font-weight:700; color:${row.dps > 0 ? 'var(--good)' : 'var(--text-muted)'};">${dpsNum !== '--' ? '₹' + dpsNum : '--'}</td>
+              <td>${row.net_profit_cr !== null && row.net_profit_cr !== undefined ? '₹' + row.net_profit_cr + ' Cr' : 'Not reported'}</td>
+            </tr>
+          `;
+        });
+        thead += '</tbody>';
+        dTable.innerHTML = thead;
+      } else {
+        dTable.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:16px; color:var(--text-dim);">Dividend history is not available in this report.</td></tr>';
+      }
+
+      if (hist.length > 0 && divs.latest_payout_pct !== undefined && divs.latest_payout_pct !== null) {
+        document.getElementById('divSafetyAnalysis').innerHTML = `
+          The company redistributed approximately <strong>${divs.latest_payout_pct}</strong> of annual audited net profits back to equity holders in the latest reported period. Historical cash payouts are audited from statutory MCA & exchange filings.
+        `;
+      } else {
+        document.getElementById('divSafetyAnalysis').textContent = hist.length
+          ? 'Dividend records are available, but the latest payout ratio is not reported here.'
+          : 'There is not enough dividend history in this report to assess payout coverage.';
+      }
+    }
+
+    function drawDividendBarChart(hist) {
+      const canvas = document.getElementById('dividendCanvas');
+      if (!canvas || !canvas.parentElement) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      const items = (hist || []).slice(-8);
+      if (items.length === 0) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '11px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('No dividend distribution data on record.', width / 2, height / 2);
+        return;
+      }
+
+      const dpsValues = items.map(i => i.dps || 0);
+      const maxDPSRaw = Math.max(...dpsValues, 0);
+      if (maxDPSRaw === 0) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '11px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('0.00% Dividend Yield · Zero cash distributions paid in these periods.', width / 2, height / 2);
+        return;
+      }
+
+      const maxDPS = maxDPSRaw * 1.35;
+      const padding = { top: 20, right: 16, bottom: 24, left: 45 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      // Axis lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 3; i++) {
+        const y = padding.top + (chartH / 3) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        const v = (maxDPS - (maxDPS / 3) * i).toFixed(2);
+        ctx.fillStyle = '#64748B';
+        ctx.font = '9px JetBrains Mono';
+        ctx.textAlign = 'right';
+        ctx.fillText('₹' + v, padding.left - 5, y + 3);
+      }
+
+      const groupW = chartW / items.length;
+      const barW = Math.min(18, groupW * 0.45);
+
+      items.forEach((item, idx) => {
+        const x = padding.left + groupW * idx + groupW / 2;
+        const dps = item.dps || 0;
+        const barH = dps > 0 ? Math.max(3, (dps / maxDPS) * chartH) : 0;
+        const y = padding.top + chartH - barH;
+
+        if (dps > 0) {
+          ctx.fillStyle = '#10B981';
+          ctx.beginPath();
+          ctx.roundRect(x - barW / 2, y, barW, barH, [3, 3, 0, 0]);
+          ctx.fill();
+
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '9px JetBrains Mono';
+          ctx.textAlign = 'center';
+          ctx.fillText('₹' + dps.toFixed(2), x, y - 4);
+        } else {
+          // Zero marker
+          ctx.fillStyle = '#334155';
+          ctx.fillRect(x - barW / 2, padding.top + chartH - 2, barW, 2);
+        }
+
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9.5px JetBrains Mono';
+        ctx.textAlign = 'center';
+        ctx.fillText((item.year || '').replace('Mar ', "'"), x, height - 6);
+      });
+    }
+
+    // ==========================================================================
+    // TAB 5: EARNINGS RENDERER (ZERO FAKE NUMBERS)
+    // ==========================================================================
+    function renderEarningsView() {
+      const f = currentFundamentals || {};
+      const qp = f.quarterly_performance || [];
+
+      drawEarningsCanvasChart(qp);
+
+      if (qp.length >= 2) {
+        const latest = qp[qp.length - 1];
+        const prev = qp[qp.length - 2];
+
+        const latSales = parseFloat(String(latest.sales_cr || '').replace(/,/g, ''));
+        const prevSales = parseFloat(String(prev.sales_cr || '').replace(/,/g, ''));
+        if (!isNaN(latSales) && !isNaN(prevSales) && prevSales > 0) {
+          const qoqSales = (((latSales - prevSales) / prevSales) * 100).toFixed(1);
+          document.getElementById('earningQoQSales').textContent = (qoqSales >= 0 ? '+' : '') + qoqSales + '%';
+        } else {
+          document.getElementById('earningQoQSales').textContent = '--';
+        }
+
+        document.getElementById('earningLatestOPM').textContent = latest.opm_pct || '--';
+
+        if (qp.length >= 5) {
+          const yoyQ = qp[qp.length - 5];
+          const yoySales = parseFloat(String(yoyQ.sales_cr || '').replace(/,/g, ''));
+          if (!isNaN(latSales) && !isNaN(yoySales) && yoySales > 0) {
+            const yoyPct = (((latSales - yoySales) / yoySales) * 100).toFixed(1);
+            document.getElementById('earningYoYSales').textContent = (yoyPct >= 0 ? '+' : '') + yoyPct + '%';
+          } else {
+            document.getElementById('earningYoYSales').textContent = '--';
+          }
+        } else {
+          document.getElementById('earningYoYSales').textContent = '--';
+        }
+      } else {
+        document.getElementById('earningQoQSales').textContent = '--';
+        document.getElementById('earningYoYSales').textContent = '--';
+        document.getElementById('earningLatestOPM').textContent = '--';
+      }
+
+      const eTable = document.getElementById('earningsTable');
+      eTable.innerHTML = '';
+
+      if (qp.length > 0) {
+        const quarters = qp.slice(-10);
+        let thead = '<thead><tr><th>Financial Metric</th>';
+        quarters.forEach(q => thead += `<th>${q.quarter}</th>`);
+        thead += '</tr></thead><tbody>';
+
+        const rowsMap = [
+          { key: 'sales_cr', label: 'Sales (₹ Cr)', highlight: true },
+          { key: 'expenses_cr', label: 'Expenses (₹ Cr)' },
+          { key: 'op_profit_cr', label: 'Operating Profit (₹ Cr)', highlight: true },
+          { key: 'opm_pct', label: 'OPM %' },
+          { key: 'other_income_cr', label: 'Other Income (₹ Cr)' },
+          { key: 'interest_cr', label: 'Interest (₹ Cr)' },
+          { key: 'depreciation_cr', label: 'Depreciation (₹ Cr)' },
+          { key: 'pbt_cr', label: 'Profit before tax (₹ Cr)' },
+          { key: 'tax_pct', label: 'Tax %' },
+          { key: 'net_profit_cr', label: 'Net Profit (₹ Cr)', highlight: true },
+          { key: 'eps', label: 'EPS in Rs', highlight: true }
+        ];
+
+        rowsMap.forEach(r => {
+          thead += `<tr class="${r.highlight ? 'highlight-row' : ''}"><td>${r.label}</td>`;
+          quarters.forEach(q => {
+            const val = q[r.key];
+            const isNeg = String(val).startsWith('-');
+            thead += `<td class="${isNeg ? 'val-negative' : ''}">${val !== null && val !== undefined ? val : '--'}</td>`;
+          });
+          thead += '</tr>';
+        });
+
+        thead += '</tbody>';
+        eTable.innerHTML = thead;
+
+        document.getElementById('earningsTakeawayText').textContent = `
+          The company reported ₹${qp[qp.length-1].sales_cr || '--'} Cr revenue and ₹${qp[qp.length-1].net_profit_cr || '--'} Cr net profit in the latest quarterly filing (${qp[qp.length-1].quarter}), with operating margins standing at ${qp[qp.length-1].opm_pct || '--'}.
+        `;
+      } else {
+        eTable.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:16px; color:var(--text-dim);">Quarterly earnings not reported for this symbol.</td></tr>';
+        document.getElementById('earningsTakeawayText').textContent = 'Quarterly filings updating from exchange records.';
+      }
+    }
+
+    function drawEarningsCanvasChart(qp) {
+      const canvas = document.getElementById('earningsCanvas');
+      if (!canvas || !canvas.parentElement) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      const items = (qp || []).slice(-8).map(q => ({
+        label: q.quarter || '',
+        sales: parseFloat(String(q.sales_cr || '0').replace(/,/g, '')) || 0,
+        pat: parseFloat(String(q.net_profit_cr || '0').replace(/,/g, '')) || 0,
+        opm: parseFloat(String(q.opm_pct || '0').replace(/%/g, '')) || 0
+      }));
+
+      if (items.length === 0) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '11px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('No quarterly earnings filings available.', width / 2, height / 2);
+        return;
+      }
+
+      const maxSales = Math.max(...items.map(i => i.sales), 10) * 1.25;
+      const maxOpm = Math.max(...items.map(i => i.opm), 10) * 1.3;
+
+      const padding = { top: 16, right: 35, bottom: 24, left: 45 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 3; i++) {
+        const y = padding.top + (chartH / 3) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        const v = Math.round(maxSales - (maxSales / 3) * i);
+        ctx.fillStyle = '#64748B';
+        ctx.font = '9px JetBrains Mono';
+        ctx.textAlign = 'right';
+        ctx.fillText(v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v, padding.left - 5, y + 3);
+
+        const opmV = Math.round(maxOpm - (maxOpm / 3) * i);
+        ctx.textAlign = 'left';
+        ctx.fillText(opmV + '%', width - padding.right + 5, y + 3);
+      }
+
+      const groupW = chartW / items.length;
+      const barW = Math.min(12, groupW * 0.28);
+      const opmPoints = [];
+
+      items.forEach((item, idx) => {
+        const groupX = padding.left + groupW * idx + groupW / 2;
+
+        const salesH = Math.max(2, (item.sales / maxSales) * chartH);
+        const salesY = padding.top + chartH - salesH;
+        ctx.fillStyle = '#3B82F6';
+        ctx.beginPath();
+        ctx.roundRect(groupX - barW - 2, salesY, barW, salesH, [3, 3, 0, 0]);
+        ctx.fill();
+
+        const patH = Math.max(2, (item.pat / maxSales) * chartH);
+        const patY = padding.top + chartH - patH;
+        ctx.fillStyle = '#10B981';
+        ctx.beginPath();
+        ctx.roundRect(groupX + 2, patY, barW, patH, [3, 3, 0, 0]);
+        ctx.fill();
+
+        const opmY = padding.top + chartH - (item.opm / maxOpm) * chartH;
+        opmPoints.push({ x: groupX, y: opmY, val: item.opm });
+
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9px JetBrains Mono';
+        ctx.textAlign = 'center';
+        ctx.fillText(item.label.replace(' ', "'"), groupX, height - 6);
+      });
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#F59E0B';
+      ctx.lineWidth = 2;
+      opmPoints.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      opmPoints.forEach(pt => {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#F59E0B';
+        ctx.fill();
+      });
+    }
+
+    // ==========================================================================
+    // VISUALIZATIONS: WATERFALL CONVERSION CHART (NO INVENTED DATA)
+    // ==========================================================================
+    function drawWaterfallConversion(qp, annualInc) {
+      const canvas = document.getElementById('waterfallCanvas');
+      if (!canvas || !canvas.parentElement) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      let sales = null;
+      let opProfit = null;
+      let netProfit = null;
+      let qName = '--';
+
+      if (annualInc && annualInc.rows) {
+        const sRow = annualInc.rows.find(r => r.metric.toLowerCase().includes('sales'));
+        const opRow = annualInc.rows.find(r => r.metric.toLowerCase().includes('operating profit'));
+        const npRow = annualInc.rows.find(r => r.metric.toLowerCase().includes('net profit'));
+        if (sRow?.values?.length) sales = parseFloat(String(sRow.values.slice(-1)[0]).replace(/,/g, ''));
+        if (opRow?.values?.length) opProfit = parseFloat(String(opRow.values.slice(-1)[0]).replace(/,/g, ''));
+        if (npRow?.values?.length) netProfit = parseFloat(String(npRow.values.slice(-1)[0]).replace(/,/g, ''));
+        qName = annualInc.years?.slice(-1)[0] || qName;
+      } else if (qp && qp.length > 0) {
+        const latest = qp[qp.length - 1];
+        sales = parseFloat(String(latest.sales_cr || '').replace(/,/g, ''));
+        opProfit = parseFloat(String(latest.op_profit_cr || '').replace(/,/g, ''));
+        netProfit = parseFloat(String(latest.net_profit_cr || '').replace(/,/g, ''));
+        qName = latest.quarter || qName;
+      }
+
+      if (!sales || isNaN(sales) || sales <= 0) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '11px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('Waterfall conversion data not reported in filings.', width / 2, height / 2);
+        return;
+      }
+
+      document.getElementById('waterfallQuarterTag').textContent = qName;
+
+      document.getElementById('wfGrossMargin').textContent = ((opProfit / sales) * 100).toFixed(1) + '%';
+      document.getElementById('wfOPM').textContent = ((opProfit / sales) * 100).toFixed(1) + '%';
+      document.getElementById('wfNetMargin').textContent = ((netProfit / sales) * 100).toFixed(1) + '%';
+
+      const expenses = Math.max(0, sales - (opProfit || 0));
+      const taxesOther = Math.max(0, (opProfit || 0) - (netProfit || 0));
+
+      const bars = [
+        { label: 'Revenue', val: sales, start: 0, end: sales, color: '#3B82F6' },
+        { label: 'Op Expenses', val: -expenses, start: sales, end: opProfit, color: '#F43F5E' },
+        { label: 'Operating Inc', val: opProfit, start: 0, end: opProfit, color: '#10B981' },
+        { label: 'Tax & Interest', val: -taxesOther, start: opProfit, end: netProfit, color: '#F59E0B' },
+        { label: 'Net PAT', val: netProfit, start: 0, end: netProfit, color: '#A78BFA' }
+      ];
+
+      const maxVal = sales * 1.15;
+      const padding = { top: 16, right: 16, bottom: 26, left: 45 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 3; i++) {
+        const y = padding.top + (chartH / 3) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        const v = Math.round(maxVal - (maxVal / 3) * i);
+        ctx.fillStyle = '#64748B';
+        ctx.font = '9.5px JetBrains Mono';
+        ctx.textAlign = 'right';
+        ctx.fillText(v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v, padding.left - 5, y + 3);
+      }
+
+      const colW = chartW / bars.length;
+      const barW = Math.min(26, colW * 0.55);
+
+      bars.forEach((b, idx) => {
+        const cx = padding.left + colW * idx + colW / 2;
+        const yTop = padding.top + chartH - (Math.max(b.start, b.end) / maxVal) * chartH;
+        const yBot = padding.top + chartH - (Math.min(b.start, b.end) / maxVal) * chartH;
+        const barH = Math.max(3, yBot - yTop);
+
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.roundRect(cx - barW / 2, yTop, barW, barH, [3, 3, 3, 3]);
+        ctx.fill();
+
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText(b.label, cx, height - 8);
+      });
+    }
+
+    // ==========================================================================
+    // VISUALIZATIONS: OWNERSHIP DONUT CHART
+    // ==========================================================================
+    function drawOwnershipDonut(sh) {
+      const canvas = document.getElementById('ownershipCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+
+      const size = 110;
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, size, size);
+
+      if (!sh || !sh.Promoters) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '10px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('No shareholding', size / 2, size / 2);
+        return;
+      }
+
+      const promPct = sh.Promoters.holding_pct || 0;
+      const fiiPct = sh.FIIs?.holding_pct || 0;
+      const diiPct = sh.DIIs?.holding_pct || 0;
+      const pubPct = sh.Public?.holding_pct || Math.max(0, 100 - promPct - fiiPct - diiPct);
+
+      const slices = [
+        { pct: promPct, color: '#3B82F6' },
+        { pct: pubPct, color: '#F59E0B' },
+        { pct: fiiPct, color: '#10B981' },
+        { pct: diiPct, color: '#8B5CF6' }
+      ].filter(s => s.pct > 0);
+
+      const cx = size / 2;
+      const cy = size / 2;
+      const radius = 48;
+      const innerRadius = 34;
+
+      let startAngle = -Math.PI / 2;
+
+      slices.forEach(s => {
+        const sliceAngle = (s.pct / 100) * Math.PI * 2;
+        const endAngle = startAngle + sliceAngle;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.arc(cx, cy, innerRadius, endAngle, startAngle, true);
+        ctx.closePath();
+        ctx.fillStyle = s.color;
+        ctx.fill();
+
+        startAngle = endAngle;
+      });
+    }
+
+    // ==========================================================================
+    // VISUALIZATIONS: 60-DAY PRICE & 20-EMA TREND CHART (REAL CANDLES ONLY)
+    // ==========================================================================
+    async function loadAndDrawPriceCandles(symbol, reportCandles, metrics) {
+      const requestToken = ++priceHistoryRequestToken;
+      const usableReportCandles = Array.isArray(reportCandles) && reportCandles.some(row => {
+        const close = Number(row?.c ?? row?.close ?? row?.price);
+        return Number.isFinite(close) && close > 0;
+      });
+      if (usableReportCandles) {
+        drawPriceCandles(reportCandles.slice(-60), metrics);
+        return;
+      }
+
+      drawPriceCandles([], metrics, 'Loading recent price history…');
+      try {
+        const response = await fetch(`/api/chart/${encodeURIComponent(symbol)}?limit=60&engine=v2`, {
+          headers: { Accept: 'application/json' },
+          signal: AbortSignal.timeout(10000)
+        });
+        const chartData = response.ok ? await response.json() : null;
+        if (requestToken !== priceHistoryRequestToken) return;
+        const candles = Array.isArray(chartData?.candles) ? chartData.candles : [];
+        const hasUsableCandles = candles.some(row => {
+          const close = Number(row?.c ?? row?.close ?? row?.price);
+          return Number.isFinite(close) && close > 0;
+        });
+        if (hasUsableCandles) {
+          drawPriceCandles(candles.slice(-60), metrics);
+        } else {
+          drawPriceCandles([], metrics, 'No recent price history is available for this company.');
+        }
+      } catch (error) {
+        if (requestToken === priceHistoryRequestToken) {
+          drawPriceCandles([], metrics, 'Price history could not be loaded. Please try again later.');
+        }
+      }
+    }
+
+    function drawPriceCandles(candles, metrics, emptyMessage = 'No recent price history is available for this company.') {
+      const canvas = document.getElementById('priceCandlesCanvas');
+      if (!canvas || !canvas.parentElement) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const dpr = window.devicePixelRatio || 1;
+
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+      if (width <= 0 || height <= 0) return;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      const data = (Array.isArray(candles) ? candles : []).map(row => ({
+        ...row,
+        close: Number(row?.c ?? row?.close ?? row?.price),
+        average: Number(row?.ema ?? row?.ma20)
+      })).filter(row => Number.isFinite(row.close) && row.close > 0);
+      if (data.length === 0) {
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#64748B';
+        ctx.font = '12px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText(emptyMessage, width / 2, height / 2, Math.max(0, width - 32));
+        return;
+      }
+
+      const prices = data.map(row => row.close);
+      data.forEach((row, index) => {
+        if (!Number.isFinite(row.average) || row.average <= 0) {
+          const start = Math.max(0, index - 19);
+          const period = prices.slice(start, index + 1);
+          row.average = period.length === 20 ? period.reduce((sum, value) => sum + value, 0) / 20 : NaN;
+        }
+      });
+
+      const rawMin = Math.min(...prices);
+      const rawMax = Math.max(...prices);
+      const paddingRange = Math.max((rawMax - rawMin) * 0.08, rawMax * 0.01);
+      const minP = rawMin - paddingRange;
+      const maxP = rawMax + paddingRange;
+
+      const padding = { top: 16, right: 54, bottom: 20, left: 10 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+      const xFor = index => padding.left + (data.length === 1 ? chartW / 2 : (index / (data.length - 1)) * chartW);
+      const yFor = value => padding.top + chartH - ((value - minP) / (maxP - minP)) * chartH;
+
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border-subtle').trim() || 'rgba(128,128,128,.2)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 3; i++) {
+        const y = padding.top + (chartH * i / 3);
+        ctx.beginPath(); ctx.moveTo(padding.left, y); ctx.lineTo(width - padding.right + 4, y); ctx.stroke();
+      }
+
+      ctx.beginPath();
+      data.forEach((d, i) => {
+        const x = xFor(i);
+        const y = yFor(d.close);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#98743A';
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      if (data.some(d => Number.isFinite(d.average) && d.average > 0)) {
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        data.forEach((d, i) => {
+          if (!Number.isFinite(d.average) || d.average <= 0) return;
+          const x = xFor(i);
+          const y = yFor(d.average);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--caution').trim() || '#D4B477';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      const lastP = prices[prices.length - 1] || 0;
+      const lastY = yFor(lastP);
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#98743A';
+      ctx.beginPath();
+      ctx.arc(xFor(data.length - 1), lastY, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-white').trim() || '#171914';
+      ctx.font = '10px JetBrains Mono, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('₹' + Number(lastP).toFixed(1), width - padding.right + 8, lastY + 3);
+    }
+
+    // Auto-detect URL query ?stock=SYMBOL on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const stockParam = params.get('stock') || params.get('symbol');
+      if (stockParam) {
+        fetchDnaReport(stockParam, true);
+      }
+      if (window.parent !== window) window.parent.postMessage({ type: 'DNA_READY' }, '*');
+    });
+
+    window.addEventListener('message', (event) => {
+      const message = event.data;
+      if (!message || typeof message !== 'object') return;
+      if (message.type === 'LOAD_STOCK' && typeof message.stock === 'string') {
+        fetchDnaReport(message.stock, true);
+      } else if (message.type === 'RESET_TO_HOME') {
+        resetToHome();
+      } else if (message.type === 'THEME_CHANGE') {
+        document.documentElement.dataset.theme = message.theme === 'light' ? 'light' : 'dark';
+      }
+    });
+  </script>
+</body>
+</html>

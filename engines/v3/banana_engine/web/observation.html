@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>L0 vs L5 Observation</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; background: #0f1419; color: #e6e6e6; padding: 24px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 15px; margin-top: 32px; color: #8a9199; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 24px; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #232a33; font-size: 13px; }
+    th { color: #8a9199; }
+    .stat-value { font-size: 22px; font-weight: 600; }
+    .stat-label { font-size: 11px; color: #8a9199; text-transform: uppercase; }
+    .l0 { color: #2962ff; }
+    .l5 { color: #16a34a; }
+    .warning { color: #f59e0b; }
+    #status { color: #8a9199; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>L0 (rules) vs L5 (ML v2) — 90-Day Observation</h1>
+  <div id="status">loading…</div>
+  <div id="summary"></div>
+  <h2>Comparison</h2>
+  <table id="comparison">
+    <thead>
+      <tr><th>Metric</th><th>L0 (Production)</th><th>L5 (Shadow)</th><th>Delta</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    async function tick() {
+      const r = await fetch('/api/observation/status');
+      const d = await r.json();
+      document.getElementById('status').textContent = 'updated ' + d.as_of.slice(0, 19);
+      
+      const l0 = d.l0_production;
+      const l5 = d.l5_shadow;
+      const rows = [
+        ['Total predictions', l0.total, l5.total],
+        ['Resolved', l0.resolved, l5.resolved],
+        ['Win rate', (l0.win_rate*100).toFixed(1) + '%', (l5.win_rate*100).toFixed(1) + '%'],
+        ['Mean R', l0.mean_r.toFixed(3), l5.mean_r.toFixed(3)],
+      ];
+      const tbody = document.querySelector('#comparison tbody');
+      tbody.innerHTML = '';
+      for (const [metric, a, b] of rows) {
+        const delta = typeof a === 'number' && typeof b === 'number' ? (b - a).toFixed(2) : '—';
+        tbody.innerHTML += `<tr><td>${metric}</td><td class="l0">${a}</td><td class="l5">${b}</td><td>${delta}</td></tr>`;
+      }
+    }
+    tick();
+    setInterval(tick, 60000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "calculated_at": "2026-09-12 10:34:02",
+  "dataset_used": "backfill_dataset.parquet",
+  "total_samples": 104,
+  "total_folds": 4,
+  "current_in_use_threshold": 0.08,
+  "recommended_recomputed_threshold_p95": 0.9091,
+  "percentiles": {
+    "p50": 0.1624,
+    "p75": 0.4095,
+    "p90": 0.6,
+    "p95": 0.9091,
+    "p99": 0.9706,
+    "max": 0.9706
+  },
+  "fold_details": [
+    {
+      "fold": 1,
+      "test_start": "2023-01-20",
+      "test_end": "2023-07-13",
+      "test_size": 26,
+      "auc": 0.5686,
+      "divergences_count": 26,
+      "mean_divergence": 0.3156
+    },
+    {
+      "fold": 2,
+      "test_start": "2023-07-13",
+      "test_end": "2023-12-04",
+      "test_size": 26,
+      "auc": 0.3846,
+      "divergences_count": 26,
+      "mean_divergence": 0.2582
+    },
+    {
+      "fold": 3,
+      "test_start": "2023-12-05",
+      "test_end": "2024-04-25",
+      "test_size": 26,
+      "auc": 0.6632,
+      "divergences_count": 26,
+      "mean_divergence": 0.2311
+    },
+    {
+      "fold": 4,
+      "test_start": "2024-04-29",
+      "test_end": "2024-12-05",
+      "test_size": 26,
+      "auc": 0.6319,
+      "divergences_count": 26,
+      "mean_divergence": 0.3482
+    }
+  ]
+}

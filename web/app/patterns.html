@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pattern Calls · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);overflow:hidden;margin-bottom:24px}
+.stages button{text-align:left;padding:16px 18px;border-right:1px solid var(--line);display:grid;gap:4px;position:relative;transition:background .2s}
+.stages button:last-child{border-right:0}
+.stages button:hover{background:var(--sunk)}
+.stages button[aria-pressed="true"]{background:var(--brand-soft)}
+.stages button[aria-pressed="true"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--brand)}
+.stages .n{font-size:12px;font-weight:700;color:var(--ink3)}
+.stages b{font-size:16px}
+.stages b em{font-style:normal;color:var(--brand);margin-left:6px;font-size:14px}
+.stages span.d{font-size:12.5px;color:var(--ink2);line-height:1.4}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;display:grid;transition:transform .25s var(--ease),box-shadow .25s;animation:pop .4s var(--ease) both}
+.pc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pc .top{display:flex;justify-content:space-between;gap:10px;padding:16px 18px 0}
+.pc .top b{font-size:17px}
+.pc svg{display:block;width:100%;height:auto}
+.pc .body{padding:0 18px 16px;display:grid;gap:10px}
+.pc .lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px;color:var(--ink3);font-weight:600}
+.pc .lv b{display:block;font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.odds{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--sunk);font-size:13px}
+.odds .ring{width:38px;height:38px;flex:none}
+.todo{font-size:13px;color:var(--ink2);border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:760px){.stages{grid-template-columns:repeat(2,minmax(0,1fr))}.stages button:nth-child(2){border-right:0}.stages button:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body data-page="patterns"><main class="main">
+
+<div class="phead"><div class="txt"><span class="kicker" id="scan">Pattern Calls</span><h1 class="t-1">Catch breakouts before they happen</h1>
+  <p class="lede">The scanner reads every chart after the close and finds classic patterns: bases, flags, triangles, cups. Where we have enough history, each one shows how often that setup worked before.</p></div>
+  <div class="acts"><div class="seg" id="tf"><button data-v="all" aria-pressed="true">All</button><button data-v="D" aria-pressed="false">Daily</button><button data-v="W" aria-pressed="false">Weekly</button></div></div></div>
+
+<div class="stages" id="stg" role="group" aria-label="Filter by stage">
+  <button data-v="Forming" aria-pressed="false"><span class="n">Stage 1</span><b>Forming<em id="c-Forming"></em></b><span class="d">Shape is building. Too early to act.</span></button>
+  <button data-v="Near" aria-pressed="true"><span class="n">Stage 2</span><b>Near breakout<em id="c-Near"></em></b><span class="d">Close to the breakout level. Watch.</span></button>
+  <button data-v="Breakout" aria-pressed="false"><span class="n">Stage 3</span><b>Broke out<em id="c-Breakout"></em></b><span class="d">Closed above the level.</span></button>
+  <button data-v="Retest" aria-pressed="false"><span class="n">Stage 4</span><b>Retest<em id="c-Retest"></em></b><span class="d">Came back to test the level from above.</span></button>
+</div>
+
+<div class="pgrid" id="grid"></div>
+<div class="more" style="display:flex;justify-content:center;margin-top:16px"><button class="btn" id="more" hidden>Show more</button></div>
+
+<p class="disclaim">Pattern odds come from past occurrences of the same setup in NSE stocks. A pattern is information, not a recommendation to buy or sell.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,fmt,n,ok}=QD;const {icon,state}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+const DO={Forming:'Too early to judge. Keep it on a watch list.',Near:'Watch for a close above the breakout level on strong volume.',Breakout:'It closed above the level. Breakouts tend to hold best when the price stays above it.',Retest:'Holding the level is a good sign. A close back below it cancels the pattern.'};
+let st='Near',tf='all',data,shown=18;
+$('grid').innerHTML=Array.from({length:6},()=>'<div class="pc" style="padding:16px;display:grid;gap:10px"><div class="skel" style="height:16px;width:40%"></div><div class="skel" style="height:150px"></div><div class="skel" style="height:40px"></div></div>').join('');
+try{data=await QD.loadPatterns()}catch(e){state($('grid'),'error',{body:e.message,action:'Try again',onAction:()=>location.reload()});return}
+if(data.scanDate)$('scan').textContent='Pattern Calls · scanned '+fmt.dateY(data.scanDate);
+Object.entries(data.counts).forEach(([k,v])=>{const el=$('c-'+k);if(el)el.textContent=v});
+if(!data.counts.Near){st=['Breakout','Retest','Forming'].find(k=>data.counts[k])||'Near';[...$('stg').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===st))}
+const ring=v=>{const C=2*Math.PI*15;return `<svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="15" fill="none" stroke="var(--line2)" stroke-width="4"/><circle cx="19" cy="19" r="15" fill="none" stroke="${v>=55?'var(--up)':'var(--warn)'}" stroke-width="4" stroke-dasharray="${v/100*C} ${C}" transform="rotate(-90 19 19)" stroke-linecap="round"/><text x="19" y="23" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--ink)">${Math.round(v)}%</text></svg>`};
+function candles(b,p){const W=340,H=150;if(!b||b.length<5)return `<div style="height:${H}px;display:grid;place-items:center" class="tiny">No chart data</div>`;
+  const lv=[p.level,ok(p.stop)?p.stop:NaN].filter(Number.isFinite);const lo=Math.min(...b.map(x=>x.low),...lv),hi=Math.max(...b.map(x=>x.high),...lv);const pad=(hi-lo)*.06;const X=i=>10+(W-20)*(i+.5)/b.length,Y=v=>12+(H-24)*(1-(v-lo+pad)/(hi-lo+2*pad)),bw=Math.max(1.6,(W-20)/b.length*.62);
+  let g=`<rect x="0" y="0" width="${W}" height="${H}" fill="var(--sunk)"/>`;
+  b.forEach((x,i)=>{const up=x.close>=x.open,c=up?'var(--up)':'var(--dn)';g+=`<line x1="${X(i)}" x2="${X(i)}" y1="${Y(x.high)}" y2="${Y(x.low)}" stroke="${c}" stroke-width="1"/><rect x="${X(i)-bw/2}" y="${Y(Math.max(x.open,x.close))}" width="${bw}" height="${Math.max(1.2,Math.abs(Y(x.open)-Y(x.close)))}" fill="${c}" rx=".8"/>`});
+  g+=`<line x1="8" x2="${W-8}" y1="${Y(p.level)}" y2="${Y(p.level)}" stroke="var(--brand)" stroke-width="1.6" stroke-dasharray="5 4"/><text x="${W-12}" y="${Y(p.level)-6}" text-anchor="end" font-size="11" font-weight="700" fill="var(--brand)">Breakout ${fmt.inr(p.level)}</text>`;
+  if(ok(p.stop))g+=`<line x1="8" x2="${W-8}" y1="${Y(p.stop)}" y2="${Y(p.stop)}" stroke="var(--dn)" stroke-width="1" stroke-dasharray="2 4" opacity=".8"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(p.pattern)} on ${esc(p.sym)}, last ${b.length} bars">${g}</svg>`}
+async function draw(){
+  const L=data.rows.filter(p=>p.stage===st&&(tf==='all'||p.tf.startsWith(tf==='D'?'D':'W')));
+  if(!L.length){state($('grid'),'empty',{title:'Nothing at this stage today',body:'Try another stage, or check again after the next close.',icon:'patterns'});$('more').hidden=true;return}
+  const V=L.slice(0,shown);
+  $('grid').innerHTML=V.map((p,i)=>{const dist=(p.level/p.price-1)*100;return `<a class="pc" href="xray.html?s=${encodeURIComponent(p.sym)}" style="animation-delay:${Math.min(i,12)*40}ms"><div class="top"><div><b>${esc(p.sym)}</b><div class="tiny">${esc(p.pattern||'Pattern')} · ${p.tf.startsWith('W')?'Weekly':'Daily'}${p.sector?' · '+esc(p.sector):''}</div></div><span class="pill ${st==='Breakout'?'up':st==='Near'?'brand':''}">${st==='Near'?'Near breakout':st==='Breakout'?'Broke out':st}</span></div>
+    <div style="padding:12px 18px" data-c="${i}"><div class="skel" style="height:150px"></div></div>
+    <div class="body"><div class="lv"><div>Price<b>${fmt.inr(p.price)}</b></div><div>Breakout<b>${fmt.inr(p.level)}</b></div><div>${dist>0?'Away':'Above it'}<b class="${dist>0?'':'up'}">${Math.abs(dist).toFixed(1)}%</b></div></div>
+     ${p.conf&&ok(p.conf.win)?`<div class="odds">${ring(p.conf.win)}<span><b>Worked ${Math.round(p.conf.win)}% of ${fmt.int(p.conf.n)} times</b> before${ok(p.conf.avgPct)?`, averaging <b class="${fmt.tone(p.conf.avgPct)}">${fmt.pct(p.conf.avgPct)}</b> per trade`:''}.</span></div>`:`<div class="odds"><span class="mute">${icon('info',18)}</span><span>${esc((p.conf&&p.conf.text)||'Not enough past examples of this setup to show odds yet.')}</span></div>`}
+     <div class="todo">${esc(p.notes[0]?p.notes[0].charAt(0).toUpperCase()+p.notes[0].slice(1)+'.':DO[st])}${ok(p.xray)?` · X-Ray ${Math.round(p.xray)}`:''}</div></div></a>`}).join('');
+  $('more').hidden=L.length<=shown;
+  const daily=V.filter(p=>!p.tf.startsWith('W')).map(p=>p.sym),weekly=V.filter(p=>p.tf.startsWith('W')).map(p=>p.sym);
+  const [d,w]=await Promise.all([lab.chartBatch(daily,60,'1D').catch(()=>({bars:{}})),lab.chartBatch(weekly,40,'1W').catch(()=>({bars:{}}))]);
+  V.forEach((p,i)=>{const el=$('grid').querySelector(`[data-c="${i}"]`);if(el)el.innerHTML=candles(((p.tf.startsWith('W')?w:d).bars||{})[p.sym],p)});
+}
+draw();
+$('stg').onclick=e=>{const b=e.target.closest('button');if(!b)return;st=b.dataset.v;shown=18;[...$('stg').children].forEach(x=>x.setAttribute('aria-pressed',x===b));draw()};
+$('tf').addEventListener('change',e=>{tf=e.detail;shown=18;draw()});
+$('more').onclick=()=>{shown+=18;draw()};
+});
+</script>
+</body></html>

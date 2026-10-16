@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Strategies · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.bar2{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.bar2 select{width:auto;height:38px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.scard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:18px;display:grid;gap:12px;transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;animation:pop .4s var(--ease) both}
+.scard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--line2)}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.scard .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.scard h3{font-size:17px;margin-top:4px}
+.scard .by{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.scard .st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.scard .st b{display:block;font-size:18px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.scard .st small{font-size:11.5px;color:var(--ink3);font-weight:600}
+.scard .ft{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink2);font-weight:550;gap:8px;flex-wrap:wrap}
+.new{border:1.5px dashed var(--line2);background:transparent;display:grid;place-items:center;text-align:center;gap:10px;min-height:250px;color:var(--ink2)}
+.new:hover{border-color:var(--brand);color:var(--brand)}
+.new .pl{width:48px;height:48px;border-radius:14px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center}
+.rank{font-weight:800;color:var(--ink3);width:26px}
+</style>
+</head>
+<body data-page="strategies"><main class="main">
+
+<div class="phead"><div class="txt"><span class="kicker">Strategies</span><h1 class="t-1">Scans with a track record</h1>
+  <p class="lede">A strategy is a saved scan with exit rules. Each one shows its tested results and a live record that builds from the day it was saved.</p></div>
+  <div class="acts"><a class="btn primary" href="scanner.html" data-i="plus">New from a scan</a></div></div>
+
+<div class="bar2">
+  <div class="seg" id="f"><button data-v="all" aria-pressed="true">All</button><button data-v="q" aria-pressed="false">QuantSync</button><button data-v="y" aria-pressed="false">Yours</button><button data-v="f" aria-pressed="false">Following</button><button data-v="p" aria-pressed="false">Community</button></div>
+  <label style="display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink2);font-weight:600">Sort by <select class="inp" id="sort"><option value="win">Most trades that made money</option><option value="avg">Best average per trade</option><option value="n">Most trades</option><option value="live">Most live trades</option></select></label>
+</div>
+<div class="sgrid" id="grid"></div>
+
+<section class="sec">
+  <div class="sech"><h2>Community leaderboard</h2><p class="small">Public strategies ranked by their live record, which nobody can edit. A win rate shows once a strategy has 30 closed live trades.</p></div>
+  <div id="board"></div>
+</section>
+
+<p class="disclaim">Strategies are scans with rules, not advice. Community strategies are made by other users and are not reviewed by QuantSync. Past results do not predict future results.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,fmt,auth}=QD;const {icon,state,toast,line}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+let f=(location.hash||'').slice(1)||'all',so='win',ALL=[];
+[...$('f').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===f));
+$('grid').innerHTML=Array.from({length:6},()=>'<div class="scard"><div class="skel" style="height:16px;width:40%"></div><div class="skel" style="height:70px"></div><div class="skel" style="height:30px"></div></div>').join('');
+const user=await auth.whenReady();
+const [fl,mine,ppl,al]=await Promise.all([lab.strategies('flagship').catch(()=>[]),user?lab.strategies('mine').catch(()=>[]):[],lab.strategies('people').catch(()=>[]),user?lab.alerts().catch(()=>({items:[]})):{items:[]}]);
+const followed=new Set((al.items||[]).filter(i=>i.cat==='f').map(i=>i.id));
+const seen=new Set();const add=(l,c)=>l.forEach(s=>{if(seen.has(s.id))return;seen.add(s.id);ALL.push({...s,_c:s.kind==='flagship'?'q':s.mine?'y':followed.has(s.id)?'f':'p'})});
+add(fl);add(mine);add(ppl);
+const CAT={q:'QuantSync',y:'Yours',f:'Following',p:'Community'};
+const key={win:s=>(s.record||{}).win_rate??-1,avg:s=>(s.record||{}).avg_ret??-99,n:s=>(s.record||{}).trades??0,live:s=>(s.stats||{}).trades??0};
+function draw(){
+  let L=ALL.filter(s=>f==='all'||s._c===f);L.sort((a,b)=>key[so](b)-key[so](a));
+  if(!L.length&&!(f==='y'||f==='all')){state($('grid'),'empty',{title:f==='f'?'You are not following any strategy':'Nothing here yet',body:f==='f'?'Open a community strategy and tap “Get alerts” to follow it.':'',icon:'strategies'});return}
+  $('grid').innerHTML=L.map((s,i)=>{const r=s.record||{},st=s.stats||{};return `<a class="scard" href="strategy.html?id=${s.id}" style="animation-delay:${Math.min(i,12)*40}ms"><div class="top"><div><span class="src cat-${s._c==='p'?'f':s._c}">${CAT[s._c]}</span><h3>${esc(s.name)}</h3><div class="by">${s._c==='q'?'by QuantSync':s._c==='y'?'Made by you':s.owner?'by @'+esc(s.owner):'Community'} · ${s.tf==='1W'?'Weekly':'Daily'}${s.followers?` · ${s.followers} following`:''}</div></div>${s.enhanced||s.source==='engine'||s.exit_choice==='ai'?`<span class="pill ai">${icon('spark',13)}AI</span>`:''}</div>
+   <div class="chart" data-sp="${i}"></div>
+   <div class="st"><div><b class="${(r.win_rate||0)>=50?'up':''}">${r.trades?fmt.plain(r.win_rate):'—'}</b><small>made money</small></div><div><b class="${fmt.tone(r.avg_ret)}">${fmt.pct(r.avg_ret)}</b><small>avg per trade</small></div><div><b>${r.trades?fmt.int(r.trades):'—'}</b><small>${r.label&&r.label.startsWith('Full')?'trades recorded':'trades tested'}</small></div></div>
+   <div class="ft"><span>${s.live_from?`Live since ${fmt.date(s.live_from)} ${String(s.live_from).slice(0,4)}`:'Not live yet'}${st.trades?` · <b class="${fmt.tone(st.avg_ret)}">${fmt.pct(st.avg_ret)}</b> live avg`:''}</span><span>${st.open||0} open now</span></div></a>`}).join('')
+   +(f==='all'||f==='y'?`<a class="scard new" href="scanner.html"><div style="display:grid;gap:10px;justify-items:center"><span class="pl">${icon('plus',24)}</span><b style="font-size:16px;color:var(--ink)">Make a new strategy</b><span class="small" style="max-width:26ch">${user?'Build a scan, test it, then save it here.':'Sign in, build a scan, test it, then save it here.'}</span></div></a>`:'');
+  L.forEach((s,i)=>{const el=$('grid').querySelector(`[data-sp="${i}"]`);const d=s.spark||[];if(d.length>1)line(el,[{data:d,color:d[d.length-1]>=d[0]?'var(--brand)':'var(--dn)',area:true}],{w:300,h:70,pl:2,pr:6,pt:6,pb:4,bare:true,noanim:true});else el.innerHTML='<div class="tiny" style="height:70px;display:grid;place-items:center">Curve appears after the first test</div>'});
+}
+draw();
+$('f').addEventListener('change',e=>{f=e.detail;history.replaceState(null,'','#'+f);draw()});$('sort').onchange=e=>{so=e.target.value;draw()};
+// leaderboard: live record only
+const board=ppl.filter(s=>(s.stats||{}).trades>0).sort((a,b)=>((b.stats.shown?b.stats.win_rate:-1)-(a.stats.shown?a.stats.win_rate:-1))||(b.stats.avg_ret??-99)-(a.stats.avg_ret??-99));
+if(!board.length)state($('board'),'empty',{title:'No live records yet',body:'Community strategies appear here once their live trades start closing.',icon:'strategies'});
+else{$('board').innerHTML=`<div class="tbl-wrap"><table class="tbl"><thead><tr><th></th><th>Strategy</th><th>By</th><th class="rt">Live trades</th><th class="rt">Made money</th><th class="rt">Avg per trade</th><th class="rt">Following</th><th></th></tr></thead><tbody>${board.slice(0,20).map((s,i)=>`<tr><td style="font-weight:800;color:var(--ink3)">${i+1}</td><td><a href="strategy.html?id=${s.id}"><b>${esc(s.name)}</b><div class="tiny">${s.tf==='1W'?'Weekly':'Daily'}${s.enhanced?' · AI enhanced':''}</div></a></td><td>${s.owner?'@'+esc(s.owner):'—'}</td><td class="rt">${s.stats.trades}</td><td class="rt ${s.stats.shown&&s.stats.win_rate>=50?'up':''}">${s.stats.shown?fmt.plain(s.stats.win_rate):'<span class="mute">needs 30</span>'}</td><td class="rt ${fmt.tone(s.stats.avg_ret)}">${fmt.pct(s.stats.avg_ret)}</td><td class="rt">${s.followers}</td><td>${s.mine?'':`<button class="btn sm" data-fol="${s.id}">${followed.has(s.id)?'Following':'Follow'}</button>`}</td></tr>`).join('')}</tbody></table></div>`;
+  $('board').querySelectorAll('[data-fol]').forEach(b=>b.onclick=async()=>{if(!auth.user){await auth.signIn().catch(e=>toast(e.message));if(!auth.user)return}const on=!followed.has(b.dataset.fol);try{await lab.follow(b.dataset.fol,on,on);on?followed.add(b.dataset.fol):followed.delete(b.dataset.fol);b.textContent=on?'Following':'Follow';toast(on?'Following. Its matches now show in Matches.':'Unfollowed.')}catch(e){toast(e.message)}});}
+});
+</script>
+</body></html>

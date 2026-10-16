@@ -1,0 +1,67 @@
+{
+  "Baseline_Strict_Rules": {
+    "trades_yr": 246,
+    "wr": 35.1,
+    "ann_r": 74.8,
+    "pf": 1.48
+  },
+  "Loosened_Flat_Rules": {
+    "trades_yr": 390,
+    "wr": 29.0,
+    "ann_r": 35.6,
+    "pf": 1.13
+  },
+  "ML_Tiered_Engine_All3": {
+    "trades_yr": 436,
+    "wr": 31.1,
+    "avg_risk_pct": 0.51,
+    "ann_r": 68.6,
+    "pf": 1.48
+  },
+  "ML_Optimized_2Tier": {
+    "trades_yr": 281,
+    "wr": 33.7,
+    "ann_r": 68.4,
+    "pf": 1.59
+  },
+  "Tiers_Breakdown": {
+    "TIER_1_FULL": {
+      "trades_yr": 83,
+      "wr": 42.8,
+      "risk_alloc": 1.0,
+      "ann_r": 58.2,
+      "pf": 2.24
+    },
+    "TIER_2_HALF": {
+      "trades_yr": 198,
+      "wr": 30.0,
+      "risk_alloc": 0.5,
+      "ann_r": 10.3,
+      "pf": 1.15
+    },
+    "TIER_3_QUARTER": {
+      "trades_yr": 155,
+      "wr": 26.2,
+      "risk_alloc": 0.25,
+      "ann_r": 0.2,
+      "pf": 1.01
+    }
+  },
+  "Top_Features_Gain": {
+    "cir": 14.09,
+    "upper_wick": 8.15,
+    "is_darvas": 7.09,
+    "ath_dist_pct": 6.54,
+    "prior_runup_20": 6.1,
+    "dist_sma50": 6.04,
+    "is_htf": 5.96,
+    "is_base": 5.83,
+    "sma200_slope": 5.8,
+    "gap_pct": 5.75,
+    "body_pct": 5.74,
+    "is_52w": 5.7,
+    "risk_pct": 5.62,
+    "atr14_pct": 5.61,
+    "vol_ratio50": 5.54
+  }
+}

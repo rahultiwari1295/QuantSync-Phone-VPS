@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Portfolio · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.hero2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:stretch}
+.val{padding:24px;display:grid;gap:16px;align-content:start}
+.val .big{font-size:clamp(34px,4.4vw,46px);font-weight:800;letter-spacing:-.04em;line-height:1}
+.val .row2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.val .row2 small{font-size:12px;color:var(--ink3);font-weight:600;display:block}
+.val .row2 b{font-size:17px;font-variant-numeric:tabular-nums}
+.alloc .meter{height:16px;border-radius:7px}
+.alloc .lg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12.5px;color:var(--ink2);font-weight:600}
+.alloc .lg i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px}
+.checks .row{align-items:flex-start}
+.checks .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none}
+.xs{display:inline-grid;place-items:center;min-width:34px;height:24px;border-radius:7px;font-size:12px;font-weight:750}
+.addf{display:grid;gap:12px}
+.addf label{display:grid;gap:6px;font-size:12.5px;font-weight:650;color:var(--ink2)}
+@media (max-width:1020px){.hero2{grid-template-columns:minmax(0,1fr)}}
+.rm{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--ink3)}.rm:hover{background:var(--dn-soft);color:var(--dn)}
+</style>
+</head>
+<body data-page="portfolio"><main class="main">
+
+<div class="phead"><div class="txt"><span class="kicker" id="where">Portfolio</span><h1 class="t-1">Everything you own, checked every day</h1>
+  <p class="lede">Add your stocks by hand. After every close we X-Ray each company, flag anything that needs a look, and tell you when a strategy matches a stock you hold.</p></div>
+  <div class="acts"><button class="btn primary" id="addb" data-i="plus">Add a stock</button></div></div>
+
+<div id="body"></div>
+
+<div class="sheet" id="add" role="dialog" aria-label="Add a stock"><div class="grab"></div><h3>Add a stock</h3>
+  <form class="addf" id="addf"><label for="a-s">NSE symbol<input class="inp" id="a-s" placeholder="e.g. TRENT" required autocomplete="off" style="text-transform:uppercase"></label>
+    <div class="grid g2" style="gap:10px"><label for="a-q">Quantity<input class="inp num" id="a-q" inputmode="decimal" placeholder="10" required></label><label for="a-p">Average price paid<input class="inp num" id="a-p" inputmode="decimal" placeholder="₹" required></label></div>
+    <p class="tiny" id="a-err" hidden></p>
+    <button class="btn primary" type="submit">Add to portfolio</button><button class="btn ghost" type="button" data-close>Cancel</button></form></div>
+
+<p class="disclaim">The portfolio is for tracking only. X-Ray scores and checks are research, not advice to buy or sell.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,api,fmt,auth,n,ok}=QD;const {icon,state,toast,line,sheet}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+let H=[],where='device',X={},B={},so='val',rng=126;
+state($('body'),'loading',{n:4});
+await auth.whenReady();
+const r=await QD.holdings.get();H=r.items;where=r.where;
+$('where').textContent=where==='account'?'Portfolio · saved to your account':'Portfolio · saved on this device';
+$('addb').onclick=()=>openAdd();
+function openAdd(sym){$('a-err').hidden=true;$('addf').reset();if(sym)$('a-s').value=sym;sheet('add');setTimeout(()=>(sym?$('a-q'):$('a-s')).focus(),300)}
+$('addf').onsubmit=async e=>{e.preventDefault();const s=$('a-s').value.trim().toUpperCase(),qy=parseFloat($('a-q').value),p=parseFloat($('a-p').value);
+  const err=m=>{$('a-err').textContent=m;$('a-err').hidden=false;$('a-err').className='tiny dn'};
+  if(!/^[A-Z0-9&-]{1,20}$/.test(s))return err('Use the NSE symbol, for example TRENT.');if(!(qy>0))return err('Quantity must be more than 0.');if(!(p>0))return err('Average price must be more than 0.');
+  const ex=H.find(h=>h.symbol===s);if(ex){const tot=ex.qty+qy;ex.avg_price=(ex.qty*ex.avg_price+qy*p)/tot;ex.qty=tot}else H.push({symbol:s,qty:qy,avg_price:p});
+  try{await QD.holdings.set(H);sheet('add',false);toast(`Added ${s}.`);await enrich();render()}catch(x){err(x.message)}};
+async function enrich(){const syms=H.map(h=>h.symbol);if(!syms.length)return;[X,B]=await Promise.all([api.xray(syms),lab.chartBatch(syms,260).then(r=>r.bars||{}).catch(()=>({}))])}
+function px(s){const x=X[s]||{},b=B[s];return ok(x.price)?n(x.price):b&&b.length?b[b.length-1].close:NaN}
+function dayChg(s){const b=B[s];return b&&b.length>1?(b[b.length-1].close/b[b.length-2].close-1)*100:NaN}
+async function render(){
+  if(!H.length){state($('body'),'empty',{title:'Your portfolio is empty',body:'Add the stocks you own. We will X-Ray each one after every close and flag anything worth a look.'+(auth.user?'':' Sign in to keep it on every device.'),action:'Add your first stock',onAction:()=>openAdd(),primary:true,icon:'portfolio'});return}
+  const rows=H.map(h=>{const p=px(h.symbol),v=p*h.qty,c=h.avg_price*h.qty,x=X[h.symbol]||{};return {...h,p,v,c,g:(p/h.avg_price-1)*100,gv:v-c,dc:dayChg(h.symbol),dv:v-v/(1+dayChg(h.symbol)/100),x}});
+  const val=rows.reduce((a,r)=>a+(ok(r.v)?r.v:0),0),cost=rows.reduce((a,r)=>a+r.c,0),day=rows.reduce((a,r)=>a+(ok(r.dv)?r.dv:0),0);
+  const sc=rows.filter(r=>ok(r.x.score));const avgX=sc.length?sc.reduce((a,r)=>a+r.x.score*(r.v||0),0)/Math.max(1,sc.reduce((a,r)=>a+(r.v||0),0)):NaN;
+  const bySec={};rows.forEach(r=>{const k=r.x.sector||'Other';bySec[k]=(bySec[k]||0)+(ok(r.v)?r.v:0)});const secs=Object.entries(bySec).sort((a,b)=>b[1]-a[1]);const COL=['var(--brand)','var(--cat-q)','var(--up)','var(--ai-fill)','#2C9CB8','var(--cat-f)','var(--line2)'];
+  // checks
+  const checks=[];
+  rows.filter(r=>ok(r.x.score)&&r.x.score<45).forEach(r=>checks.push(['warn','dn',`${r.symbol} has a weak X-Ray score of ${r.x.score}`,esc(r.x.title||'Check the company before buying more.'),`xray.html?s=${r.symbol}`,'X-Ray']));
+  rows.filter(r=>ok(r.x.ema200)&&ok(r.p)&&r.p<r.x.ema200).forEach(r=>checks.push(['trend','dn',`${r.symbol} is below its 200-day average`,`Price ${fmt.inr(r.p)} vs average ${fmt.inr(r.x.ema200)}. The long-term trend is down.`,`xray.html?s=${r.symbol}`,'X-Ray']));
+  secs.filter(([k,v])=>k!=='Other'&&val&&v/val>.3&&rows.filter(r=>(r.x.sector||'Other')===k).length>1).forEach(([k,v])=>checks.push(['portfolio','brand',`${esc(k)} is ${Math.round(v/val*100)}% of your money`,'One sector move affects a large share of your portfolio.']));
+  rows.filter(r=>val&&r.v/val>.25).forEach(r=>checks.push(['portfolio','brand',`${r.symbol} is ${Math.round(r.v/val*100)}% of your money`,'A single stock this large moves your whole portfolio.']));
+  rows.filter(r=>ok(r.x.dist_52w_pct)&&r.x.dist_52w_pct>-3).forEach(r=>checks.push(['trend','up',`${r.symbol} is close to its 52-week high`,`${fmt.pct(r.x.dist_52w_pct)} from the high of ${fmt.inr(r.x.w52_high)}.`]));
+  let m=null;try{m=await lab.matches()}catch{}const held=new Set(H.map(h=>h.symbol));((m&&m.rows)||[]).filter(x=>held.has(x.symbol)).slice(0,4).forEach(x=>checks.push(['spark','ai',`${esc(x.strategy)} matched ${x.symbol}, which you own`,`Matched ${fmt.rel(x.date).toLowerCase()} at ${fmt.inr(x.price)}.`,`strategy.html?id=${x.sid}`,'See strategy']));
+  const IC={dn:['var(--dn-soft)','var(--dn)'],up:['var(--up-soft)','var(--up)'],brand:['var(--brand-soft)','var(--brand)'],ai:['var(--ai-soft)','var(--ai)']};
+  $('body').innerHTML=`<div class="hero2"><section class="panel val"><div><div class="tiny" style="font-weight:600">Current value</div><div class="big num">${fmt.inr(val,0)}</div><div style="margin-top:6px;font-weight:700" class="${fmt.tone(val-cost)}">${val-cost>=0?'+':'−'}${fmt.inr(Math.abs(val-cost),0)} (${fmt.pct((val/cost-1)*100)}) overall${ok(day)&&day!==0?` · <span class="${fmt.tone(day)}">${day>=0?'+':'−'}${fmt.inr(Math.abs(day),0)} on the last close</span>`:''}</div></div>
+     <div class="row2"><div><small>Invested</small><b>${fmt.inr(cost,0)}</b></div><div><small>Stocks</small><b>${H.length}</b></div><div><small>Average X-Ray</small><b style="color:${QD.scoreTone(avgX).c}">${ok(avgX)?Math.round(avgX):'—'}</b></div></div>
+     <div class="alloc"><div class="tiny" style="font-weight:600;margin-bottom:8px">By sector</div><div class="meter">${secs.map(([k,v],i)=>`<i style="flex:${v};background:${COL[Math.min(i,COL.length-1)]}" title="${esc(k)}"></i>`).join('')}</div><div class="lg">${secs.map(([k,v],i)=>`<span><i style="background:${COL[Math.min(i,COL.length-1)]}"></i>${esc(k)} ${val?Math.round(v/val*100):0}%</span>`).join('')}</div></div></section>
+    <section class="panel pad"><div class="sech" style="margin-bottom:4px"><h2>Your holdings vs Nifty 50</h2><div class="seg" id="rng"><button data-v="63" aria-pressed="${rng===63}">3M</button><button data-v="126" aria-pressed="${rng===126}">6M</button><button data-v="250" aria-pressed="${rng===250}">1Y</button></div></div><p class="tiny" style="margin-bottom:6px">How today’s holdings, in today’s quantities, moved over the period</p><div class="legend" id="pleg" style="margin-bottom:6px"></div><div class="chart" id="perf"></div></section></div>
+   <section class="sec"><div class="sech"><h2>Today’s check</h2><p class="small">${checks.length?`${checks.length} ${checks.length===1?'thing':'things'} worth a look, found after the latest close.`:'Nothing needs your attention today.'}</p></div>${checks.length?`<div class="rows checks">${checks.map(([ic,k,t,s,href,btn])=>`<div class="row"><span class="ic" style="background:${IC[k][0]};color:${IC[k][1]}">${icon(ic,18)}</span><div class="grow"><div class="t">${t}</div><div class="s" style="white-space:normal">${s}</div></div>${href?`<a class="btn sm" href="${href}">${btn}</a>`:''}</div>`).join('')}</div>`:''}</section>
+   <section class="sec"><div class="sech"><h2>Holdings</h2><div class="seg" id="sort"><button data-v="val" aria-pressed="${so==='val'}">By value</button><button data-v="pl" aria-pressed="${so==='pl'}">By gain</button><button data-v="xr" aria-pressed="${so==='xr'}">By X-Ray</button></div></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Stock</th><th class="rt">Qty</th><th class="rt">Avg cost</th><th class="rt">Price</th><th class="rt">Last close</th><th class="rt">Value</th><th class="rt">Gain</th><th class="rt">X-Ray</th><th></th></tr></thead><tbody>${[...rows].sort((a,b)=>so==='val'?(b.v||0)-(a.v||0):so==='pl'?(b.g||-1e9)-(a.g||-1e9):(b.x.score??-1)-(a.x.score??-1)).map(r=>{const t=QD.scoreTone(r.x.score);return `<tr><td><a href="xray.html?s=${encodeURIComponent(r.symbol)}"><b>${esc(r.symbol)}</b><div class="tiny">${esc(r.x.sector||r.x.name||'')}</div></a></td><td class="rt">${fmt.num(r.qty,2)}</td><td class="rt">${fmt.inr(r.avg_price)}</td><td class="rt">${fmt.inr(r.p)}</td><td class="rt ${fmt.tone(r.dc)}">${fmt.pct(r.dc)}</td><td class="rt"><b>${fmt.inr(r.v,0)}</b></td><td class="rt ${fmt.tone(r.g)}" style="font-weight:700">${fmt.pct(r.g)}</td><td class="rt">${ok(r.x.score)?`<span class="xs" style="background:color-mix(in srgb,${t.c} 16%,transparent);color:${t.c}">${r.x.score}</span>`:'—'}</td><td><button class="rm" data-rm="${esc(r.symbol)}" aria-label="Remove ${esc(r.symbol)}">${icon('trash',15)}</button></td></tr>`}).join('')}</tbody></table></div>
+    <p class="tiny" style="margin-top:10px">${where==='account'?'Saved to your account.':'Saved on this device only.'+(auth.user?'':' <a href="#" id="si" style="color:var(--brand);font-weight:600">Sign in</a> to keep it on every device.')} Prices update after each close.</p></section>`;
+  QS.segs($('body'));
+  $('sort').addEventListener('change',e=>{so=e.detail;render()});$('rng').addEventListener('change',e=>{rng=+e.detail;perf()});
+  $('body').querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{const s=b.dataset.rm;const keep=H;H=H.filter(h=>h.symbol!==s);try{await QD.holdings.set(H);toast(`Removed ${s}.`);render()}catch(e){H=keep;toast(e.message)}});
+  if($('si'))$('si').onclick=e=>{e.preventDefault();auth.signIn().then(()=>location.reload()).catch(x=>toast(x.message))};
+  perf();
+}
+async function perf(){
+  const el=$('perf');if(!el)return;const syms=H.map(h=>h.symbol).filter(s=>B[s]&&B[s].length);if(!syms.length){el.innerHTML='<p class="tiny">No price history for these stocks yet.</p>';return}
+  const sets=syms.map(s=>new Map(B[s].map(b=>[b.date,b.close])));let dates=[...sets[0].keys()].filter(d=>sets.every(m=>m.has(d))).sort().slice(-rng);
+  if(dates.length<5){el.innerHTML='<p class="tiny">Not enough shared price history yet.</p>';return}
+  const q=Object.fromEntries(H.map(h=>[h.symbol,h.qty]));const v=dates.map(d=>syms.reduce((a,s,i)=>a+sets[i].get(d)*q[s],0));const pv=v.map(x=>x/v[0]*100);
+  const bp=(await lab.benchmark(dates[0])).points||[];let bench=null;if(bp.length>5){const bm=new Map(bp.map(p=>[p.d,p.v]));let lastB=NaN;const bs=dates.map(d=>{if(bm.has(d))lastB=bm.get(d);return lastB});const b0=bs.find(Number.isFinite);bench=bs.map(x=>x/b0*100)}
+  $('pleg').innerHTML=`<span><i style="--c:var(--brand)"></i>Your holdings <b class="${fmt.tone(pv[pv.length-1]-100)}">${fmt.pct(pv[pv.length-1]-100)}</b></span>${bench?`<span><i class="dash" style="--c:var(--ink3)"></i>Nifty 50 <b>${fmt.pct(bench[bench.length-1]-100)}</b></span>`:''}`;
+  line(el,[...(bench?[{data:bench,color:'var(--ink3)',dash:true,w:1.5}]:[]),{data:pv,color:'var(--brand)',area:true}],{h:230,dates,zero:100,yfmt:x=>(x-100>=0?'+':'')+Math.round(x-100)+'%',tip:i=>`${fmt.dateY(dates[i])} · You ${fmt.pct(pv[i]-100)}${bench?` · Nifty ${fmt.pct(bench[i]-100)}`:''}`,label:'Holdings versus Nifty'});
+}
+await enrich();render();
+const add=QD.param('add');if(add)openAdd(add.toUpperCase());
+});
+</script>
+</body></html>

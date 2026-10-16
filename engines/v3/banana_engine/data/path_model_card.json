@@ -1,0 +1,30 @@
+{
+  "version": "5.2.0-master",
+  "trained_date": "2026-09-12 00:34:40",
+  "total_formations": 42857,
+  "train_samples": 37525,
+  "holdout_samples": 5332,
+  "features": [
+    "duration_weeks",
+    "depth_pct",
+    "coil_ratio",
+    "dry_ratio",
+    "rs_rating",
+    "vol_ratio",
+    "cir",
+    "dist_from_52w_high_pct",
+    "price_vs_50ma_pct"
+  ],
+  "metrics": {
+    "mfe_spearman_rank_correlation": 0.2577,
+    "mfe_mae_pct": 8.3,
+    "mae_loss_pct": 5.17,
+    "up_roc_auc": 0.6197,
+    "double_digit_gain_roc_auc": 0.6442
+  },
+  "verdict_thresholds": {
+    "high_conviction_min_upside": 12.0,
+    "high_conviction_min_asymmetry": 2.5,
+    "skip_max_upside": 5.0
+  }
+}

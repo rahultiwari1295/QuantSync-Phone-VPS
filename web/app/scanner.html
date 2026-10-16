@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scanner · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.flow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:26px;padding:0;list-style:none;counter-reset:f}
+.flow li{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:650;color:var(--ink3);padding:6px 12px 6px 6px;border-radius:999px;background:var(--surface);border:1px solid var(--line);counter-increment:f;transition:color .3s,border-color .3s,background .3s}
+.flow li::before{content:counter(f);width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);font-size:12px;transition:background .3s,color .3s}
+.flow li.on{color:var(--ink);border-color:var(--brand)}
+.flow li.on::before{background:var(--brand);color:var(--brand-ink)}
+.flow li.done::before{content:"✓";background:var(--up);color:#fff}
+.flow li.ai.on{border-color:var(--ai-fill)} .flow li.ai.on::before{background:var(--ai-fill);color:var(--ai-ink)}
+.presets{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 12px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.pre{flex:0 0 230px;scroll-snap-align:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:6px;align-content:start;transition:border-color .2s,transform .2s var(--ease),box-shadow .2s}
+.pre:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.pre[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.pre b{font-size:15px;letter-spacing:-.01em}
+.pre .d{font-size:12.5px;color:var(--ink2);line-height:1.45}
+.pre .tg{font-size:11.5px;font-weight:700;color:var(--brand)}
+.pre .tg.q{color:var(--cat-q)}
+.tagbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tagbar button{height:30px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink2);border:1px solid var(--line);background:var(--surface)}
+.tagbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.builder{padding:20px;display:grid;gap:16px}
+.bhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.mode{font-size:14px;color:var(--ink2);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mode select{height:34px;width:auto;font-weight:650;color:var(--ink)}
+.cond{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr) minmax(0,1.45fr) 36px;gap:8px;align-items:center;animation:pop .35s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.cond .x{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--ink3)}
+.cond .x:hover{background:var(--dn-soft);color:var(--dn)}
+.cond .join{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--ink3);padding-left:4px;margin:-2px 0}
+.reads{background:var(--sunk);border-radius:14px;padding:14px 16px;font-size:14.5px;line-height:1.9;color:var(--ink2)}
+.reads .k{font-size:12px;font-weight:700;color:var(--ink3);display:block;line-height:1.4;margin-bottom:4px}
+.tok{display:inline;padding:3px 7px;border-radius:7px;background:var(--brand-soft);color:var(--brand);font-weight:650;font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.tok.o{background:transparent;color:var(--ink);font-family:var(--f);font-size:14px;padding:0 2px}
+.tok.j{background:transparent;color:var(--ink3);font-family:var(--f);font-weight:800;font-size:13px;padding:0 3px}
+.res-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.res-head h2{font-size:22px}
+.res-head h2 b{color:var(--brand)}
+.xs{display:inline-grid;place-items:center;min-width:34px;height:24px;border-radius:7px;font-size:12px;font-weight:750}
+.tbl .sp{width:90px}
+.tbl tr.in{animation:pop .35s var(--ease) both}
+.test{padding:22px;display:grid;gap:16px;margin-top:24px}
+.exits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.exits label{display:grid;gap:6px;font-size:12.5px;font-weight:650;color:var(--ink2)}
+.exits .inp{font-variant-numeric:tabular-nums}
+.steps2{display:grid;gap:8px}
+.steps2 div{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--ink3);transition:color .3s}
+.steps2 div.on{color:var(--ink)} .steps2 div.done{color:var(--ink2)}
+.steps2 .ic{width:20px;height:20px;display:grid;place-items:center;flex:none}
+.steps2 div.done .ic{color:var(--up)}
+.yrbars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.yrbars div{background:var(--sunk);border-radius:12px;padding:12px}
+.yrbars b{display:block;font-size:20px;letter-spacing:-.02em}
+.yrbars small{font-size:12px;color:var(--ink3);font-weight:600}
+@media (min-width:1021px){.split{grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr)}}
+@media (max-width:640px){.cond{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px}.cond .f{grid-column:1/-1}.exits{grid-template-columns:repeat(3,minmax(0,1fr))}.yrbars{grid-template-columns:repeat(2,1fr)}}
+.val{display:flex;gap:6px;min-width:0}.val select{flex:1;min-width:0}.val input{width:70px;flex:none}.val select{min-width:90px}
+.more{display:flex;justify-content:center;margin-top:10px}
+</style></head>
+<body data-page="scanner"><main class="main">
+
+<div class="phead"><div class="txt"><span class="kicker">Scanner</span><h1 class="t-1">Build a scanner</h1>
+  <p class="lede">Describe the stocks you are looking for. We check every NSE stock against your rules after each close, show you today’s matches, and test how they did since 2023.</p></div></div>
+
+<ol class="flow" id="flow"><li class="on">Choose your rules</li><li>See today’s matches</li><li>Backtest it</li><li class="ai">Save and let AI enhance</li></ol>
+
+<section>
+  <div class="sech"><h2>Start from a ready-made scan</h2><p class="small">Tap one to load its rules below and see today’s matches. You can change anything.</p></div>
+  <div class="tagbar" id="tags"></div>
+  <div class="presets" id="presets"></div>
+</section>
+
+<div class="split sec" style="margin-top:24px">
+  <section class="panel builder" aria-labelledby="bh">
+    <div class="bhead"><h2 id="bh" class="t-3">Your rules</h2><div class="seg" id="tf"><button aria-pressed="true" data-v="1D">Daily</button><button aria-pressed="false" data-v="1W">Weekly</button></div></div>
+    <div class="mode">Show stocks that match <select class="inp" id="mode" aria-label="Match mode"><option value="all">all</option><option value="any">any</option></select> of these rules</div>
+    <div id="conds" style="display:grid;gap:10px"><div class="skel" style="height:42px"></div><div class="skel" style="height:42px"></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="add" data-i="plus" data-s="15">Add a rule</button><button class="btn sm ghost" id="clear">Clear all</button></div>
+    <div class="reads" aria-live="polite"><span class="k">In plain words</span><span id="reads"></span></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="run" data-i="play" data-s="14">Show matches</button><span class="tiny" id="hint">Runs on the latest close across every NSE stock.</span></div>
+  </section>
+
+  <section id="results" aria-live="polite">
+    <div class="res-head"><h2 id="rc">Matches will show here</h2><span class="tiny" id="asof"></span></div>
+    <div id="rbody"></div>
+  </section>
+</div>
+
+<section class="panel test" id="test" hidden>
+  <div><h2 class="t-2">How would this scan have done?</h2><p class="small" style="margin-top:6px">We follow every match since January 2023: buy at the next day’s open, sell when one of these exits happens. Costs of 0.10% per side are included.</p></div>
+  <div class="exits">
+    <label for="ex-stop">Sell if it falls<input class="inp" id="ex-stop" value="5" inputmode="decimal"><span class="tiny">% below entry</span></label>
+    <label for="ex-tgt">Sell if it rises<input class="inp" id="ex-tgt" value="10" inputmode="decimal"><span class="tiny">% above entry</span></label>
+    <label for="ex-time">Or sell after<input class="inp" id="ex-time" value="20" inputmode="numeric"><span class="tiny">bars (days on daily)</span></label>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="bt" data-i="flask" data-s="16">Backtest 2023 to today</button><span class="tiny" id="bt-note"></span></div>
+  <div class="steps2" id="prog" hidden></div>
+  <div id="btres" hidden style="display:grid;gap:16px"></div>
+</section>
+
+<p class="disclaim">Scans and results are informational only and are not investment advice. QuantSync is not a SEBI-registered investment adviser. Past results do not predict future results.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,api,fmt,auth,PRESETS}=QD;const {icon,spark,state,toast,equity}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+let cat=null,tag='All',picked='rsi-turn',mode='all',conds=[],tf='1D',lastRes=null,lastBt=null;
+const TAGS=['All','QuantSync','Trend','Momentum','Breakout','Volume','Reversal'];
+const flow=[...$('flow').children];const stepTo=k=>flow.forEach((l,i)=>{l.classList.toggle('done',i<k);l.classList.toggle('on',i===k)});
+$('tags').innerHTML=TAGS.map(t=>`<button aria-pressed="${t===tag}" data-t="${t}">${t}</button>`).join('');
+$('tags').onclick=e=>{const b=e.target.closest('button');if(!b)return;tag=b.dataset.t;[...$('tags').children].forEach(x=>x.setAttribute('aria-pressed',x===b));drawPre()};
+function drawPre(){$('presets').innerHTML=PRESETS.filter(p=>tag==='All'||p.tag===tag).map(p=>`<button class="pre" aria-pressed="${p.id===picked}" data-id="${p.id}"><span class="tg ${p.tag==='QuantSync'?'q':''}">${p.tag}${p.tf==='1W'?' · Weekly':''}</span><b>${esc(p.name)}</b><span class="d">${esc(p.blurb)}</span></button>`).join('')}
+$('presets').onclick=e=>{const b=e.target.closest('.pre');if(!b)return;load(b.dataset.id);run()};
+try{cat=await lab.catalog()}catch(e){state($('conds'),'error',{body:e.message,action:'Try again',onAction:()=>location.reload()});return}
+const F=Object.fromEntries(cat.features.map(f=>[f.key,f]));const groups=[...new Set(cat.features.map(f=>f.group))];
+const OPS=cat.operators.filter(o=>o.op!=='in');
+function load(id){const p=PRESETS.find(x=>x.id===id);picked=id;mode=p.mode;tf=p.tf;conds=structuredClone(p.conds);$('mode').value=mode;setTf();drawPre();drawConds()}
+function setTf(){[...$('tf').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===tf))}
+const fieldSel=(v,cls,numOpt)=>`<select class="inp ${cls}" aria-label="Indicator">${numOpt?`<option value="#num" ${v==null?'selected':''}>A number</option>`:''}${groups.map(g=>`<optgroup label="${esc(g)}">${cat.features.filter(f=>f.group===g&&(!numOpt||f.kind!=='bool')).map(f=>`<option value="${f.key}" ${f.key===v?'selected':''}>${esc(f.label)}</option>`).join('')}</optgroup>`).join('')}</select>`;
+function drawConds(){
+  $('conds').innerHTML=conds.map((k,i)=>{const isBool=(F[k.l.f]||{}).kind==='bool';let right='';
+    if(k.op==='is_true')right='<span class="tiny" style="padding-left:6px">No value needed</span>';
+    else if(k.op==='between')right=`<div class="val"><input class="inp num" data-r0 value="${(k.r&&k.r.list||[30,50])[0]}" inputmode="decimal" aria-label="From" style="width:auto;flex:1"><input class="inp num" data-r1 value="${(k.r&&k.r.list||[30,50])[1]}" inputmode="decimal" aria-label="To" style="width:auto;flex:1"></div>`;
+    else right=`<div class="val">${fieldSel(k.r&&k.r.f?k.r.f:null,'rf',true)}${k.r&&k.r.f?'':`<input class="inp num" data-rv value="${k.r&&Number.isFinite(k.r.c)?k.r.c:50}" inputmode="decimal" aria-label="Value">`}</div>`;
+    const ops=isBool?OPS.filter(o=>o.op==='is_true'):OPS.filter(o=>o.op!=='is_true');
+    return `${i?`<div class="cond" style="animation:none"><span class="join">${mode==='all'?'AND':'OR'}</span></div>`:''}<div class="cond" data-i="${i}">${fieldSel(k.l.f,'f lf')}<select class="inp op" aria-label="Comparison">${ops.map(o=>`<option value="${o.op}" ${o.op===k.op?'selected':''}>${esc(o.label)}</option>`).join('')}</select>${right}<button class="x" aria-label="Remove rule">${icon('x',16)}</button></div>`}).join('')||'<p class="small">No rules yet. Add one, or pick a ready-made scan above.</p>';
+  reads();}
+function reads(){const ok=conds.length&&conds.every(QD.validCond);
+  $('reads').innerHTML=conds.length?'Find stocks where '+conds.map(k=>`<span class="tok">${esc(QD.label(cat,k.l.f))}</span> <span class="tok o">${esc(QD.describeCond(cat,{l:k.l,op:k.op}).replace(QD.label(cat,k.l.f),'').trim())}</span> ${k.op==='is_true'?'':k.op==='between'?`<span class="tok">${k.r.list[0]}</span> <span class="tok o">and</span> <span class="tok">${k.r.list[1]}</span>`:`<span class="tok">${esc(k.r&&k.r.f?QD.label(cat,k.r.f):k.r&&k.r.c)}</span>`}`).join(` <span class="tok j">${mode==='all'?'and':'or'}</span> `)+` on the ${tf==='1D'?'daily':'weekly'} chart.`:'Add at least one rule.';
+  $('run').disabled=!ok;$('hint').textContent=ok?'Runs on the latest close across every NSE stock.':'Fill in every value to run.';}
+$('conds').addEventListener('change',e=>{const row=e.target.closest('.cond[data-i]');if(!row)return;const k=conds[+row.dataset.i];
+  if(e.target.matches('.lf')){k.l={f:e.target.value};if(F[k.l.f].kind==='bool'){k.op='is_true';delete k.r}else if(k.op==='is_true'){k.op='>';k.r={c:50}}drawConds()}
+  else if(e.target.matches('.op')){k.op=e.target.value;if(k.op==='is_true')delete k.r;else if(k.op==='between')k.r={list:[30,50]};else if(k.op.startsWith('crosses')&&!(k.r&&k.r.f))k.r={f:'ema_21'};else if(!k.r||k.r.list)k.r={c:50};drawConds()}
+  else if(e.target.matches('.rf')){k.r=e.target.value==='#num'?{c:50}:{f:e.target.value};drawConds()}
+  else if(e.target.matches('[data-rv]'))k.r={c:parseFloat(e.target.value)};
+  else if(e.target.matches('[data-r0]'))k.r.list[0]=parseFloat(e.target.value);
+  else if(e.target.matches('[data-r1]'))k.r.list[1]=parseFloat(e.target.value);
+  picked=null;drawPre();reads();invalidate()});
+$('conds').addEventListener('click',e=>{const b=e.target.closest('.x');if(!b)return;conds.splice(+b.closest('.cond').dataset.i,1);picked=null;drawPre();drawConds();invalidate()});
+$('add').onclick=()=>{if(conds.length>=12){toast('Up to 12 rules per scan.');return}conds.push({l:{f:'rsi_14'},op:'>',r:{c:50}});picked=null;drawPre();drawConds()};
+$('clear').onclick=()=>{conds=[];picked=null;drawPre();drawConds();invalidate()};
+$('mode').onchange=e=>{mode=e.target.value;drawConds();invalidate()};
+$('tf').addEventListener('change',e=>{tf=e.detail;reads();invalidate()});
+function invalidate(){if(lastBt){lastBt=null;$('btres').hidden=true;$('bt-note').textContent='Rules changed. Backtest again to see results.'}}
+const rule=()=>QD.toRule(mode,conds);
+
+async function run(quiet){
+  if(!conds.length||!conds.every(QD.validCond))return;
+  $('run').disabled=true;$('run').innerHTML='<span class="spin"></span> Scanning';
+  state($('rbody'),'loading',{n:6});if(!quiet)$('results').scrollIntoView({behavior:QS.RM?'auto':'smooth',block:'nearest'});
+  try{
+    const r=await lab.scan(tf,rule());lastRes=r;
+    $('rc').innerHTML=`<b>${fmt.int(r.count)}</b> ${r.count===1?'stock matches':'stocks match'}`;$('asof').textContent=r.as_of?`As of close, ${fmt.dateY(r.as_of)}`:'';
+    if(!r.rows.length){state($('rbody'),'empty',{title:'No stocks match right now',body:'Loosen a rule (for example a lower threshold) and try again.',icon:'filter'})}
+    else{const rows=r.rows;const top=rows.slice(0,25).map(x=>x.symbol);
+      const [xr,cb]=await Promise.all([api.xray(top),lab.chartBatch(top,60,tf).catch(()=>({bars:{}}))]);
+      const show=k=>{$('rbody').innerHTML=`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Stock</th><th class="rt">Close</th><th class="rt">Today</th><th class="rt">RSI</th><th class="rt">Volume</th><th>3 months</th><th class="rt">X-Ray</th></tr></thead><tbody>${rows.slice(0,k).map((x,i)=>{const X=xr[x.symbol]||{},t=QD.scoreTone(X.score);return `<tr class="in" style="animation-delay:${Math.min(i,20)*35}ms;cursor:pointer" data-s="${esc(x.symbol)}"><td><b>${esc(x.symbol)}</b><div class="tiny">${esc(X.name&&X.name!==x.symbol?X.name:'')}</div></td><td class="rt">${fmt.inr(x.close)}</td><td class="rt ${fmt.tone(x.ret_1)}" style="font-weight:700">${fmt.pct(x.ret_1)}</td><td class="rt">${QD.ok(x.rsi_14)?Math.round(x.rsi_14):'—'}</td><td class="rt">${QD.ok(x.vol_ratio)?x.vol_ratio.toFixed(1)+'×':'—'}</td><td><div class="sp chart" data-sp="${esc(x.symbol)}"></div></td><td class="rt">${QD.ok(X.score)?`<span class="xs" style="background:color-mix(in srgb,${t.c} 16%,transparent);color:${t.c}">${X.score}</span>`:'<span class="mute">—</span>'}</td></tr>`}).join('')}</tbody></table></div>${rows.length>k?`<div class="more"><button class="btn sm" id="more">Show ${Math.min(25,rows.length-k)} more</button></div>`:''}<p class="tiny" style="margin-top:10px">X-Ray is a 0–100 health score for the company. Tap a row to open it.${r.count>rows.length?` Showing the first ${rows.length} of ${fmt.int(r.count)}.`:''}</p>`;
+        $('rbody').querySelectorAll('[data-sp]').forEach(el=>{const b=(cb.bars||{})[el.dataset.sp];if(b&&b.length>2){const d=b.map(z=>z.close);spark(el,d,d[d.length-1]>=d[0]?'var(--up)':'var(--dn)')}});
+        $('rbody').querySelectorAll('tr[data-s]').forEach(tr=>tr.onclick=()=>location.href='xray.html?s='+encodeURIComponent(tr.dataset.s));
+        const m=$('more');if(m)m.onclick=async()=>{const nk=k+25;const extra=rows.slice(k,nk).map(x=>x.symbol);Object.assign(xr,await api.xray(extra));const cb2=await lab.chartBatch(extra,60,tf).catch(()=>({bars:{}}));Object.assign(cb.bars=cb.bars||{},cb2.bars||{});show(nk)}};
+      show(25);}
+    $('test').hidden=false;stepTo(2);
+  }catch(e){state($('rbody'),'error',{body:e.message,action:'Try again',onAction:()=>run()});$('rc').textContent='The scan did not run'}
+  finally{$('run').disabled=false;$('run').innerHTML=icon('play',14)+' Show matches'}
+}
+$('run').onclick=()=>run();
+
+$('bt').onclick=async()=>{
+  if(!auth.user){toast('Sign in to backtest. It is free.');try{await auth.signIn()}catch(e){toast(e.message);return}if(!auth.user)return}
+  const ex=QD.buildExit($('ex-stop').value,$('ex-tgt').value,$('ex-time').value);
+  const p=$('prog');p.hidden=false;$('btres').hidden=true;$('bt').disabled=true;$('bt-note').textContent='';
+  p.innerHTML=`<div class="on"><span class="ic"><span class="spin" style="width:14px;height:14px"></span></span><span id="pstage">Starting</span></div><div class="bar"><i id="pbar" style="width:3%"></i></div>`;
+  try{
+    const {job_id}=await lab.backtest(tf,rule(),ex);
+    const j=await QD.waitJob(job_id,x=>{$('pstage').textContent=x.status==='queued'?`In line${x.position?' · position '+x.position:''}${x.eta_s?' · about '+Math.max(1,Math.round(x.eta_s/60))+' min':''}`:(x.stage||'Working');$('pbar').style.width=Math.max(3,x.progress||0)+'%'});
+    lastBt={res:j.result,exit:ex,tf,rule:rule()};showBt(j.result);stepTo(3);
+  }catch(e){p.innerHTML=`<p class="dn" style="font-weight:600">${esc(e.message)}</p>`;return}
+  finally{$('bt').disabled=false}
+  p.hidden=true;
+};
+async function showBt(r){
+  const a=r.summary.All||{},an=r.analytics||{};const yrs=r.years||[];
+  const st=new Date((an.first_date||'2023-01-01')+'T00:00:00').toISOString().slice(0,10);const bench=(await lab.benchmark(st,tf)).points;
+  $('btres').hidden=false;
+  $('btres').innerHTML=`<div class="kpis">
+    <div class="kpi"><span class="l">Trades</span><span class="v">${fmt.int(a.trades)}</span><span class="h">${an.first_date?`${fmt.date(an.first_date)} ${an.first_date.slice(0,4)} to ${fmt.date(an.last_date)} ${String(an.last_date).slice(0,4)}`:''}</span></div>
+    <div class="kpi"><span class="l">Made money</span><span class="v ${a.win_rate>=50?'up':''}">${fmt.plain(a.win_rate)}</span><span class="h">${fmt.int(a.wins)} of ${fmt.int(a.trades)}</span></div>
+    <div class="kpi"><span class="l">Average per trade</span><span class="v ${fmt.tone(a.avg_ret)}">${fmt.pct(a.avg_ret,2)}</span><span class="h">after costs</span></div>
+    <div class="kpi"><span class="l">Worst fall from a peak</span><span class="v dn">${fmt.pct(a.max_dd)}</span><span class="h">profit factor ${a.profit_factor??'—'}</span></div></div>
+   <div class="panel pad"><div class="legend" style="margin-bottom:6px"><span><i style="--c:var(--brand)"></i>Your scan</span>${bench&&bench.length?'<span><i class="dash" style="--c:var(--ink3)"></i>Nifty 50</span>':''}<span class="tiny" style="margin-left:auto">Value of ₹1,00,000 following every match</span></div><div class="chart" id="eq"></div></div>
+   <div class="yrbars" style="grid-template-columns:repeat(${Math.min(4,yrs.length||1)},minmax(0,1fr))">${yrs.map(y=>{const s=r.summary[String(y)]||{};return `<div><small>${y}${y===new Date().getFullYear()?' so far':''}</small><b class="${s.win_rate>=50?'up':''}">${fmt.plain(s.win_rate)}</b><small>won · ${fmt.int(s.trades)} trades · avg ${fmt.pct(s.avg_ret)}</small></div>`}).join('')}</div>
+   <div class="aicard" style="border-radius:18px;padding:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="pill ai">${icon('spark',13)}Next step</span><b>Save it, then let the AI try to make it better</b></div>
+     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end"><label style="display:grid;gap:6px;font-size:12.5px;font-weight:650;color:var(--ink2);flex:1;min-width:200px" for="nm">Strategy name<input class="inp" id="nm" maxlength="60" value="${esc((PRESETS.find(p=>p.id===picked)||{}).name||'My scan')}${tf==='1W'?', weekly':''}"></label><button class="btn ai" id="save">${icon('save',16)}Save and open</button></div>
+     <p class="tiny">Saving starts a live record from the latest close and switches on alerts for it. Past results are tests, not a forecast.</p></div>`;
+  equity($('eq'),an.equity,{bench,h:250,name:'Your scan'});
+  $('save').onclick=async()=>{const nm=$('nm').value.trim();if(nm.length<2){toast('Give it a name of at least 2 letters.');return}
+    $('save').disabled=true;$('save').innerHTML='<span class="spin"></span> Saving';
+    try{const s=await lab.createStrategy({name:nm,tf:lastBt.tf,entry:lastBt.rule,exit:lastBt.exit});location.href='strategy.html?id='+s.id+'#ai'}
+    catch(e){toast(e.message);$('save').disabled=false;$('save').innerHTML=icon('save',16)+'Save and open'}};
+  $('btres').scrollIntoView({behavior:QS.RM?'auto':'smooth',block:'start'});
+}
+
+// start: a strategy's rules (?from=id), else the default preset
+const from=QD.param('from');
+if(from){try{const s=await lab.strategy(from);const fr=QD.fromRule(s.info.entry);if(fr.nested)toast('This strategy has grouped rules. Showing the default scan instead.');else{mode=fr.mode;conds=fr.conds;tf=s.tf;picked=null;$('mode').value=mode;setTf();
+  const ex=(s.info.exit&&s.info.exit.any)||[];ex.forEach(x=>{if(x.type==='stop_pct')$('ex-stop').value=x.v;if(x.type==='target_pct')$('ex-tgt').value=x.v;if(x.type==='time')$('ex-time').value=x.v});drawPre();drawConds();run(true);return}}catch(e){toast(e.message)}}
+load('rsi-turn');run(true);
+});
+</script>
+</body></html>

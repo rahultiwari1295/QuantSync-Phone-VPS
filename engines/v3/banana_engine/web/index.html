@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>BananaPatterns — Institutional Breakout &amp; Alpha Gating Engine</title>
+
+  <!-- Google Fonts for crisp financial typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/style.css">
+
+  <!-- TradingView Lightweight Charts Standalone Production Library -->
+  <script src="/static/lightweight-charts.standalone.production.js"></script>
+</head>
+<body class="light-mode">
+  <div id="app-root">
+
+    <!-- TOP INSTITUTIONAL HEADER (Matching BananaPatterns Master Standard) -->
+    <header class="app-header">
+      <div class="header-container">
+        <!-- Left: Logo & Tagline -->
+        <div class="brand-group" onclick="switchTab('to_buy')">
+          <div class="brand-logo">
+            <span class="banana-icon">🍌</span>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">BananaPatterns</div>
+            <div class="brand-sub">Risk first, always.</div>
+          </div>
+        </div>
+
+        <!-- Center: Search Capsule -->
+        <div class="header-search-capsule">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="top-search-input" placeholder="Search any stock" oninput="onSearchChange(this.value)">
+        </div>
+
+        <!-- Right: Institutional Nav Links & Profile (Buy Now / Ongoing / Closed / Sim) -->
+        <div class="header-nav-group">
+          <button class="header-nav-item active" id="nav-btn-signal" onclick="switchTab('to_buy')" title="Fresh Actionable Breakout Setups (Triggered Within 2-3 Days & ≤+3%)">
+            <span class="nav-icon">⚡</span>
+            <span>Buy Now</span>
+            <span class="nav-count-badge" id="count-to-buy">0</span>
+          </button>
+          <button class="header-nav-item" id="nav-btn-ongoing" onclick="switchTab('ongoing')" title="Active Swing Positions (Climbing)">
+            <span class="nav-icon">📈</span>
+            <span>Ongoing</span>
+            <span class="nav-count-badge" id="count-ongoing">0</span>
+          </button>
+          <button class="header-nav-item" id="nav-btn-closed" onclick="switchTab('closed')" title="Verified Closed Trades Track Record">
+            <span class="nav-icon">📜</span>
+            <span>Closed</span>
+            <span class="nav-count-badge" id="count-closed">368</span>
+          </button>
+          <button class="header-nav-item" id="nav-btn-sim" onclick="switchTab('sim')" title="Dynamic ₹10k Backtest Simulation">
+            <span class="nav-icon">🎯</span>
+            <span>Sim</span>
+          </button>
+
+          <div class="header-divider"></div>
+
+          <!-- Observability link -->
+          <a href="/dashboard" class="header-action-pill" title="Observability Dashboard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Observability</span>
+          </a>
+
+          <!-- Theme Toggle -->
+          <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-toggle" title="Toggle Light/Dark Theme">
+            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+
+          <!-- User Profile -->
+          <div class="user-profile-capsule" title="Rahul Tiwari">
+            <div class="user-avatar">R</div>
+            <span class="user-name">Rahul Tiwari</span>
+            <span class="user-chevron">▾</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SLEEK SUB-TOOLBAR & CONVICTION GATE STRIP -->
+    <div class="sub-toolbar-strip" id="signals-toolbar">
+      <div class="toolbar-container">
+        <!-- 4 Champion Strategies Filter Pills -->
+        <div class="gate-filter-pills strategy-filter-pills" id="gate-filter-pills">
+          <span class="gate-lbl">Strategy:</span>
+          <button class="gate-pill-btn all-pill active" id="strat-btn-ALL" onclick="setStrategyFilter('ALL')">⭐ All Strategies</button>
+          <button class="gate-pill-btn htf-pill" id="strat-btn-HTF" onclick="setStrategyFilter('HTF')">🚀 HTF Flag</button>
+          <button class="gate-pill-btn base-pill" id="strat-btn-BASE" onclick="setStrategyFilter('BASE')">🏛️ Ultra Base</button>
+          <button class="gate-pill-btn high52-pill" id="strat-btn-52W_HIGH" onclick="setStrategyFilter('52W_HIGH')">📈 52W High</button>
+          <button class="gate-pill-btn darvas-pill" id="strat-btn-DARVAS" onclick="setStrategyFilter('DARVAS')">📦 Darvas Box</button>
+        </div>
+
+        <div class="toolbar-middle-status">
+          <span class="active-count-chip" id="active-count-chip">Showing conviction setups</span>
+        </div>
+
+        <!-- Sort & View Toggle -->
+        <div class="toolbar-right-controls">
+          <select id="sort-select" onchange="changeSort(this.value)" class="sort-dropdown">
+            <option value="gate_score" selected>Rank: Gate Score</option>
+            <option value="rs_rating">Rank: RS Rating</option>
+            <option value="daily_pct">Day Gain (%)</option>
+            <option value="breakout_volume_ratio">Breakout Volume</option>
+            <option value="now_vs_pivot_pct">Distance to Pivot</option>
+          </select>
+
+          <div class="view-mode-toggle">
+            <button class="mode-btn active" id="mode-btn-cards" onclick="setViewMode('cards')" title="Card View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="mode-btn" id="mode-btn-table" onclick="setViewMode('table')" title="Table View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP VIEWPORTS -->
+    <main class="main-content-viewport">
+
+      <!-- SECTION 1: SIGNAL STAGES (To Buy, Ongoing, Upcoming, Closed) -->
+      <section class="signals-view-panel" id="signals-panel">
+        <!-- Closed Trades Verified Track Record KPI Summary Strip (shown in Closed tab) -->
+        <div class="closed-kpi-summary-strip hidden" id="closed-kpi-strip">
+          <!-- Dynamically populated by updateClosedKPIStrip() -->
+        </div>
+
+        <!-- Cards Grid Container -->
+        <div class="cards-responsive-grid" id="cards-container">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Table View Container -->
+        <div class="table-responsive-container hidden" id="table-container">
+          <table class="signals-data-table">
+            <thead id="signals-table-head">
+              <!-- Dynamically populated based on active tab -->
+            </thead>
+            <tbody id="signals-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 2: SIMULATION & CAPITAL BACKTEST DASHBOARD -->
+      <section class="simulation-view-panel hidden" id="simulation-panel">
+        <div class="sim-container">
+
+          <!-- Simulation Top Hero Controls -->
+          <div class="sim-hero-card">
+            <div class="sim-hero-header">
+              <div class="sim-title-group">
+                <span class="sim-badge">PORTFOLIO CAPITAL SIMULATOR</span>
+                <h2 class="sim-title">Dynamic Capital Growth &amp; Month-by-Month Returns</h2>
+                <div class="sim-desc">Simulates compounding returns on historical (2025) and strict Out-of-Sample (2026) verified trade setups.</div>
+              </div>
+
+              <!-- Interactive Trade Sample Size Selector -->
+              <div class="sim-input-box">
+                <label for="sample-size-input" class="sim-input-lbl">Allocation Per Trade:</label>
+                <div class="sim-input-row">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" id="sample-size-input" value="10000" min="1000" step="5000" onchange="onSampleSizeChange(this.value)">
+                </div>
+                <div class="quick-pills-row">
+                  <button class="quick-pill active" onclick="setQuickSample(10000)">₹10k (Default)</button>
+                  <button class="quick-pill" onclick="setQuickSample(25000)">₹25k</button>
+                  <button class="quick-pill" onclick="setQuickSample(50000)">₹50k</button>
+                  <button class="quick-pill" onclick="setQuickSample(100000)">₹1 Lakh</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Simulation KPI Summary Cards -->
+            <div class="sim-kpi-grid">
+              <div class="sim-kpi-card highlight-kpi">
+                <span class="kpi-lbl">Total Realized Net Return</span>
+                <span class="kpi-val green" id="sim-kpi-net-inr">+₹8,47,200</span>
+                <span class="kpi-sub" id="sim-kpi-net-pct">+847.2% on capital</span>
+              </div>
+              <div class="sim-kpi-card">
+                <span class="kpi-lbl">Profit Factor (PF)</span>
+                <span class="kpi-val" id="sim-kpi-pf">4.12</span>
+                <span class="kpi-sub" id="sim-kpi-pf-sub">2026 OOS Verified</span>
+              </div>
+              <div class="sim-kpi-card">
+                <span class="kpi-lbl">Win Rate</span>
+                <span class="kpi-val green" id="sim-kpi-winrate">56.5%</span>
+                <span class="kpi-sub" id="sim-kpi-win-count">48 Wins / 37 Losses</span>
+              </div>
+              <div class="sim-kpi-card">
+                <span class="kpi-lbl">Avg Win / Avg Loss</span>
+                <span class="kpi-val" id="sim-kpi-avg-win">+₹2,200 <small>/ -₹690</small></span>
+                <span class="kpi-sub">+22.0% Win / -6.9% Stop</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Equity Growth Curve (Lightweight Charts Area Series) -->
+          <div class="sim-chart-card">
+            <div class="sim-card-header">
+              <div class="sim-card-title-row">
+                <span class="sim-card-title">📈 Cumulative Capital Equity Curve (₹)</span>
+                <span class="sim-chart-hint">Powered by TradingView Lightweight Charts</span>
+              </div>
+              <div class="sim-cohort-picker">
+                <button class="sim-cohort-btn active" id="sim-cohort-ALL" onclick="switchSimCohort('ALL')">⭐ All Strategies</button>
+                <button class="sim-cohort-btn" id="sim-cohort-HTF" onclick="switchSimCohort('HTF')">🚀 HTF Flag</button>
+                <button class="sim-cohort-btn" id="sim-cohort-BASE" onclick="switchSimCohort('BASE')">🏛️ Ultra Base</button>
+                <button class="sim-cohort-btn" id="sim-cohort-52W_HIGH" onclick="switchSimCohort('52W_HIGH')">📈 52W High</button>
+                <button class="sim-cohort-btn" id="sim-cohort-DARVAS" onclick="switchSimCohort('DARVAS')">📦 Darvas Box</button>
+              </div>
+            </div>
+            <div id="sim-equity-chart-container" class="sim-chart-surface"></div>
+          </div>
+
+          <!-- Month-by-Month Money Return Matrix Table -->
+          <div class="sim-table-card">
+            <div class="sim-card-header">
+              <span class="sim-card-title">📅 Month-by-Month Trade &amp; Capital Breakdown</span>
+              <span class="sim-table-hint">Green: Profit Factor &ge; 1.50</span>
+            </div>
+            <div class="sim-table-responsive">
+              <table class="sim-data-table">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Cohort Period</th>
+                    <th>Trades</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Win Rate %</th>
+                    <th>Gross Profit (₹)</th>
+                    <th>Gross Loss (₹)</th>
+                    <th>Net Return (₹)</th>
+                    <th>Profit Factor</th>
+                    <th>Cumulative (₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="sim-monthly-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- TRADINGVIEW LIGHTWEIGHT CHARTS MODAL (TARGET + SL IN-CHART OVERLAYS) -->
+    <div id="tv-chart-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-dialog tv-modal-dialog">
+
+        <!-- Modal Top Bar -->
+        <div class="tv-modal-header">
+          <div class="tv-stock-headline">
+            <div class="tv-sym-group">
+              <h2 class="tv-stock-symbol" id="tv-modal-symbol">JINDWORLD</h2>
+              <span class="tv-stock-company" id="tv-modal-company">Jindal Worldwide Ltd</span>
+              <span class="tv-pattern-badge" id="tv-modal-pattern-badge">CHAMPION STRATEGY</span>
+              <span class="tv-gate-badge" id="tv-modal-status-badge">🟢 ACTIVE SETUP</span>
+            </div>
+            <div class="tv-price-group">
+              <span class="tv-current-price" id="tv-modal-price">₹57.50</span>
+              <span class="tv-day-gain green" id="tv-modal-gain">+4.8%</span>
+            </div>
+          </div>
+
+          <div class="tv-header-right">
+            <!-- Structured, Beautiful Trade Overview Card -->
+            <div class="tv-trade-overview-card" id="tv-trade-overview-card">
+              <div class="tv-ov-col tv-ov-entry-col">
+                <div class="tv-ov-item">
+                  <span class="tv-ov-icon">⚡</span>
+                  <div class="tv-ov-content">
+                    <span class="tv-ov-label">Entry</span>
+                    <div class="tv-ov-val-wrap">
+                      <strong class="tv-ov-val" id="tv-ov-entry">₹378.00</strong>
+                      <span class="tv-ov-sub" id="tv-ov-entry-date">(2026-09-11)</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="tv-ov-item">
+                  <span class="tv-ov-icon" id="tv-ov-current-icon">📍</span>
+                  <div class="tv-ov-content">
+                    <span class="tv-ov-label" id="tv-ov-current-lbl">Current</span>
+                    <div class="tv-ov-val-wrap">
+                      <strong class="tv-ov-val" id="tv-ov-current">₹378.00</strong>
+                      <span class="tv-ov-meta green" id="tv-ov-current-meta">+0.0%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tv-ov-divider"></div>
+
+              <div class="tv-ov-col tv-ov-target-col">
+                <div class="tv-ov-item">
+                  <span class="tv-ov-icon">🎯</span>
+                  <div class="tv-ov-content">
+                    <span class="tv-ov-label">Target</span>
+                    <div class="tv-ov-val-wrap">
+                      <strong class="tv-ov-val green" id="tv-ov-target">₹430.86</strong>
+                      <span class="tv-ov-meta green" id="tv-ov-target-pct">(+14.0%)</span>
+                      <span class="tv-ov-left-tag" id="tv-ov-target-left">14.0% left</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="tv-ov-item">
+                  <span class="tv-ov-icon">🛑</span>
+                  <div class="tv-ov-content">
+                    <span class="tv-ov-label">SL</span>
+                    <div class="tv-ov-val-wrap">
+                      <strong class="tv-ov-val red" id="tv-ov-stop">₹370.49</strong>
+                      <span class="tv-ov-meta red" id="tv-ov-stop-pct">(-2.0%)</span>
+                      <span class="tv-ov-risk-tag" id="tv-ov-stop-left">Risk: 2.0%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Red Close Button on Right Corner Side -->
+          <button class="tv-modal-close-btn" id="tv-modal-close-btn" onclick="closeTradingViewModal()" title="Close chart (Esc)">✕</button>
+        </div>
+
+        <!-- Modal Body (Two Column Layout on Desktop, Fluid Stack on Mobile) -->
+        <div class="tv-modal-body">
+
+          <!-- Left Column: TradingView Lightweight Charts Surface -->
+          <div class="tv-chart-viewport-col">
+            <!-- Chart Legend & Timeframes Strip -->
+            <div class="tv-chart-controls-strip">
+              <div class="tv-legend-bar" id="tv-chart-legend">
+                <span class="leg-item"><span class="leg-lbl">O:</span> <strong id="leg-open">-</strong></span>
+                <span class="leg-item"><span class="leg-lbl">H:</span> <strong id="leg-high">-</strong></span>
+                <span class="leg-item"><span class="leg-lbl">L:</span> <strong id="leg-low">-</strong></span>
+                <span class="leg-item"><span class="leg-lbl">C:</span> <strong id="leg-close">-</strong></span>
+                <span class="leg-item"><span class="leg-lbl">Vol:</span> <strong id="leg-vol">-</strong></span>
+                <span class="leg-item leg-rr"><span class="leg-lbl">R:R:</span> <strong id="leg-rr" class="green">2.25×</strong></span>
+              </div>
+
+              <div class="tv-timeframe-btns">
+                <button class="tf-btn" onclick="zoomChartDays(30)">1M</button>
+                <button class="tf-btn active" onclick="zoomChartDays(90)">3M</button>
+                <button class="tf-btn" onclick="zoomChartDays(180)">6M</button>
+                <button class="tf-btn" onclick="fitChartAll()">All</button>
+              </div>
+            </div>
+
+            <!-- Institutional Studies Indicator Strip -->
+            <div class="tv-studies-legend-bar" id="tv-studies-legend">
+              <div class="study-chip" title="10 Exponential Moving Average (Momentum Guide)">
+                <span class="chip-dot dot-ema10"></span>
+                <span class="chip-name">EMA 10</span>
+                <strong class="chip-val" id="tv-val-ema10">-</strong>
+              </div>
+              <div class="study-chip" title="20 Exponential Moving Average (Trend Guide)">
+                <span class="chip-dot dot-ema20"></span>
+                <span class="chip-name">EMA 20</span>
+                <strong class="chip-val" id="tv-val-ema20">-</strong>
+              </div>
+              <div class="study-chip" title="50 Simple Moving Average (Institutional Base Support)">
+                <span class="chip-dot dot-sma50"></span>
+                <span class="chip-name">SMA 50</span>
+                <strong class="chip-val" id="tv-val-sma50">-</strong>
+              </div>
+              <div class="study-chip" id="tv-chip-pivot" title="Structural Breakout Pivot Level">
+                <span class="chip-dot dot-pivot"></span>
+                <span class="chip-name">Pivot</span>
+                <strong class="chip-val" id="tv-val-pivot">-</strong>
+              </div>
+              <div class="study-chip" id="tv-chip-base" style="display:none;" title="Base Consolidation Coiling Structure">
+                <span class="chip-dot dot-base"></span>
+                <span class="chip-name">Base</span>
+                <strong class="chip-val" id="tv-val-base">-</strong>
+              </div>
+            </div>
+
+            <!-- Candlestick + Volume Chart DOM Element with TradingView Forecast Overlay -->
+            <div id="tradingview-chart-container" class="tradingview-chart-surface">
+              <canvas id="tv-forecast-canvas" class="tv-forecast-canvas-overlay"></canvas>
+            </div>
+          </div>
+
+          <!-- Right Column: Institutional Trade Intelligence & Sizing Drawer -->
+          <div class="tv-intel-sidebar-col">
+
+            <!-- Card 1: Machine Learning Action Verdict -->
+            <div class="intel-card verdict-card">
+              <div class="intel-card-header">
+                <span class="intel-card-title">ML Action Verdict</span>
+                <span class="intel-badge" id="tv-intel-verdict-badge">HIGH ASYMMETRY</span>
+              </div>
+              <div class="verdict-banner-box" id="tv-verdict-banner">
+                <div class="v-headline" id="tv-verdict-title">🟢 GO FOR IT</div>
+                <div class="v-sub" id="tv-verdict-desc">Strong asymmetric upside (+22%) with 2.8× reward-to-risk ratio. High conviction setup.</div>
+              </div>
+            </div>
+
+            <!-- Card 2: Path Expectancy & Probability Odds -->
+            <div class="intel-card">
+              <div class="intel-card-header">
+                <span class="intel-card-title">Path Expectancy &amp; Probabilities</span>
+                <span class="intel-sub">LightGBM OOS Validated</span>
+              </div>
+              <div class="prob-progress-bar-wrap">
+                <div class="prob-labels-row">
+                  <span class="prob-up-lbl" id="tv-prob-up-lbl">P(Target Up): 78%</span>
+                  <span class="prob-down-lbl" id="tv-prob-down-lbl">P(Stop Dip): 22%</span>
+                </div>
+                <div class="prob-meter-bar">
+                  <div class="prob-meter-fill green-fill" id="tv-prob-meter-fill" style="width: 78%;"></div>
+                </div>
+              </div>
+              <div class="milestones-grid">
+                <div class="milestone-cell">
+                  <span class="m-lbl">P(&ge; +10% Run)</span>
+                  <strong class="m-val green" id="tv-p-g10">72.4%</strong>
+                </div>
+                <div class="milestone-cell">
+                  <span class="m-lbl">P(&ge; +20% Run)</span>
+                  <strong class="m-val green" id="tv-p-g20">44.8%</strong>
+                </div>
+                <div class="milestone-cell">
+                  <span class="m-lbl">Expected Upside</span>
+                  <strong class="m-val green" id="tv-exp-upside">+22.4%</strong>
+                </div>
+                <div class="milestone-cell">
+                  <span class="m-lbl">Expected Downside</span>
+                  <strong class="m-val red" id="tv-exp-downside">-6.8%</strong>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

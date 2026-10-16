@@ -1,0 +1,17 @@
+{
+  "description": "Layer 3: Cross-Sectional Ranking, Regime Modulation, Rolling Feedback",
+  "benchmark_results": {
+    "trades_yr": 319,
+    "wr": 31.8,
+    "ann_r": 77.2,
+    "pf": 1.36,
+    "max_dd_r": 29.3,
+    "sharpe": 2.79,
+    "avg_hold": 8.4
+  },
+  "annual_r_lift_vs_static": 42.1,
+  "acceptance_criteria": {
+    "annual_r_improves": true,
+    "max_drawdown_stable": true
+  }
+}

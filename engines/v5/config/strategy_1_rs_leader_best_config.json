@@ -1,0 +1,69 @@
+{
+  "strategy_id": "RS_LEADER_REFINED",
+  "strategy_name": "RS Leader Refined (Cross-Sectional Momentum Breakout)",
+  "version": "11.0_PRODUCTION_CANDIDATE",
+  "status": "VALIDATED_OOS",
+  "target_annual_trades": "50-60",
+  "core_screening": {
+    "min_price": 20.0,
+    "min_daily_turnover": 2500000.0,
+    "require_close_gt_open": true,
+    "breakout_lookback_bars": 20,
+    "require_c_gt_ema50": true,
+    "cross_sectional_rs60_percentile": 80.0
+  },
+  "loser_blocking_hard_gates": {
+    "max_risk_pct": 7.0,
+    "max_chase_pct": 3.5,
+    "max_dist_sma200_pct": 55.0,
+    "max_upper_wick_pct": 0.12,
+    "min_close_in_range": 0.70,
+    "min_turnover_cr": 0.50,
+    "require_p_above_vma48": true,
+    "max_base_depth_pct": 28.0
+  },
+  "institutional_sponsorship": {
+    "min_volume_ratio_20d": 2.0
+  },
+  "dual_ml_ensemble": {
+    "lgb_model_path": "quantsync_v11/models/saved_models/lgb_rs_leader.pkl",
+    "xgb_model_path": "quantsync_v11/models/saved_models/xgb_rs_leader.pkl",
+    "min_ensemble_probability": 0.55,
+    "high_conviction_threshold": 0.62
+  },
+  "exit_architecture": {
+    "primary_mode": "EMA20_TRAIL_PROTECT",
+    "slippage_buffer_pct": 0.20,
+    "initial_stop": "min(Candle_Low, Entry * 0.94)",
+    "profit_ratchet_trigger_r": 2.0,
+    "profit_ratchet_lock_r": 0.5,
+    "trailing_ema20_min_days": 3,
+    "trailing_ema20_only_in_profit": true,
+    "alternative_two_tranche": {
+      "tranche_1_target_r": 2.5,
+      "tranche_1_fraction": 0.5,
+      "tranche_2_trail": "EMA20"
+    },
+    "max_holding_days": 60
+  },
+  "empirical_benchmarks": {
+    "in_sample_2018_2024": {
+      "trades_per_year": 20.6,
+      "win_rate_pct": 48.6,
+      "profit_factor": 2.11,
+      "payoff_ratio": 2.23,
+      "avg_win_pct": 14.2,
+      "avg_loss_pct": 6.4
+    },
+    "out_of_sample_2025_2026": {
+      "trades_per_year": 57.1,
+      "total_trades": 97,
+      "win_rate_pct": 40.2,
+      "profit_factor": 1.56,
+      "payoff_ratio": 2.31,
+      "avg_win_pct": 14.4,
+      "avg_loss_pct": 6.2,
+      "cumulative_pnl_pct": 200.4
+    }
+  }
+}

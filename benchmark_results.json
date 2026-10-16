@@ -1,0 +1,80 @@
+{
+  "Qwen 2.5 (1.5B Instruct)": {
+    "disk_size_mb": 941,
+    "format": "Q4_K_M GGUF",
+    "boot_time_sec": 3.54,
+    "ram_idle_mb": 1628.4,
+    "tests": [
+      {
+        "id": "trade_thesis",
+        "name": "Task 1: Pattern Trade Thesis",
+        "latency_sec": 6.45,
+        "prompt_tokens": 74,
+        "prompt_tps": 40.98,
+        "gen_tokens": 75,
+        "gen_tps": 15.94,
+        "output": "NURECA's 24-day consolidation breakout on 4.2x volume suggests a strong reversal signal, likely due to a significant price move. The RSI at 62 indicates a balanced market sentiment, favoring a continuation of the trend. Given the breakout and volume, a potential trade thesis is to enter a long position with a stop-loss set at"
+      },
+      {
+        "id": "risk_math",
+        "name": "Task 2: Financial Math & Risk Management",
+        "latency_sec": 5.88,
+        "prompt_tokens": 63,
+        "prompt_tps": 35.32,
+        "gen_tokens": 65,
+        "gen_tps": 15.63,
+        "output": "### Risk Amount per Share\nThe risk amount per share is calculated by subtracting the stop loss from the stock entry price.\n\n\\[\n\\text{Risk Amount per Share} = \\text{Stock Entry Price} - \\text{Stop Loss}\n\\]\n\n\\[\n\\text{Risk Amount per Share} = 3"
+      },
+      {
+        "id": "json_structured",
+        "name": "Task 3: Structured JSON Output",
+        "latency_sec": 5.11,
+        "prompt_tokens": 64,
+        "prompt_tps": 39.18,
+        "gen_tokens": 52,
+        "gen_tps": 14.68,
+        "output": "```json\n{\n  \"ticker\": \"TRENT\",\n  \"action\": \"BUY\",\n  \"entry\": 7150,\n  \"stop_loss\": 6950,\n  \"confidence\": \"very high\"\n}\n```"
+      }
+    ],
+    "ram_peak_mb": 1642.2
+  },
+  "Llama 3.2 (1B Instruct)": {
+    "disk_size_mb": 1260,
+    "format": "Q8_0 GGUF",
+    "boot_time_sec": 5.01,
+    "ram_idle_mb": 1367.1,
+    "tests": [
+      {
+        "id": "trade_thesis",
+        "name": "Task 1: Pattern Trade Thesis",
+        "latency_sec": 7.48,
+        "prompt_tokens": 72,
+        "prompt_tps": 42.36,
+        "gen_tokens": 75,
+        "gen_tps": 12.81,
+        "output": "Here's a concise, institutional rationale for a potential trade:\n\n**Trade Thesis:** Buy NURECA at 364.80 with a stop at 364.00, targeting 365.50, based on a 24-day consolidation breakout on 4.2x volume and a strong RSI reading of 62, indicating a potential reversal from a downtrend. This"
+      },
+      {
+        "id": "risk_math",
+        "name": "Task 2: Financial Math & Risk Management",
+        "latency_sec": 6.02,
+        "prompt_tokens": 57,
+        "prompt_tps": 43.46,
+        "gen_tokens": 65,
+        "gen_tps": 13.59,
+        "output": "To calculate the risk amount per share, we need to first calculate the potential loss per share.\n\nPotential loss = Stop loss - Entry price\n= 351.00 - 364.80\n= 36.20\n\nRisk amount per share = Potential loss / Number of shares\n= 36.20 / 1"
+      },
+      {
+        "id": "json_structured",
+        "name": "Task 3: Structured JSON Output",
+        "latency_sec": 5.61,
+        "prompt_tokens": 60,
+        "prompt_tps": 35.96,
+        "gen_tokens": 44,
+        "gen_tps": 10.92,
+        "output": "{\n  \"ticker\": \"TRENT\",\n  \"action\": \"BUY\",\n  \"entry\": 7150,\n  \"stop_loss\": 6950,\n  \"confidence\": \"very high\"\n}"
+      }
+    ],
+    "ram_peak_mb": 1382.0
+  }
+}

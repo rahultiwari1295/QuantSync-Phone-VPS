@@ -1,0 +1,18 @@
+[Unit]
+Description=QuantSync Multi-Engine Autonomous Trading Scheduler
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/quantsync
+ExecStart=/root/quantsync/venv/bin/python3 scheduler.py --daemon
+Restart=always
+RestartSec=5
+MemoryMax=650M
+MemoryHigh=550M
+StandardOutput=append:/root/quantsync/logs/systemd.log
+StandardError=append:/root/quantsync/logs/systemd.log
+
+[Install]
+WantedBy=multi-user.target

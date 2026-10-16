@@ -1,0 +1,50 @@
+{
+  "strategy_id": "POWER_EARNINGS_GAP",
+  "strategy_name": "Power Earnings Gap (Post-Earnings Announcement Drift Institutional Gap-and-Go)",
+  "version": "11.0_PRODUCTION_FROZEN",
+  "status": "VALIDATED_OOS",
+  "target_annual_trades": "40-50",
+  "core_screening": {
+    "min_price": 20.0,
+    "min_daily_turnover_cr": 2.5,
+    "min_gap_pct": 2.5,
+    "require_close_gt_open": true,
+    "require_c_gt_ema50": true
+  },
+  "candle_dna_filters": {
+    "min_close_in_range": 0.65,
+    "max_upper_wick_pct": 0.20
+  },
+  "institutional_sponsorship": {
+    "min_volume_ratio_20d": 2.0
+  },
+  "loser_blocking_hard_gates": {
+    "max_stop_pct": 6.5,
+    "min_turnover_cr": 2.5
+  },
+  "exit_architecture": {
+    "primary_mode": "TWO_TRANCHE_VMA_TRAIL",
+    "initial_structural_stop": "min(Candle_Low, Entry * 0.935)",
+    "max_initial_risk_pct": 6.5,
+    "breakeven_trigger_pct": 12.0,
+    "breakeven_lock_pct": 4.0,
+    "tranche_1_target_pct": 15.0,
+    "tranche_1_fraction": 0.50,
+    "tranche_2_trail_indicator": "vma7",
+    "tranche_2_min_days": 5,
+    "max_holding_days": 50,
+    "slippage_buffer_pct": 0.20
+  },
+  "empirical_benchmarks": {
+    "out_of_sample_2025_2026": {
+      "trades_per_year": 42.4,
+      "total_trades": 72,
+      "win_rate_pct": 50.0,
+      "profit_factor": 1.89,
+      "payoff_ratio": 1.89,
+      "avg_win_pct": 10.31,
+      "avg_loss_pct": 5.46,
+      "total_realized_r": 27.0
+    }
+  }
+}

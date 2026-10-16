@@ -1,0 +1,57 @@
+{
+  "config_live.json": {
+    "target_rel_path": "QuantSync-V6/config_live.json",
+    "sha256": "00323d5f2e7ec257f15dd1f9536664864f7d244ad584f49101aff4c1d9b05483",
+    "size_bytes": 2386
+  },
+  "config.json": {
+    "target_rel_path": "QuantSync-V6/config.json",
+    "sha256": "d13e08a80ed4ad06486574a8ebf29dd9aa0e5faab7ec5adec799cec14dce9e37",
+    "size_bytes": 1544
+  },
+  "rs_leader_refined_live.py": {
+    "target_rel_path": "QuantSync-V6/strategies/live/rs_leader_refined_FROZEN_20260913.py",
+    "sha256": "33e36ba33772cc652979cb72bdf89b54382974fbe0b59de2d800d20429c8a3af",
+    "size_bytes": 9142
+  },
+  "strategy_active.py": {
+    "target_rel_path": "QuantSync-V6/strategies/active/strat_rs_leader_refined/strategy.py",
+    "sha256": "33e36ba33772cc652979cb72bdf89b54382974fbe0b59de2d800d20429c8a3af",
+    "size_bytes": 9142
+  },
+  "champion_patterns.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/champion_patterns.py",
+    "sha256": "9c9847485ddda50ef71e7ed6cfd9bce07b5a63d3199a51476d1d525a5e05312e",
+    "size_bytes": 22690
+  },
+  "adaptive_exits.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/adaptive_exits.py",
+    "sha256": "e74453db1b0e23591985886c56f43d886a757372f183dbc70ca9d5b29175d756",
+    "size_bytes": 11517
+  },
+  "smart_money.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/smart_money.py",
+    "sha256": "a37a7d33002b502fe243a091a2669be4fe6dfabf51c3c06b3f0c28e3fe801f8f",
+    "size_bytes": 6558
+  },
+  "cascade.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/cascade.py",
+    "sha256": "3bedf590e487b5120b06f2ac6ca56145c0aaa65b86e1016fdf0e1536abeb0519",
+    "size_bytes": 7386
+  },
+  "failure_anatomy.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/failure_anatomy.py",
+    "sha256": "b1a4f797adb2947603f220eb2f9311f6241ffb0cafd8dc979e5daf988f120616",
+    "size_bytes": 5266
+  },
+  "enhanced_features.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/enhanced_features.py",
+    "sha256": "ebfffd8cc2741cdac8761a4bbf0eec1bd12651663574ec2ea88215dddf2c7ae3",
+    "size_bytes": 2999
+  },
+  "enhanced_brain.py": {
+    "target_rel_path": "QuantSync_Lines/banana_engine/core/enhanced_brain.py",
+    "sha256": "bdec87ec0945d37e2f3c52b644486804a16c2dfc0be7e3ecb4fac83002374cf7",
+    "size_bytes": 11437
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "model_engine": "QuantSync ML Engine v2",
+  "version": "2.0.0",
+  "training_window": "2020-01-01 to 2024-12-31",
+  "evaluation_window": "2025-01-01 to 2026-09-12",
+  "architecture": {
+    "layer_1": "4 LightGBM Pattern Classifiers + Meta-Classifier",
+    "layer_2": "8 Multi-Timeframe Weekly Features + MTF Alignment Filter",
+    "layer_3": "Daily Cross-Sectional Ranking + Regime Adjustment + Rolling WR Feedback",
+    "layer_4": "32-Point Shape Embeddings + Top-20 Cosine Similarity Analog Library",
+    "layer_5": "3 LightGBM Forward Path Regressors (MFE, MAE, Days to Peak)"
+  },
+  "performance_summary": {
+    "annual_r_multiple": 86.8,
+    "profit_factor": 1.52,
+    "win_rate": 54.3,
+    "max_drawdown_r": 26.7,
+    "sharpe_ratio": 2.86,
+    "trades_per_year": 322
+  }
+}

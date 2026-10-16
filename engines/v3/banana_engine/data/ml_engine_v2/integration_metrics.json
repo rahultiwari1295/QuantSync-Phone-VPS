@@ -1,0 +1,56 @@
+{
+  "L0_Baseline_Strict": {
+    "trades_yr": 235,
+    "wr": 36.4,
+    "ann_r": 93.4,
+    "pf": 1.63,
+    "max_dd_r": 21.4,
+    "sharpe": 4.23,
+    "avg_hold": 9.3
+  },
+  "L1_Pattern_Meta": {
+    "trades_yr": 76,
+    "wr": 36.1,
+    "ann_r": 34.0,
+    "pf": 1.7,
+    "max_dd_r": 11.0,
+    "sharpe": 4.22,
+    "avg_hold": 4.7
+  },
+  "L2_MTF_Weekly": {
+    "trades_yr": 70,
+    "wr": 37.4,
+    "ann_r": 35.1,
+    "pf": 1.8,
+    "max_dd_r": 11.0,
+    "sharpe": 4.67,
+    "avg_hold": 4.5
+  },
+  "L3_Adaptive_Thresholds": {
+    "trades_yr": 319,
+    "wr": 31.8,
+    "ann_r": 77.2,
+    "pf": 1.36,
+    "max_dd_r": 29.3,
+    "sharpe": 2.79,
+    "avg_hold": 8.4
+  },
+  "L4_Analog_Sizing": {
+    "trades_yr": 319,
+    "wr": 31.8,
+    "ann_r": 95.9,
+    "pf": 1.38,
+    "max_dd_r": 34.3,
+    "sharpe": 2.94,
+    "avg_hold": 8.4
+  },
+  "L5_Dynamic_Exits_Full": {
+    "trades_yr": 322,
+    "wr": 54.3,
+    "ann_r": 86.8,
+    "pf": 1.52,
+    "max_dd_r": 26.7,
+    "sharpe": 2.86,
+    "avg_hold": 4.3
+  }
+}

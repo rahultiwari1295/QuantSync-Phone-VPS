@@ -1,0 +1,30 @@
+{
+  "snapshot_version": "DAILY_V2_GATE_2B_FROZEN_2026_08_30",
+  "status": "APPROVED_FROZEN",
+  "creation_timestamp": "2026-08-30T18:58:00Z",
+  "decision_gate": {
+    "gate_name": "GATE_2B",
+    "ml_confidence_floor": 0.6,
+    "directional_momentum_gate": "plus_di14 > minus_di14",
+    "volume_surge_gate": "vol_ratio_20d >= 1.2",
+    "daily_capacity_limit": 3,
+    "daily_ranking_metric": "ML Calibrated Probability (Descending)"
+  },
+  "portfolio_execution": {
+    "capital_allocation": "Fixed \u20b910,000 per trade",
+    "starting_capital_reference": 250000.0,
+    "max_natural_slots": 25,
+    "execution_convention": "SAME_DAY_CLOSE (15:25\u201315:30 IST)",
+    "position_rule": "ONE STOCK = ONE ACTIVE POSITION",
+    "round_trip_friction_pct": 0.15
+  },
+  "health_engine": {
+    "hard_stop_loss_pct": -8.0,
+    "early_warning_mae_pct": -5.0,
+    "early_warning_rsi_threshold": 48.0,
+    "mfe_expansion_hurdle_pct": 15.0,
+    "mfe_trail_capture_pct": 0.75,
+    "moderate_winner_trail_pct": 0.6,
+    "structure_invalidation_ema": 50
+  }
+}

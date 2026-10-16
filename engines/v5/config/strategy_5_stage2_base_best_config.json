@@ -1,0 +1,52 @@
+{
+  "strategy_id": "STAGE2_BASE_BREAKOUT",
+  "strategy_name": "Stan Weinstein Stage-2 Structural Base Breakout",
+  "version": "11.0_PRODUCTION_FROZEN",
+  "status": "VALIDATED_OOS",
+  "target_annual_trades": "50-60",
+  "core_screening": {
+    "min_price": 20.0,
+    "min_daily_turnover_cr": 2.5,
+    "base_lookback_bars": 60,
+    "base_depth_min_pct": 10.0,
+    "base_depth_max_pct": 35.0,
+    "sma150_rising_tolerance": 0.99,
+    "require_close_gt_open": true
+  },
+  "candle_dna_filters": {
+    "min_close_in_range": 0.65,
+    "max_upper_wick_pct": 0.20
+  },
+  "institutional_sponsorship": {
+    "min_volume_ratio_20d": 1.8
+  },
+  "loser_blocking_hard_gates": {
+    "max_stop_pct": 6.5,
+    "min_turnover_cr": 2.5
+  },
+  "exit_architecture": {
+    "primary_mode": "TWO_TRANCHE_VMA_TRAIL",
+    "initial_structural_stop": "min(Candle_Low, Entry * 0.935)",
+    "max_initial_risk_pct": 6.5,
+    "breakeven_trigger_pct": 12.0,
+    "breakeven_lock_pct": 4.0,
+    "tranche_1_target_pct": 15.0,
+    "tranche_1_fraction": 0.50,
+    "tranche_2_trail_indicator": "vma7",
+    "tranche_2_min_days": 5,
+    "max_holding_days": 50,
+    "slippage_buffer_pct": 0.20
+  },
+  "empirical_benchmarks": {
+    "out_of_sample_2025_2026": {
+      "trades_per_year": 54.7,
+      "total_trades": 93,
+      "win_rate_pct": 38.7,
+      "profit_factor": 1.54,
+      "payoff_ratio": 2.44,
+      "avg_win_pct": 9.97,
+      "avg_loss_pct": 4.08,
+      "total_realized_r": 23.9
+    }
+  }
+}

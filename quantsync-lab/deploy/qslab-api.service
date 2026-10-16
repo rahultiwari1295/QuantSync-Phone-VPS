@@ -1,0 +1,16 @@
+[Unit]
+Description=QuantSync Lab API
+After=network.target
+[Service]
+User=qslab
+WorkingDirectory=/opt/quantsync-lab/app
+Environment=QSLAB_CONFIG=/opt/quantsync-lab/config.yaml
+ExecStart=/opt/quantsync-lab/venv/bin/uvicorn lab.api:create_app --factory --host 127.0.0.1 --port 8100 --workers 1
+Restart=on-failure
+MemoryMax=600M
+CPUQuota=60%
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/quantsync-lab
+[Install]
+WantedBy=multi-user.target

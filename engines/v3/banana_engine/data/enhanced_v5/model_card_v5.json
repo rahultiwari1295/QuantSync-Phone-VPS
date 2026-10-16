@@ -1,0 +1,128 @@
+{
+  "version": "5.0.0-institutional",
+  "training_window": {
+    "train": "2020-01-01 to 2024-12-31",
+    "test": "2025-01-01 to 2026-09"
+  },
+  "samples": {
+    "train": 12087,
+    "test": 5405
+  },
+  "features": [
+    "base_depth_pct",
+    "duration_weeks",
+    "coil_ratio",
+    "dry_ratio",
+    "num_contractions",
+    "depth_contraction_ratio",
+    "tightness_5d",
+    "tightness_10d",
+    "days_since_peak",
+    "position_in_base",
+    "dry_depth",
+    "ud_ratio",
+    "breakout_volume_ratio",
+    "volume_slope_base",
+    "max_volume_day_ratio",
+    "volume_contraction_ratio",
+    "rs_rating",
+    "dist_from_52w_high_pct",
+    "dist_from_52w_low_pct",
+    "pct_above_50dma",
+    "pct_above_150dma",
+    "pct_above_200dma",
+    "dma_150_above_200",
+    "dma_200_slope_22d",
+    "breadth_above_20dma",
+    "breadth_above_50dma",
+    "breadth_above_200dma",
+    "regime_state_ord",
+    "sector_return_5d",
+    "sector_return_20d",
+    "sector_rs_rank",
+    "sector_breadth",
+    "stock_vs_sector_rs",
+    "squat_count_in_base",
+    "failed_poke_count_in_base",
+    "days_since_last_squat",
+    "days_to_next_earnings",
+    "weeks_since_ipo",
+    "obv_divergence_score",
+    "ad_line_curvature",
+    "close_position_drift",
+    "large_bar_bias",
+    "price_volume_divergence",
+    "accumulation_score",
+    "sector_breakout_count_10d",
+    "cascade_position",
+    "leader_mfe_10d",
+    "market_cascade_breadth",
+    "cascade_velocity"
+  ],
+  "n_features": 49,
+  "primary_auc": 0.4966,
+  "primary_brier": 0.2477,
+  "failure_auc": 0.6366,
+  "top_features": [
+    [
+      "weeks_since_ipo",
+      62
+    ],
+    [
+      "dist_from_52w_high_pct",
+      31
+    ],
+    [
+      "leader_mfe_10d",
+      31
+    ],
+    [
+      "cascade_velocity",
+      26
+    ],
+    [
+      "market_cascade_breadth",
+      25
+    ],
+    [
+      "sector_breakout_count_10d",
+      23
+    ],
+    [
+      "dry_depth",
+      19
+    ],
+    [
+      "rs_rating",
+      15
+    ],
+    [
+      "accumulation_score",
+      15
+    ],
+    [
+      "tightness_5d",
+      13
+    ],
+    [
+      "depth_contraction_ratio",
+      12
+    ],
+    [
+      "dma_200_slope_22d",
+      12
+    ],
+    [
+      "obv_divergence_score",
+      12
+    ],
+    [
+      "dist_from_52w_low_pct",
+      11
+    ],
+    [
+      "duration_weeks",
+      10
+    ]
+  ]
+}

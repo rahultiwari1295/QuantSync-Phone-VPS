@@ -1,0 +1,457 @@
+{
+  "1. Trendline Retest": {
+    "In_Sample_2020_2024": {
+      "n": 2265,
+      "trades_per_yr": 453,
+      "wr": 46.1,
+      "avg_w": 5.81,
+      "avg_l": 4.35,
+      "avg_risk": 4.4,
+      "payoff": 1.34,
+      "pf": 1.14,
+      "expectancy": 0.62
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 1016,
+      "trades_per_yr": 581,
+      "wr": 41.2,
+      "avg_w": 5.06,
+      "avg_l": 4.34,
+      "avg_risk": 4.36,
+      "payoff": 1.17,
+      "pf": 0.82,
+      "expectancy": 0.48
+    },
+    "All_2020_2026": {
+      "n": 3281,
+      "trades_per_yr": 486,
+      "wr": 44.6,
+      "avg_w": 5.6,
+      "avg_l": 4.35,
+      "avg_risk": 4.39,
+      "payoff": 1.29,
+      "pf": 1.04,
+      "expectancy": 0.57
+    }
+  },
+  "2. Falling Wedge": {
+    "In_Sample_2020_2024": {
+      "n": 2334,
+      "trades_per_yr": 467,
+      "wr": 46.0,
+      "avg_w": 8.1,
+      "avg_l": 5.78,
+      "avg_risk": 6.41,
+      "payoff": 1.4,
+      "pf": 1.19,
+      "expectancy": 0.64
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 1254,
+      "trades_per_yr": 717,
+      "wr": 35.2,
+      "avg_w": 6.69,
+      "avg_l": 5.75,
+      "avg_risk": 6.37,
+      "payoff": 1.16,
+      "pf": 0.63,
+      "expectancy": 0.41
+    },
+    "All_2020_2026": {
+      "n": 3588,
+      "trades_per_yr": 532,
+      "wr": 42.2,
+      "avg_w": 7.69,
+      "avg_l": 5.77,
+      "avg_risk": 6.4,
+      "payoff": 1.33,
+      "pf": 0.97,
+      "expectancy": 0.56
+    }
+  },
+  "3. Donchian Breakout": {
+    "In_Sample_2020_2024": {
+      "n": 14034,
+      "trades_per_yr": 2807,
+      "wr": 47.9,
+      "avg_w": 8.0,
+      "avg_l": 5.9,
+      "avg_risk": 6.03,
+      "payoff": 1.36,
+      "pf": 1.25,
+      "expectancy": 0.65
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 4360,
+      "trades_per_yr": 2491,
+      "wr": 43.5,
+      "avg_w": 7.6,
+      "avg_l": 5.66,
+      "avg_risk": 6.03,
+      "payoff": 1.34,
+      "pf": 1.04,
+      "expectancy": 0.58
+    },
+    "All_2020_2026": {
+      "n": 18394,
+      "trades_per_yr": 2725,
+      "wr": 46.9,
+      "avg_w": 7.91,
+      "avg_l": 5.84,
+      "avg_risk": 6.03,
+      "payoff": 1.36,
+      "pf": 1.2,
+      "expectancy": 0.64
+    }
+  },
+  "4. Cup and Handle": {
+    "In_Sample_2020_2024": {
+      "n": 127,
+      "trades_per_yr": 25,
+      "wr": 52.8,
+      "avg_w": 9.06,
+      "avg_l": 6.12,
+      "avg_risk": 6.61,
+      "payoff": 1.48,
+      "pf": 1.65,
+      "expectancy": 0.78
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 42,
+      "trades_per_yr": 24,
+      "wr": 40.5,
+      "avg_w": 7.37,
+      "avg_l": 5.76,
+      "avg_risk": 6.5,
+      "payoff": 1.28,
+      "pf": 0.87,
+      "expectancy": 0.52
+    },
+    "All_2020_2026": {
+      "n": 169,
+      "trades_per_yr": 25,
+      "wr": 49.7,
+      "avg_w": 8.72,
+      "avg_l": 6.01,
+      "avg_risk": 6.58,
+      "payoff": 1.45,
+      "pf": 1.43,
+      "expectancy": 0.72
+    }
+  },
+  "5. Wyckoff Spring": {
+    "In_Sample_2020_2024": {
+      "n": 8806,
+      "trades_per_yr": 1761,
+      "wr": 49.9,
+      "avg_w": 7.07,
+      "avg_l": 5.08,
+      "avg_risk": 5.4,
+      "payoff": 1.39,
+      "pf": 1.39,
+      "expectancy": 0.7
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 5061,
+      "trades_per_yr": 2892,
+      "wr": 40.6,
+      "avg_w": 6.21,
+      "avg_l": 4.97,
+      "avg_risk": 5.38,
+      "payoff": 1.25,
+      "pf": 0.85,
+      "expectancy": 0.51
+    },
+    "All_2020_2026": {
+      "n": 13867,
+      "trades_per_yr": 2054,
+      "wr": 46.5,
+      "avg_w": 6.8,
+      "avg_l": 5.04,
+      "avg_risk": 5.39,
+      "payoff": 1.35,
+      "pf": 1.18,
+      "expectancy": 0.63
+    }
+  },
+  "6. Momentum Burst": {
+    "In_Sample_2020_2024": {
+      "n": 12157,
+      "trades_per_yr": 2431,
+      "wr": 48.0,
+      "avg_w": 5.05,
+      "avg_l": 4.16,
+      "avg_risk": 6.83,
+      "payoff": 1.21,
+      "pf": 1.12,
+      "expectancy": 0.58
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 5151,
+      "trades_per_yr": 2943,
+      "wr": 46.1,
+      "avg_w": 4.85,
+      "avg_l": 4.2,
+      "avg_risk": 6.71,
+      "payoff": 1.15,
+      "pf": 0.99,
+      "expectancy": 0.53
+    },
+    "All_2020_2026": {
+      "n": 17308,
+      "trades_per_yr": 2564,
+      "wr": 47.4,
+      "avg_w": 4.99,
+      "avg_l": 4.17,
+      "avg_risk": 6.79,
+      "payoff": 1.2,
+      "pf": 1.08,
+      "expectancy": 0.57
+    }
+  },
+  "7. Darvas Box": {
+    "In_Sample_2020_2024": {
+      "n": 1796,
+      "trades_per_yr": 359,
+      "wr": 49.3,
+      "avg_w": 9.34,
+      "avg_l": 6.12,
+      "avg_risk": 6.64,
+      "payoff": 1.53,
+      "pf": 1.48,
+      "expectancy": 0.75
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 697,
+      "trades_per_yr": 398,
+      "wr": 40.6,
+      "avg_w": 7.82,
+      "avg_l": 5.92,
+      "avg_risk": 6.76,
+      "payoff": 1.32,
+      "pf": 0.91,
+      "expectancy": 0.54
+    },
+    "All_2020_2026": {
+      "n": 2493,
+      "trades_per_yr": 369,
+      "wr": 46.9,
+      "avg_w": 8.97,
+      "avg_l": 6.06,
+      "avg_risk": 6.68,
+      "payoff": 1.48,
+      "pf": 1.31,
+      "expectancy": 0.69
+    }
+  },
+  "Benchmark: High-Tight Flag": {
+    "In_Sample_2020_2024": {
+      "n": 201,
+      "trades_per_yr": 40,
+      "wr": 50.7,
+      "avg_w": 5.32,
+      "avg_l": 4.49,
+      "avg_risk": 4.49,
+      "payoff": 1.18,
+      "pf": 1.22,
+      "expectancy": 0.6
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 49,
+      "trades_per_yr": 28,
+      "wr": 44.9,
+      "avg_w": 5.35,
+      "avg_l": 4.5,
+      "avg_risk": 4.5,
+      "payoff": 1.19,
+      "pf": 0.97,
+      "expectancy": 0.53
+    },
+    "All_2020_2026": {
+      "n": 250,
+      "trades_per_yr": 37,
+      "wr": 49.6,
+      "avg_w": 5.33,
+      "avg_l": 4.49,
+      "avg_risk": 4.49,
+      "payoff": 1.19,
+      "pf": 1.17,
+      "expectancy": 0.59
+    }
+  },
+  "Benchmark: Base Breakout": {
+    "In_Sample_2020_2024": {
+      "n": 991,
+      "trades_per_yr": 198,
+      "wr": 49.1,
+      "avg_w": 6.28,
+      "avg_l": 4.81,
+      "avg_risk": 4.82,
+      "payoff": 1.31,
+      "pf": 1.26,
+      "expectancy": 0.64
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 232,
+      "trades_per_yr": 133,
+      "wr": 44.0,
+      "avg_w": 6.85,
+      "avg_l": 4.53,
+      "avg_risk": 4.73,
+      "payoff": 1.51,
+      "pf": 1.19,
+      "expectancy": 0.66
+    },
+    "All_2020_2026": {
+      "n": 1223,
+      "trades_per_yr": 181,
+      "wr": 48.2,
+      "avg_w": 6.38,
+      "avg_l": 4.75,
+      "avg_risk": 4.8,
+      "payoff": 1.34,
+      "pf": 1.25,
+      "expectancy": 0.65
+    }
+  },
+  "Benchmark: 52W High Breakout": {
+    "In_Sample_2020_2024": {
+      "n": 1241,
+      "trades_per_yr": 248,
+      "wr": 55.0,
+      "avg_w": 6.32,
+      "avg_l": 4.77,
+      "avg_risk": 4.75,
+      "payoff": 1.32,
+      "pf": 1.62,
+      "expectancy": 0.73
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 260,
+      "trades_per_yr": 149,
+      "wr": 50.8,
+      "avg_w": 5.46,
+      "avg_l": 4.36,
+      "avg_risk": 4.59,
+      "payoff": 1.25,
+      "pf": 1.29,
+      "expectancy": 0.64
+    },
+    "All_2020_2026": {
+      "n": 1501,
+      "trades_per_yr": 222,
+      "wr": 54.2,
+      "avg_w": 6.18,
+      "avg_l": 4.7,
+      "avg_risk": 4.73,
+      "payoff": 1.32,
+      "pf": 1.56,
+      "expectancy": 0.71
+    }
+  },
+  "COMPENDIUM_PORTFOLIO_TOP2": {
+    "In_Sample_2020_2024": {
+      "n": 2366,
+      "trades_per_yr": 473,
+      "wr": 48.2,
+      "avg_w": 8.3,
+      "avg_l": 5.79,
+      "avg_risk": 8.46,
+      "payoff": 1.43,
+      "pf": 1.34,
+      "expectancy": 0.69
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 832,
+      "trades_per_yr": 475,
+      "wr": 45.6,
+      "avg_w": 6.83,
+      "avg_l": 5.96,
+      "avg_risk": 8.86,
+      "payoff": 1.15,
+      "pf": 0.96,
+      "expectancy": 0.52
+    },
+    "All_2020_2026": {
+      "n": 3198,
+      "trades_per_yr": 474,
+      "wr": 47.5,
+      "avg_w": 7.94,
+      "avg_l": 5.83,
+      "avg_risk": 8.57,
+      "payoff": 1.36,
+      "pf": 1.23,
+      "expectancy": 0.65
+    }
+  },
+  "BENCHMARK_ENSEMBLE_TOP2": {
+    "In_Sample_2020_2024": {
+      "n": 418,
+      "trades_per_yr": 84,
+      "wr": 62.0,
+      "avg_w": 5.31,
+      "avg_l": 4.9,
+      "avg_risk": 4.92,
+      "payoff": 1.08,
+      "pf": 1.77,
+      "expectancy": 0.67
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 66,
+      "trades_per_yr": 38,
+      "wr": 54.5,
+      "avg_w": 4.87,
+      "avg_l": 4.82,
+      "avg_risk": 4.91,
+      "payoff": 1.01,
+      "pf": 1.21,
+      "expectancy": 0.55
+    },
+    "All_2020_2026": {
+      "n": 484,
+      "trades_per_yr": 72,
+      "wr": 61.0,
+      "avg_w": 5.26,
+      "avg_l": 4.89,
+      "avg_risk": 4.92,
+      "payoff": 1.08,
+      "pf": 1.68,
+      "expectancy": 0.66
+    }
+  },
+  "GRAND_MASTER_TOP2": {
+    "In_Sample_2020_2024": {
+      "n": 2369,
+      "trades_per_yr": 474,
+      "wr": 49.6,
+      "avg_w": 8.16,
+      "avg_l": 5.75,
+      "avg_risk": 8.34,
+      "payoff": 1.42,
+      "pf": 1.4,
+      "expectancy": 0.7
+    },
+    "Out_Of_Sample_2025_2026": {
+      "n": 832,
+      "trades_per_yr": 475,
+      "wr": 46.5,
+      "avg_w": 6.65,
+      "avg_l": 5.93,
+      "avg_risk": 8.81,
+      "payoff": 1.12,
+      "pf": 0.98,
+      "expectancy": 0.52
+    },
+    "All_2020_2026": {
+      "n": 3201,
+      "trades_per_yr": 474,
+      "wr": 48.8,
+      "avg_w": 7.79,
+      "avg_l": 5.8,
+      "avg_risk": 8.46,
+      "payoff": 1.34,
+      "pf": 1.28,
+      "expectancy": 0.66
+    }
+  }
+}

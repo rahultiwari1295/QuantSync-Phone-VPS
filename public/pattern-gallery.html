@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuantSync · Classical Pattern DNA Charting Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0E14;
+      --surface: #111622;
+      --card-bg: #161C2C;
+      --border: #1E2638;
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --bull: #10B981;
+      --bear: #EF4444;
+      --accent: #38BDF8;
+      --gold: #F59E0B;
+    }
+    [data-theme="light"] {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --bull: #059669;
+      --bear: #DC2626;
+      --accent: #0284C7;
+      --gold: #D97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; transition: all 0.25s ease; }
+    
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #0284C7, #10B981);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #FFF;
+      font-size: 16px;
+    }
+    .logo-text h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    .logo-text p { font-size: 12px; color: var(--text-muted); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .pill-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .pill-btn.primary { background: var(--accent); color: #FFF; border-color: var(--accent); }
+    .pill-btn.primary:hover { opacity: 0.92; }
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .hero-banner {
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-text h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .hero-text p { font-size: 14px; color: var(--text-muted); max-width: 720px; line-height: 1.5; }
+
+    .tabs-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--card-bg);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+      gap: 28px;
+    }
+    @media (max-width: 768px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+
+    .pattern-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .pattern-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+    }
+    .card-header {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .card-title-group h3 {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title-group p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-bull { background: rgba(16, 185, 129, 0.15); color: var(--bull); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-bear { background: rgba(239, 68, 68, 0.15); color: var(--bear); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .chart-container {
+      position: relative;
+      background: #000;
+      width: 100%;
+      min-height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-in;
+    }
+    .chart-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: opacity 0.2s ease;
+    }
+
+    .card-metrics {
+      padding: 14px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .metric-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; }
+    .metric-val { font-size: 13.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .val-bull { color: var(--bull); }
+    .val-bear { color: var(--bear); }
+    .val-accent { color: var(--accent); }
+
+    .card-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+    .card-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .card-footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <header>
+    <div class="logo-badge">
+      <div class="logo-icon">QS</div>
+      <div class="logo-text">
+        <h1>QuantSync · Classical Pattern DNA Showcase</h1>
+        <p>Engine-Agnostic Geometric Perception & Charting Engine</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="pill-btn" onclick="toggleTheme()" id="theme-btn">☀️ Light Mode</button>
+      <a class="pill-btn" href="/dna?symbol=RELIANCE" target="_blank">📱 Live DNA Page</a>
+      <a class="pill-btn primary" href="http://localhost:3000" target="_blank">💻 Main Platform (Port 3000)</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-banner">
+      <div class="hero-text">
+        <h2>Classical Chart Pattern Detection Fused into Stock DNA</h2>
+        <p>All 6 classical chart patterns are continuously modeled by <code>ClassicalPatternAnalystDNA</code> with mathematical slope angles, neckline anchors, and ATR-normalized measurements, rendered directly into Stock DNA's dual-panel institutional chart layout.</p>
+      </div>
+      <div>
+        <span class="badge badge-bull" style="font-size: 13px; padding: 8px 14px;">6 / 6 Patterns Live</span>
+      </div>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="filterGallery('ALL')">All Formations</button>
+      <button class="tab-btn" onclick="filterGallery('WEDGE')">Falling Wedge</button>
+      <button class="tab-btn" onclick="filterGallery('TRIANGLE')">Triangles</button>
+      <button class="tab-btn" onclick="filterGallery('RECTANGLE')">Rectangle Box</button>
+      <button class="tab-btn" onclick="filterGallery('HEAD_AND_SHOULDERS')">Inverse H&S</button>
+      <button class="tab-btn" onclick="filterGallery('CUP_AND_HANDLE')">Cup & Handle</button>
+      <button class="tab-btn" onclick="filterGallery('REAL')">Real NSE Equities</button>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- 1. Falling Wedge -->
+      <div class="pattern-card" data-category="WEDGE">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>1. Falling Wedge</h3>
+            <p>Bullish Apex Breakout · Converging Descending Rails</p>
+          </div>
+          <span class="badge badge-bull">BULLISH · FORMING</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/WEDGE_TECH_tactical_dark.png" alt="Falling Wedge Chart" data-dark="/demo-charts/WEDGE_TECH_tactical_dark.png" data-light="/demo-charts/WEDGE_TECH_tactical_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Breakout</span><span class="metric-val val-accent">₹657.06</span></div>
+          <div class="metric-item"><span class="metric-label">Target</span><span class="metric-val val-bull">₹796.25 (+28.5%)</span></div>
+          <div class="metric-item"><span class="metric-label">Stop Floor</span><span class="metric-val val-bear">₹552.35 (-10.9%)</span></div>
+          <div class="metric-item"><span class="metric-label">R:R Ratio</span><span class="metric-val">2.63 : 1</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Geometric spread contraction: 31.2% towards apex</span>
+          <a href="/dna?symbol=WEDGE_TECH" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 2. Symmetrical Triangle -->
+      <div class="pattern-card" data-category="TRIANGLE">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>2. Symmetrical Triangle</h3>
+            <p>Coiled Energy Pinch · Symmetrical Bounds to Apex</p>
+          </div>
+          <span class="badge badge-bull">BULLISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/SYM_COIL_tactical_dark.png" alt="Symmetrical Triangle Chart" data-dark="/demo-charts/SYM_COIL_tactical_dark.png" data-light="/demo-charts/SYM_COIL_tactical_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Breakout</span><span class="metric-val val-accent">₹468.30</span></div>
+          <div class="metric-item"><span class="metric-label">Target</span><span class="metric-val val-bull">₹548.59 (+16.9%)</span></div>
+          <div class="metric-item"><span class="metric-label">Stop Floor</span><span class="metric-val val-bear">₹411.26 (-12.4%)</span></div>
+          <div class="metric-item"><span class="metric-label">R:R Ratio</span><span class="metric-val">1.36 : 1</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Lower high + higher low convergence</span>
+          <a href="/dna?symbol=SYM_COIL" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 3. Bullish Rectangle -->
+      <div class="pattern-card" data-category="RECTANGLE">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>3. Bullish Rectangle</h3>
+            <p>Horizontal Consolidation Box · Multi-Touch Floor & Ceiling</p>
+          </div>
+          <span class="badge badge-bull">BULLISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/RECT_CONSOL_tactical_dark.png" alt="Bullish Rectangle Chart" data-dark="/demo-charts/RECT_CONSOL_tactical_dark.png" data-light="/demo-charts/RECT_CONSOL_tactical_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Breakout</span><span class="metric-val val-accent">₹1009.76</span></div>
+          <div class="metric-item"><span class="metric-label">Target</span><span class="metric-val val-bull">₹1161.03 (+12.0%)</span></div>
+          <div class="metric-item"><span class="metric-label">Stop Floor</span><span class="metric-val val-bear">₹839.97 (-19.0%)</span></div>
+          <div class="metric-item"><span class="metric-label">Quality</span><span class="metric-val">95.0%</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Parallel channel bounds: ₹858.49 to ₹1009.76</span>
+          <a href="/dna?symbol=RECT_CONSOL" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 4. Inverse Head & Shoulders -->
+      <div class="pattern-card" data-category="HEAD_AND_SHOULDERS">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>4. Inverse Head & Shoulders</h3>
+            <p>Reversal Trough · Left Shoulder, Head, Right Shoulder</p>
+          </div>
+          <span class="badge badge-bull">BULLISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/IHNS_REVERSAL_tactical_dark.png" alt="Inverse Head and Shoulders Chart" data-dark="/demo-charts/IHNS_REVERSAL_tactical_dark.png" data-light="/demo-charts/IHNS_REVERSAL_tactical_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Neckline</span><span class="metric-val val-accent">₹1390.65</span></div>
+          <div class="metric-item"><span class="metric-label">Target</span><span class="metric-val val-bull">₹1617.60 (+13.5%)</span></div>
+          <div class="metric-item"><span class="metric-label">Stop Floor</span><span class="metric-val val-bear">₹1238.81 (-13.1%)</span></div>
+          <div class="metric-item"><span class="metric-label">Symmetry</span><span class="metric-val">99.0%</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Three-trough bottom with central head trough at ₹1163.7</span>
+          <a href="/dna?symbol=IHNS_REVERSAL" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 5. Cup & Handle -->
+      <div class="pattern-card" data-category="CUP_AND_HANDLE">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>5. Cup & Handle</h3>
+            <p>High-Tight Continuation · Parabolic Bowl + Handle Drift</p>
+          </div>
+          <span class="badge badge-bull">BULLISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/CUP_O_NEIL_tactical_dark.png" alt="Cup and Handle Chart" data-dark="/demo-charts/CUP_O_NEIL_tactical_dark.png" data-light="/demo-charts/CUP_O_NEIL_tactical_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Rim Level</span><span class="metric-val val-accent">₹1953.59</span></div>
+          <div class="metric-item"><span class="metric-label">Target</span><span class="metric-val val-bull">₹2364.06 (+18.3%)</span></div>
+          <div class="metric-item"><span class="metric-label">Stop Floor</span><span class="metric-val val-bear">₹1768.88 (-11.5%)</span></div>
+          <div class="metric-item"><span class="metric-label">R:R Ratio</span><span class="metric-val">1.58 : 1</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Rounding bowl spanning 59 bars; handle retrace ≤ 35%</span>
+          <a href="/dna?symbol=CUP_O_NEIL" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 6. Ascending Triangle -->
+      <div class="pattern-card" data-category="TRIANGLE">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>6. Ascending Triangle</h3>
+            <p>Pressure Against Ceiling · Flat Horizontal Top + Rising Lows</p>
+          </div>
+          <span class="badge badge-bull">BULLISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/ASC_MOMENTUM_tactical_dark.png" alt="Ascending Triangle Chart" data-dark="/demo-charts/ASC_MOMENTUM_tactical_dark.png" data-light="/demo-charts/ASC_MOMENTUM_tactical_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Ceiling</span><span class="metric-val val-accent">₹1686.69</span></div>
+          <div class="metric-item"><span class="metric-label">Target</span><span class="metric-val val-bull">₹1886.90 (+9.4%)</span></div>
+          <div class="metric-item"><span class="metric-label">Stop Floor</span><span class="metric-val val-bear">₹1522.94 (-11.7%)</span></div>
+          <div class="metric-item"><span class="metric-label">Confidence</span><span class="metric-val">89.0%</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Repeated ceiling tests with ascending buyer floors</span>
+          <a href="/dna?symbol=ASC_MOMENTUM" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 7. Real NSE Equity: RELIANCE -->
+      <div class="pattern-card" data-category="REAL">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>RELIANCE · Live Stock History</h3>
+            <p>Double Top · M-Distribution Top (Live Cache)</p>
+          </div>
+          <span class="badge badge-bear">BEARISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/api/dna/chart/RELIANCE?view=tactical&theme=dark" alt="Reliance DNA Chart" data-dark="/api/dna/chart/RELIANCE?view=tactical&theme=dark" data-light="/api/dna/chart/RELIANCE?view=tactical&theme=light">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Neckline</span><span class="metric-val val-accent">₹1271.00</span></div>
+          <div class="metric-item"><span class="metric-label">Down Target</span><span class="metric-val val-bear">₹1205.00</span></div>
+          <div class="metric-item"><span class="metric-label">Invalidation</span><span class="metric-val">₹1337.00</span></div>
+          <div class="metric-item"><span class="metric-label">Confidence</span><span class="metric-val">82.0%</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Live feed directly from /api/dna/chart/RELIANCE</span>
+          <a href="/dna?symbol=RELIANCE" target="_blank">Open Full RELIANCE DNA Story →</a>
+        </div>
+      </div>
+
+      <!-- 8. Real NSE Equity: NIFTY 100 -->
+      <div class="pattern-card" data-category="REAL">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>NIFTY 100 · Benchmark Index</h3>
+            <p>Head & Shoulders Distribution Top</p>
+          </div>
+          <span class="badge badge-bear">BEARISH · CONFIRMED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/NIFTY100_real_dna_light.png" alt="Nifty 100 Chart" data-dark="/demo-charts/NIFTY100_real_dna_light.png" data-light="/demo-charts/NIFTY100_real_dna_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Neckline</span><span class="metric-val val-accent">₹24659.80</span></div>
+          <div class="metric-item"><span class="metric-label">Down Target</span><span class="metric-val val-bear">₹23438.95</span></div>
+          <div class="metric-item"><span class="metric-label">Invalidation</span><span class="metric-val">₹25880.65</span></div>
+          <div class="metric-item"><span class="metric-label">Confidence</span><span class="metric-val">82.0%</span></div>
+        </div>
+        <div class="card-footer">
+          <span>Real historical candles scanned from stock_history.db</span>
+          <a href="/dna?symbol=NIFTY100" target="_blank">Inspect in DNA Page →</a>
+        </div>
+      </div>
+
+      <!-- 9. Real NSE Equity: WSTCSTPAPR (Double Bottom Reversal & Signal Separation) -->
+      <div class="pattern-card" data-category="REAL">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3>WSTCSTPAPR · Macro Base (1-Year)</h3>
+            <p>Double Bottom · W-Reversal Base (Separation of Concerns)</p>
+          </div>
+          <span class="badge" style="background: rgba(37,99,235,0.18); color: #3B82F6; border: 1px solid rgba(59,130,246,0.3);">TARGET ACHIEVED · EXTENDED</span>
+        </div>
+        <div class="chart-container" onclick="window.open(this.querySelector('img').src, '_blank')">
+          <img class="chart-img" src="/demo-charts/WSTCSTPAPR_corrected_macro_dark.png" alt="WSTCSTPAPR Corrected Macro Chart" data-dark="/demo-charts/WSTCSTPAPR_corrected_macro_dark.png" data-light="/demo-charts/WSTCSTPAPR_corrected_macro_light.png">
+        </div>
+        <div class="card-metrics">
+          <div class="metric-item"><span class="metric-label">Intervening Neckline</span><span class="metric-val val-accent">₹464.95</span></div>
+          <div class="metric-item"><span class="metric-label">Target (Met)</span><span class="metric-val val-bull">₹552.50</span></div>
+          <div class="metric-item"><span class="metric-label">Base Floor (P1/P3)</span><span class="metric-val">₹375.00</span></div>
+          <div class="metric-item"><span class="metric-label">CMP (Extended)</span><span class="metric-val" style="color: #60A5FA;">₹750.50</span></div>
+        </div>
+        <div class="card-footer" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+          <div><strong style="color: var(--text-main);">Structure:</strong> Strong Bullish Trend Continuation · <strong style="color: var(--text-main);">Signal:</strong> Target Achieved (Hold / Trail Stop)</div>
+          <a href="/dna?symbol=WSTCSTPAPR" target="_blank">Open Full WSTCSTPAPR DNA Analysis →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTheme = 'dark';
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', currentTheme);
+      document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+      
+      const imgs = document.querySelectorAll('.chart-img');
+      imgs.forEach(img => {
+        const targetSrc = currentTheme === 'dark' ? img.getAttribute('data-dark') : img.getAttribute('data-light');
+        if (targetSrc) img.src = targetSrc;
+      });
+    }
+
+    function filterGallery(category) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      const cards = document.querySelectorAll('.pattern-card');
+      cards.forEach(card => {
+        if (category === 'ALL' || card.getAttribute('data-category') === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{
+  "engine_id": "v6-live",
+  "engine_name": "QuantSync-V6 Live Production",
+  "version": "1.0.0-live-20260912",
+  "freeze_date": "2026-09-12",
+  "data": {
+    "db_path": "../Prod_VPS/Data/stock_history.db",
+    "cache_dir": "data"
+  },
+  "benchmark": {
+    "symbol": "NIFTY100"
+  },
+  "strategy": {
+    "id": "RelativeStrengthLeaderRefined_1D",
+    "source_file": "strategies/live/rs_leader_refined_FROZEN_20260913.py",
+    "sha256": "33e36ba33772cc652979cb72bdf89b54382974fbe0b59de2d800d20429c8a3af"
+  },
+  "ml_gate": {
+    "enabled": true,
+    "layers": [
+      "L1_cross_strategy",
+      "L2_multi_label"
+    ],
+    "model_file": "models/enhanced_ml_gate/model.pkl",
+    "sha256": "3517dc76670b2eb589d499d6c2d9ad523fdc5fc1f1bf0ac289ffe423ffcfecde",
+    "gate_threshold": 0.3
+  },
+  "sizing": {
+    "method": "score_scaled_conviction",
+    "base_size": 10000.0,
+    "score_multiplier": 2.5,
+    "min_multiplier": 0.5,
+    "max_multiplier": 2.5,
+    "min_position_size": 5000.0,
+    "max_position_size": 25000.0
+  },
+  "portfolio": {
+    "initial_capital": 300000.0,
+    "total_slots": 20,
+    "cost_rate_per_side": 0.00075,
+    "max_pairwise_corr": 0.7,
+    "max_sector_pct": 0.25,
+    "enforce_capital_cap": true
+  },
+  "quality_guards": {
+    "max_price_deviation_pct": 0.03,
+    "min_daily_turnover": 15000000.0,
+    "max_daily_turnover": 2500000000.0,
+    "min_volume_ratio": 2.50,
+    "min_close_in_range": 0.85,
+    "max_upper_wick_pct": 0.10,
+    "min_bar_return_pct": 4.0,
+    "min_chase_pct": 1.5,
+    "max_chase_pct": 8.0,
+    "min_prior_runup_60_pct": 15.0,
+    "max_ath_dist_pct": 20.0,
+    "max_dist_sma200_pct": 30.0,
+    "min_stop_distance_pct": 8.0,
+    "min_turnover_cr": 1.5,
+    "daily_selection_mode": "TOP_2_CONVICTION_RANKED"
+  },
+  "daily_selection": {
+    "max_takes": 2,
+    "min_score": 0.0
+  },
+  "entry_execution": {
+    "timing": "SIGNAL_DAY_CLOSE"
+  },
+  "verification": {
+    "frozen_on": "2026-09-12",
+    "walk_forward_avg_total_r": 291.7,
+    "walk_forward_avg_sharpe": 2.37,
+    "walk_forward_avg_max_dd_pct": 10.27,
+    "baseline_avg_total_r": 155.8,
+    "baseline_avg_sharpe": 1.87,
+    "improvement_vs_baseline_pct": 87.3
+  },
+  "forward_test": {
+    "start_date": "2026-09-13",
+    "review_30d": true,
+    "review_90d": true,
+    "review_6mo": true,
+    "review_12mo": true,
+    "halt_if_dd_pct": 15.0,
+    "halt_if_6mo_return_pct": -10.0
+  }
+}

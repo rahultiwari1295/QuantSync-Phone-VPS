@@ -1,0 +1,119 @@
+{
+  "1. Qwen 2.5 0.5B Stock-News FineTune (HF)": {
+    "disk_size_mb": 380,
+    "format": "Q4_K_M GGUF (Fine-tuned on Stock News)",
+    "boot_time_sec": 1.24,
+    "ram_idle_mb": 481.8,
+    "tests": [
+      {
+        "id": "trade_thesis",
+        "name": "Task 1: Pattern Trade Thesis",
+        "latency_sec": 2.53,
+        "prompt_tokens": 74,
+        "prompt_tps": 88.51,
+        "gen_tokens": 51,
+        "gen_tps": 29.56,
+        "output": "NURECA could surge 20% within 24 days if the stock breaks below $320, supported by a 4.2x volume breakout and a 62% RSI, indicating potential for a significant decline."
+      },
+      {
+        "id": "risk_math",
+        "name": "Task 2: Financial Math & Risk Management",
+        "latency_sec": 2.56,
+        "prompt_tokens": 63,
+        "prompt_tps": 79.71,
+        "gen_tokens": 50,
+        "gen_tps": 27.78,
+        "output": "Risk Amount Per Share: 364.80 / 1.2 = 303.00\nTarget Price: 351.00 * 1.2 = 391.20"
+      },
+      {
+        "id": "json_structured",
+        "name": "Task 3: Structured JSON Output",
+        "latency_sec": 2.95,
+        "prompt_tokens": 64,
+        "prompt_tps": 86.53,
+        "gen_tokens": 70,
+        "gen_tps": 31.28,
+        "output": "```json\n{\n    \"ticker\": \"TRENT\",\n    \"action\": \"BUY\",\n    \"entry\": \"7150\",\n    \"stop_loss\": \"6950\",\n    \"confidence\": \"BUY TRENT at 7150 with stop 6950, very high conviction\"\n}\n```"
+      }
+    ],
+    "ram_peak_mb": 489.3
+  },
+  "2. Qwen 2.5 (0.5B Instruct)": {
+    "disk_size_mb": 397,
+    "format": "Q4_K_M GGUF (General Instruct)",
+    "boot_time_sec": 2.11,
+    "ram_idle_mb": 482.4,
+    "tests": [
+      {
+        "id": "trade_thesis",
+        "name": "Task 1: Pattern Trade Thesis",
+        "latency_sec": 3.26,
+        "prompt_tokens": 74,
+        "prompt_tps": 85.71,
+        "gen_tokens": 75,
+        "gen_tps": 30.9,
+        "output": "The NURECA stock has a 24-day consolidation breakout on 4.2x volume with an RSI of 62. This suggests a potential buy signal, indicating a potential uptrend. The 4.2x volume suggests a strong market momentum, which could be beneficial for a long-term trade. However, it's important to monitor the market closely"
+      },
+      {
+        "id": "risk_math",
+        "name": "Task 2: Financial Math & Risk Management",
+        "latency_sec": 2.92,
+        "prompt_tokens": 63,
+        "prompt_tps": 82.89,
+        "gen_tokens": 75,
+        "gen_tps": 34.22,
+        "output": "To calculate the risk amount per share and the target price for a 1:2 risk-reward ratio, we need to follow these steps:\n\n1. **Calculate the risk amount per share:**\n   - **Stop Loss:** 351.00\n   - **Stock Entry:** 364.80\n   - **Risk Amount per Share"
+      },
+      {
+        "id": "json_structured",
+        "name": "Task 3: Structured JSON Output",
+        "latency_sec": 2.62,
+        "prompt_tokens": 64,
+        "prompt_tps": 92.94,
+        "gen_tokens": 62,
+        "gen_tps": 31.65,
+        "output": "```json\n{\n  \"ticker\": \"TRENT\",\n  \"action\": \"BUY\",\n  \"entry\": {\n    \"price\": 7150,\n    \"stop_loss\": 6950\n  },\n  \"confidence\": \"VERY HIGH CONVICTION\"\n}\n```"
+      }
+    ],
+    "ram_peak_mb": 490.1
+  },
+  "3. DeepSeek-R1 (1.5B Distill Reasoning)": {
+    "disk_size_mb": 1117,
+    "format": "Q4_K_M GGUF (DeepSeek Reasoning CoT)",
+    "boot_time_sec": 4.52,
+    "ram_idle_mb": 1742.8,
+    "tests": [
+      {
+        "id": "trade_thesis",
+        "name": "Task 1: Pattern Trade Thesis",
+        "latency_sec": 7.03,
+        "prompt_tokens": 96,
+        "prompt_tps": 44.53,
+        "gen_tokens": 75,
+        "gen_tps": 15.22,
+        "output": "Stock: NURECA (CMP: 364.80). Setup: 24-day consolidation breakout on 4.2x volume, RSI 62. Trade: 2-sentence actionable thesis. 1. 2023-05-01 00:00:00 - 202"
+      },
+      {
+        "id": "risk_math",
+        "name": "Task 2: Financial Math & Risk Management",
+        "latency_sec": 6.33,
+        "prompt_tokens": 79,
+        "prompt_tps": 43.36,
+        "gen_tokens": 75,
+        "gen_tps": 16.45,
+        "output": "The target price is 351.00. The risk amount per share is 364.80 minus 351.00, which is 13.80. The risk-reward ratio is 13.80 / 364.80, which is 0.038. The user"
+      },
+      {
+        "id": "json_structured",
+        "name": "Task 3: Structured JSON Output",
+        "latency_sec": 2.69,
+        "prompt_tokens": 80,
+        "prompt_tps": 42.33,
+        "gen_tokens": 13,
+        "gen_tps": 15.19,
+        "output": "Got your request and will return soon."
+      }
+    ],
+    "ram_peak_mb": 1765.0
+  }
+}

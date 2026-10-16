@@ -1,0 +1,44 @@
+{
+  "regressors": {
+    "mfe_r": {
+      "train_r2": 0.0879,
+      "oos_r2": 0.0232,
+      "oos_rmse": 2.7126,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/regressor_mfe_r.lgb"
+    },
+    "mae_r": {
+      "train_r2": 0.0915,
+      "oos_r2": 0.0366,
+      "oos_rmse": 0.5501,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/regressor_mae_r.lgb"
+    },
+    "days_to_peak": {
+      "train_r2": 0.0416,
+      "oos_r2": 0.0026,
+      "oos_rmse": 12.3075,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/regressor_days_to_peak.lgb"
+    }
+  },
+  "fixed_3r_benchmark": {
+    "win_rate": 30.7,
+    "annual_r": 286.6,
+    "profit_factor": 1.24,
+    "avg_holding_days": 9.4
+  },
+  "dynamic_exits": {
+    "win_rate": 55.3,
+    "annual_r": 183.1,
+    "profit_factor": 1.26,
+    "avg_holding_days": 4.1,
+    "annual_r_lift": -103.5,
+    "rule_counts": {
+      "runner": 50,
+      "standard": 1236,
+      "tight": 1611,
+      "skip": 87
+    }
+  },
+  "acceptance_criteria": {
+    "r_lift_ge_15r": false
+  }
+}

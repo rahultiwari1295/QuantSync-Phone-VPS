@@ -1,0 +1,81 @@
+{
+  "pattern_models": {
+    "HTF": {
+      "train_auc": 0.6924,
+      "oos_auc": 0.4974,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/pattern_HTF.lgb"
+    },
+    "BASE": {
+      "train_auc": 0.6978,
+      "oos_auc": 0.4973,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/pattern_BASE.lgb"
+    },
+    "52W_HIGH": {
+      "train_auc": 0.7277,
+      "oos_auc": 0.5569,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/pattern_52W_HIGH.lgb"
+    },
+    "DARVAS": {
+      "train_auc": 0.8551,
+      "oos_auc": 0.5092,
+      "model_path": "/Users/rahultiwari/Projects/WIX_with_local/wix_latest_code/QuantSync/QuantSync_Lines/banana_engine/data/ml_engine_v2/pattern_DARVAS.lgb"
+    }
+  },
+  "meta_model": {
+    "train_auc": 0.7449,
+    "oos_auc": 0.5048,
+    "features": [
+      "chase_pct",
+      "upper_wick_pct",
+      "lower_wick_pct",
+      "body_pct",
+      "cir",
+      "is_bull_body",
+      "bar_ret",
+      "gap_pct",
+      "vol_ratio_20",
+      "vol_ratio_50",
+      "volume_slope_20",
+      "ud_ratio_20",
+      "dry_up_ratio",
+      "dist_sma20",
+      "dist_sma50",
+      "dist_sma200",
+      "sma50_slope_20",
+      "sma200_slope_20",
+      "ema_stack_score",
+      "ath_dist_pct",
+      "dist_from_52w_high",
+      "dist_from_52w_low",
+      "is_htf",
+      "is_base",
+      "is_52w",
+      "is_darvas",
+      "base_depth_pct",
+      "base_duration_bars",
+      "flag_pole_height_pct",
+      "flag_duration_bars",
+      "risk_pct",
+      "r_ratio_available",
+      "w_uptrend",
+      "w_sma_slope",
+      "w_rs_20",
+      "w_atr_pct",
+      "w_vol_ratio",
+      "w_base_depth",
+      "w_base_tightness",
+      "w_position_52w",
+      "mtf_alignment",
+      "score_HTF",
+      "score_BASE",
+      "score_52W_HIGH",
+      "score_DARVAS",
+      "pattern_ordinal"
+    ]
+  },
+  "mtf_filter": {
+    "low_mtf_oos_candidates": 205,
+    "oos_reject_loss_rate": 66.3,
+    "criterion_ge_60pct_met": true
+  }
+}

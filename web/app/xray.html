@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Stock X-Ray · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.shero{display:grid;gap:14px;max-width:760px;margin-bottom:30px}
+.sbox{position:relative}
+.sbox label{display:flex;align-items:center;gap:12px;height:60px;padding:0 8px 0 20px;border-radius:18px;background:var(--surface);border:1px solid var(--line2);box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s}
+.sbox label:focus-within{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft),var(--shadow)}
+.sbox input{flex:1;border:0;background:transparent;font-size:17px;height:100%;min-width:0}
+.sbox input:focus{outline:0}
+.sug{position:absolute;left:0;right:0;top:66px;z-index:10;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{height:32px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:650}
+.chips button:hover{border-color:var(--brand);color:var(--brand)}
+.rhead{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:20px 22px;border-bottom:1px solid var(--line)}
+.rhead .av{width:52px;height:52px;border-radius:15px;font-size:16px}
+.rhead h2{font-size:26px;letter-spacing:-.03em}
+.rhead .px{margin-left:auto;text-align:right}
+.rhead .px b{font-size:28px;letter-spacing:-.03em;display:block}
+.score{display:grid;grid-template-columns:220px minmax(0,1fr) minmax(0,1.1fr);gap:28px;padding:24px 22px;align-items:center}
+.score .dial{width:220px}
+.pill-g{display:grid;gap:14px}
+.pill-g .p{display:grid;gap:6px}
+.pill-g .p>div:first-child{display:flex;justify-content:space-between;font-size:14px;font-weight:700}
+.pill-g .p>div:first-child span{color:var(--ink3);font-weight:600}
+.pill-g .p small{font-size:12.5px;color:var(--ink2)}
+.verdict{background:var(--sunk);border-radius:18px;padding:18px;display:grid;gap:10px}
+.verdict b.v{font-size:22px;letter-spacing:-.02em}
+.signs{display:grid;gap:10px;list-style:none;padding:0;margin:0}
+.signs li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:14px;line-height:1.5}
+.signs li svg{margin-top:1px}
+.signs.g svg{color:var(--up)} .signs.w svg{color:var(--warn)}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:2px}
+.facts small{font-size:12px;color:var(--ink3);font-weight:600}
+.facts b{font-size:18px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.facts span{font-size:11.5px;color:var(--ink2)}
+.own .meter{height:18px;border-radius:7px}
+.own table{width:100%;font-size:13.5px;border-collapse:collapse;font-variant-numeric:tabular-nums;margin-top:12px}
+.own td,.own th{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line)}
+.own th{font-size:12px;color:var(--ink3);font-weight:650}
+.own td:first-child,.own th:first-child{text-align:left}
+.own i.sq{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px}
+.flags{display:grid;gap:0}
+.flags div{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px}
+.flags div:last-child{border-bottom:0}
+.flags .ok{color:var(--up)} .flags .no{color:var(--warn)}
+.flags b{font-weight:650}
+.flags span.r{margin-left:auto;font-size:12.5px;font-weight:650}
+.cagr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cagr div{background:var(--sunk);border-radius:12px;padding:12px}
+.cagr small{font-size:11.5px;color:var(--ink3);font-weight:600}
+.cagr b{display:block;font-size:15px}
+.news a{display:grid;gap:4px;padding:14px 0;border-bottom:1px solid var(--line)}
+.news a:last-child{border-bottom:0}
+.news b{font-weight:650;line-height:1.4}
+.shelf{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.fc{flex:0 0 170px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:grid;gap:8px;transition:transform .2s var(--ease),box-shadow .2s}
+.fc:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+@media (max-width:1100px){.score{grid-template-columns:200px minmax(0,1fr)}.score .verdict{grid-column:1/-1}.score .dial{width:200px}}
+@media (max-width:640px){.score{grid-template-columns:minmax(0,1fr);justify-items:center}.score .pill-g,.score .verdict{width:100%}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.rhead .px{margin-left:0;text-align:left;width:100%}.cagr{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.sum3{display:grid;gap:10px}.sum3 b{display:block;font-size:13px;color:var(--ink3);margin-bottom:2px}
+.xr-sec[hidden]{display:none}
+</style>
+</head>
+<body data-page="xray"><main class="main">
+
+<div class="shero">
+  <span class="kicker">Stock X-Ray</span>
+  <h1 class="t-1">Is it a good company? Find out in seconds.</h1>
+  <p class="lede">Search any NSE stock. X-Ray checks its trend, momentum, buying activity and business quality, then gives one health score from 0 to 100.</p>
+  <div class="sbox"><label for="q"><span data-i="search" data-s="22" class="mute"></span><input id="q" type="search" autocomplete="off" placeholder="Search a company" aria-label="Search a company"><button class="btn primary sm" id="go">X-Ray</button></label><div class="sug" id="sug" hidden></div></div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<div id="report-state"></div>
+<div id="report"></div>
+
+<section class="sec" id="explore" hidden><div class="sech"><h2>Explore other companies</h2><p class="small">Ideas to X-Ray next, refreshed after every close.</p></div><div id="shelves"></div></section>
+
+<p class="disclaim">X-Ray is research, not a trade call. It tells you how much to trust the company behind a chart. Not investment advice.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,api,fmt,n,ok}=QD;const {icon,state,toast,line,dial,bars}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+const PIL=[['trend','Trend','var(--brand)'],['momentum','Momentum','#2C9CB8'],['volume','Buying activity','var(--up)'],['quality','Business quality','var(--ai-fill)']];
+const rowOf=(t,names)=>((t&&t.rows)||[]).find(r=>names.some(x=>String(r.metric||'').toLowerCase()===x.toLowerCase()));
+let sym=(QD.param('s')||'').toUpperCase();
+// discovery (chips + shelves)
+api.discovery().then(d=>{
+  const sh=[['solvency','Strong balance sheets','Little or no debt'],['velocity','Rising right now','Price above its short-term trend'],['trending','Most watched','Active setups and big-fund interest']];
+  const chips=((d.trending&&d.trending.stocks)||[]).slice(0,6).map(s=>s.symbol);
+  $('chips').innerHTML=(chips.length?chips:['TRENT','RELIANCE','HDFCBANK','INFY','TATASTEEL','BEL']).map(s=>`<button>${esc(s)}</button>`).join('');
+  const html=sh.map(([k,t,sub])=>{const L=(d[k]&&d[k].stocks)||[];if(!L.length)return'';return `<h3 class="small" style="font-weight:700;color:var(--ink);margin:18px 0 10px">${t} <span class="mute" style="font-weight:500">· ${sub}</span></h3><div class="shelf">${L.slice(0,12).map(s=>`<a class="fc" href="?s=${encodeURIComponent(s.symbol)}"><span class="av">${esc(String(s.symbol).slice(0,2))}</span><div><b>${esc(s.symbol)}</b><div class="tiny">${esc(s.price||'')}</div></div><span class="pill ${s.stance==='BULLISH'?'up':s.stance==='BEARISH'?'dn':''}" style="justify-self:start;max-width:100%;overflow:hidden;text-overflow:ellipsis">${esc(String(s.stanceLabel||s.stance||'').split('·')[0].trim())}</span></a>`).join('')}</div>`}).join('');
+  if(html){$('shelves').innerHTML=html;$('explore').hidden=false}
+  if(!sym){sym=chips[0]||'TRENT';render()}
+}).catch(()=>{$('chips').innerHTML=['TRENT','RELIANCE','HDFCBANK','INFY','TATASTEEL','BEL'].map(s=>`<button>${s}</button>`).join('');if(!sym){sym='TRENT';render()}});
+if(sym)render();
+
+async function render(){
+  history.replaceState(null,'','?s='+encodeURIComponent(sym));document.title=sym+' · Stock X-Ray';
+  $('report').innerHTML='';state($('report-state'),'loading',{n:4});
+  let d;try{d=await api.report(sym)}catch(e){state($('report-state'),'error',{title:e.status===404?`No X-Ray for ${sym} yet`:'This did not load',body:e.status===404?'Check the NSE symbol, or try another company.':e.message,action:'Try again',onAction:render});return}
+  if(!d||d.error){state($('report-state'),'error',{title:`No X-Ray for ${sym} yet`,body:esc(d&&d.error||'Try another company.')});return}
+  $('report-state').innerHTML='';
+  const u=d.ui_report||{},m=d.current_metrics||{},f=d.fundamentals||{},kr=f.key_ratios||{},tc=u.trade_execution_card||{},bs=u.beginner_summary||{},solv=d.solvency||{};
+  const score=n(u.dna_health_score??(u.score_breakdown||{}).total),tone=QD.scoreTone(score),pill=(u.score_breakdown||{}).pillars||{};
+  const cand=(d.chart_candles||[]).map(c=>({t:String(c.time).slice(0,10),c:n(c.close)})).filter(c=>Number.isFinite(c.c));
+  const last=cand[cand.length-1],prev=cand[cand.length-2];const chg=last&&prev?(last.c/prev.c-1)*100:NaN;const px=ok(m.price)?n(m.price):last&&last.c;
+  const name=d.company_name&&d.company_name!==sym?d.company_name:sym;
+  const maxTot=PIL.reduce((a,[k])=>a+(n((pill[k]||{}).max)||25),0)||100;
+  const good=[...(u.why_buy_reasons||[]),...(f.pros||[])].map(s=>String(s).replace(/&#x27;/g,"'")),bad=[...(u.why_avoid_reasons||[]),...(f.cons||[])].map(s=>String(s).replace(/&#x27;/g,"'"));
+  const inc=f.annual_income_statement;const yrs=((inc&&inc.years)||[]).filter(y=>y!=='TTM').slice(-10);const idx=yrs.map(y=>inc.years.indexOf(y));
+  const sales=rowOf(inc,['Sales','Revenue']),np=rowOf(inc,['Net Profit','Net profit']);
+  const sh=f.shareholding_pattern||{};const own=[['Promoters','Promoters','var(--brand)'],['FIIs','Foreign funds','var(--cat-q)'],['DIIs','Indian funds','var(--up)'],['Government','Government','var(--warn)'],['Public','Public','var(--line2)']].map(([k,l,c])=>({l,c,v:n((sh[k]||{}).holding_pct),q:n((sh[k]||{}).qoq_change)})).filter(o=>ok(o.v)&&o.v>0);
+  const qp=(f.quarterly_performance||[]).slice(-4),cg=f.compounded_growth||{},checks=(d.catalysts||{}).checklist||[];
+  const H=[];
+  H.push(`<article class="panel" style="overflow:hidden"><div class="rhead"><span class="av">${esc(sym.slice(0,2))}</span><div style="min-width:0"><h2>${esc(name)}</h2><div class="small">NSE: ${esc(sym)}${d.sector&&d.sector!=='NSE Equities'?' · '+esc(d.sector):''}${d.industry?' · '+esc(d.industry):''}</div></div>
+    <div class="px"><b class="num">${fmt.inr(px,2)}</b>${ok(chg)?`<span class="${fmt.tone(chg)}" style="font-weight:700">${fmt.pct(chg,2)} on the last close</span>`:''}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;width:100%"><a class="btn sm" href="portfolio.html?add=${encodeURIComponent(sym)}">${icon('plus',15)}Add to portfolio</a><button class="btn sm" id="share">${icon('copy',15)}Copy link</button><a class="btn sm ghost" href="scanner.html">${icon('scanner',15)}Build a scan</a><span class="tiny" style="align-self:center;margin-left:auto">Report from ${esc(d.report_date||fmt.date(d.cache_updated_at))}${d.is_fresh===false?' · refreshing soon':''}</span></div></div>
+   <div class="score"><div class="dial" id="dial"></div>
+    <div class="pill-g">${PIL.map(([k,l,c])=>{const p=pill[k]||{},mx=n(p.max)||25,sc=n(p.score);return `<div class="p"><div>${l} <span>${ok(sc)?Math.round(sc):'—'} of ${mx}</span></div><div class="bar"><i data-w="${ok(sc)?Math.max(0,Math.min(100,sc/mx*100)):0}" style="--c:${c}"></i></div>${p.summary?`<small>${esc(p.summary)}</small>`:''}</div>`}).join('')}</div>
+    <div class="verdict"><span class="pill ${tone.k==='up'?'up':tone.k==='dn'?'dn':''}" style="justify-self:start;${tone.k==='warn'?'color:var(--warn)':''}"><i class="d"></i>${tone.t}${ok(score)?' · '+Math.round(score)+' of 100':''}</span><b class="v">${esc(u.action_title||d.action_title||'')}</b>
+     <div class="sum3">${bs.what_is_happening?`<p class="small"><b>What is happening</b>${esc(bs.what_is_happening)}</p>`:''}${bs.the_opportunity?`<p class="small"><b>The opportunity</b>${esc(bs.the_opportunity)}</p>`:''}${bs.the_danger?`<p class="small"><b>The danger</b>${esc(bs.the_danger)}</p>`:''}</div></div></div></article>`);
+  if(good.length||bad.length)H.push(`<div class="grid g2 sec">${good.length?`<section class="panel pad"><h2 class="t-3" style="margin-bottom:14px">Good signs</h2><ul class="signs g">${good.slice(0,7).map(x=>`<li>${icon('check',18)}<span>${esc(x)}</span></li>`).join('')}</ul></section>`:''}${bad.length?`<section class="panel pad"><h2 class="t-3" style="margin-bottom:14px">Warning signs</h2><ul class="signs w">${bad.slice(0,7).map(x=>`<li>${icon('warn',18)}<span>${esc(x)}</span></li>`).join('')}</ul></section>`:''}</div>`);
+  if(cand.length>10)H.push(`<section class="sec panel pad"><div class="sech" style="margin-bottom:6px"><h2>Price</h2><div class="seg" id="rng"><button data-v="63" aria-pressed="false">3M</button><button data-v="126" aria-pressed="false">6M</button><button data-v="260" aria-pressed="true">1Y</button><button data-v="9999" aria-pressed="false">All</button></div></div>
+    <div class="legend" style="margin-bottom:6px"><span><i style="--c:var(--brand)"></i>Price</span><span><i class="dash" style="--c:var(--ai-fill)"></i>50-day average</span>${ok(m.ema200)?'<span><i class="dash" style="--c:var(--ink3)"></i>200-day average</span>':''}</div><div class="chart" id="px"></div>
+    <div class="grid g3" style="margin-top:14px;gap:10px">${ok(m.w52_low)&&ok(m.w52_high)?`<div class="well"><div class="tiny">52-week range</div><b>${fmt.inr(m.w52_low)} – ${fmt.inr(m.w52_high)}</b><div class="bar" style="margin-top:8px"><i data-w="${Math.max(0,Math.min(100,(px-m.w52_low)/(m.w52_high-m.w52_low)*100))}"></i></div></div>`:''}
+     ${tc.entry_zone?`<div class="well"><div class="tiny">Model’s buy zone</div><b>${esc(String(tc.entry_zone))}</b>${ok(tc.stop_loss)?`<div class="tiny">Exit below ${fmt.inr(tc.stop_loss)}</div>`:''}</div>`:''}
+     ${ok(tc.target_1)?`<div class="well"><div class="tiny">Model’s targets</div><b>${fmt.inr(tc.target_1)}${ok(tc.target_2)?' · '+fmt.inr(tc.target_2):''}</b><div class="tiny">${fmt.pct((tc.target_1/px-1)*100)} to the first</div></div>`:''}</div></section>`);
+  H.push(`<section class="sec aicard" id="picked" hidden></section>`);
+  const facts=[['Market value',fmt.cr(f.market_cap_cr),''],['Price to earnings',ok(kr.stock_pe)?n(kr.stock_pe).toFixed(1)+'×':'—','Years of profit you pay for'],['Return on equity',ok(kr.roe_pct)?n(kr.roe_pct).toFixed(1)+'%':'—','Above 15% is good'],['Return on capital',ok(kr.roce_pct)?n(kr.roce_pct).toFixed(1)+'%':'—','Profit on money put in'],['Debt safety',ok(solv.score)?Math.round(solv.score)+'/100':'—',esc(solv.grade||'Borrowings vs reserves')],['Dividend yield',ok(kr.dividend_yield_pct)?n(kr.dividend_yield_pct).toFixed(2)+'%':'—','Cash paid out each year'],['Promoter holding',own[0]&&own[0].l==='Promoters'?own[0].v.toFixed(1)+'%':'—',(sh.Promoters||{}).quarter||''],['Book value',ok(kr.book_value)?fmt.inr(kr.book_value):'—',ok(kr.book_value)&&px?'Price is '+(px/n(kr.book_value)).toFixed(1)+'× book':'']].filter(x=>x[1]!=='—');
+  if(facts.length)H.push(`<section class="sec"><div class="sech"><h2>Key facts</h2></div><div class="facts">${facts.map(([l,v,h])=>`<div><small>${l}</small><b>${v}</b><span>${h}</span></div>`).join('')}</div></section>`);
+  const fin=yrs.length>=3&&sales;
+  if(fin||own.length)H.push(`<div class="split sec">${fin?`<section class="panel pad"><div class="sech" style="margin-bottom:4px"><h2>Sales and profit</h2></div><p class="tiny" style="margin-bottom:10px">₹ crore, by financial year</p><div class="legend" style="margin-bottom:6px"><span><i style="--c:var(--brand)"></i>Sales</span><span><i style="--c:var(--up)"></i>Net profit</span></div><div class="chart" id="fin"></div>${(cg.sales_growth||[]).length?`<div class="cagr" style="margin-top:14px">${(cg.sales_growth||[]).slice(0,3).map((s,i)=>`<div><small>${esc(s.period)}</small><b class="${n(s.value)>=0?'up':'dn'}">Sales ${esc(s.value)}</b><small>Profit ${esc((cg.profit_growth||[])[i]?cg.profit_growth[i].value:'—')}</small></div>`).join('')}</div>`:''}</section>`:''}
+    ${own.length?`<section class="panel pad own"><h2 class="t-3">Who owns it</h2><p class="tiny" style="margin:4px 0 12px">${esc((sh.Promoters||{}).quarter||'Latest quarter')}</p><div class="meter">${own.map(o=>`<i style="flex:${o.v};background:${o.c}"></i>`).join('')}</div><table><thead><tr><th></th><th>Holding</th><th>Change this quarter</th></tr></thead><tbody>${own.map(o=>`<tr><td><i class="sq" style="background:${o.c}"></i>${o.l}</td><td><b>${o.v.toFixed(2)}%</b></td><td class="${fmt.tone(o.q)}">${ok(o.q)&&o.q!==0?(o.q>0?'+':'−')+Math.abs(o.q).toFixed(2)+' pts':'no change'}</td></tr>`).join('')}</tbody></table></section>`:''}</div>`);
+  H.push(`<div class="grid g2 sec">${checks.length?`<section class="panel pad"><h2 class="t-3" style="margin-bottom:6px">Red-flag check</h2><p class="tiny" style="margin-bottom:6px">Common warning signs we look for in every company</p><div class="flags">${checks.map(c=>`<div><span class="${c.pass?'ok':'no'}">${icon(c.pass?'check':'warn',18)}</span><b>${esc(c.item)}</b><span class="r ${c.pass?'ok':'no'}">${esc(c.status||'')}</span></div>`).join('')}</div></section>`:''}<section class="panel pad" id="peers"><h2 class="t-3" style="margin-bottom:6px">Similar setups in the sector</h2><p class="tiny" style="margin-bottom:6px">Companies in the same sector with a strong X-Ray</p><div id="peer-list"><div class="skel" style="height:120px"></div></div></section></div>`);
+  H.push(`<div class="split sec">${qp.length?`<section class="panel pad"><h2 class="t-3" style="margin-bottom:8px">Last four quarters</h2><div style="overflow-x:auto"><table class="tbl" style="min-width:420px"><thead><tr><th>Quarter</th><th class="rt">Sales</th><th class="rt">Net profit</th><th class="rt">Margin</th></tr></thead><tbody>${qp.map(x=>`<tr><td>${esc(x.quarter)}</td><td class="rt">${esc(x.sales_cr)}</td><td class="rt">${esc(x.net_profit_cr)}</td><td class="rt">${esc(x.opm_pct)}</td></tr>`).join('')}</tbody></table></div><p class="tiny" style="margin-top:8px">₹ crore</p></section>`:''}<section class="panel pad news" id="news"><h2 class="t-3" style="margin-bottom:4px">In the news</h2><div id="news-list"><div class="skel" style="height:100px"></div></div></section></div>`);
+  $('report').innerHTML=H.join('');
+  if(ok(score))dial($('dial'),Math.round(score),PIL.map(([k,,c])=>({v:Math.max(0,n((pill[k]||{}).score)||0)/maxTot*100,c})));else $('dial').innerHTML='<p class="small">No score yet</p>';
+  QS.bars($('report'));
+  $('share').onclick=()=>{navigator.clipboard.writeText(location.href).then(()=>toast('Link copied'),()=>toast(location.href))};
+  if($('px')){const draw=k=>{const C=cand.slice(-k);const d=C.map(c=>c.c),dates=C.map(c=>c.t);const all=cand.map(c=>c.c);const off=cand.length-C.length;const sma=(p)=>C.map((_,i)=>{const j=i+off;if(j<p-1)return NaN;let s=0;for(let z=j-p+1;z<=j;z++)s+=all[z];return s/p});
+      const S=[];if(ok(m.ema200)){const s2=sma(200);S.push({data:s2.some(Number.isFinite)?s2:C.map(()=>n(m.ema200)),color:'var(--ink3)',dash:true,w:1.4})}S.push({data:sma(50),color:'var(--ai-fill)',dash:true,w:1.4},{data:d,color:'var(--brand)',area:true});
+      line($('px'),S,{h:280,pl:56,yfmt:v=>'₹'+fmt.int(v),dates,tip:i=>`${fmt.dateY(dates[i])} · ${fmt.inr(d[i])}`,label:sym+' price'})};
+    draw(260);$('rng').addEventListener('change',e=>draw(+e.detail));}
+  if(fin){const el=$('fin'),SV=idx.map(i=>n(sales.values[i])),NV=idx.map(i=>np?n(np.values[i]):NaN),W=Math.max(300,el.clientWidth||600),Hh=230,pl=48,pr=6,pt=12,pb=26,mx=Math.max(...SV.filter(Number.isFinite),1)*1.1,mn=Math.min(0,...NV.filter(Number.isFinite)),bw=(W-pl-pr)/yrs.length,Y=v=>pt+(Hh-pt-pb)*(1-(v-mn)/(mx-mn));let g='';
+    for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,y=Y(v);g+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/><text class="ax" x="${pl-6}" y="${y+4}" text-anchor="end">${Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':Math.round(v)}</text>`}
+    yrs.forEach((y,i)=>{const x=pl+bw*i+bw*.14,w=bw*.34;[[SV[i],'var(--brand)','Sales'],[NV[i],NV[i]>=0?'var(--up)':'var(--dn)','Net profit']].forEach(([v,c,k],j)=>{if(!Number.isFinite(v))return;const y0=Y(0),y1=Y(v);g+=`<rect x="${x+j*(w+bw*.04)}" y="${Math.min(y0,y1)}" width="${w}" height="${Math.max(1.5,Math.abs(y1-y0))}" rx="3" fill="${c}" style="transform-origin:0 ${y0}px;transform:scaleY(${QS.RM?1:0});animation:grow .8s ${i*40}ms var(--ease) forwards"><title>${esc(y)} ${k}: ₹${fmt.int(v)} cr</title></rect>`});g+=`<text class="ax" x="${x+bw*.36}" y="${Hh-7}" text-anchor="middle">${esc(String(y).replace(/^Mar\s*/,'FY').replace(/^FY20/,'FY'))}</text>`});
+    el.innerHTML=`<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Sales and profit by year">${g}</svg>`;}
+  lab.symbolStrategies(sym).then(r=>{const L=r.rows||[];if(!L.length)return;const b=$('picked');b.hidden=false;
+    b.innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3>Strategies holding ${esc(sym)} right now</h3><span class="pill ai">${icon('spark',13)}From the Lab</span></div><div class="rows" style="background:var(--surface)">${L.map(x=>`<a class="row" href="strategy.html?id=${x.sid}"><span class="av cat cat-${x.cat}">${esc(x.strategy.replace(/[^A-Za-z0-9]/g,'').slice(0,2).toUpperCase())}</span><div class="grow"><div class="t">${esc(x.strategy)}</div><div class="s"><span class="src cat-${x.cat}">${x.cat==='q'?'QuantSync':x.cat==='y'?'Yours':'Community'}</span> · matched ${fmt.date(x.date)} at ${fmt.inr(x.price)}</div></div><div class="r ${fmt.tone(x.chg)}">${fmt.pct(x.chg)}<small>since match</small></div></a>`).join('')}</div>`}).catch(()=>{});
+  api.peers(sym).then(P=>{const el=$('peer-list');if(!el)return;if(!P||!P.length){el.innerHTML='<p class="small">No similar setups found today.</p>';return}
+    el.innerHTML=`<div class="rows" style="border:0;border-radius:0;background:none">${P.map(p=>{const t=QD.scoreTone(p.score);return `<a class="row" href="?s=${encodeURIComponent(p.symbol)}" style="padding:12px 0"><span class="av">${esc(p.symbol.slice(0,2))}</span><div class="grow"><div class="t">${esc(p.symbol)}</div><div class="s">${esc(p.name)} · ${fmt.inr(p.price)}</div></div><span class="pill ${t.k==='up'?'up':t.k==='dn'?'dn':''}">${p.score}</span></a>`}).join('')}</div>`});
+  const nws=((d.catalysts||{}).news||[]);(nws.length?Promise.resolve({news:nws}):api.news(sym,5)).then(r=>{const L=(r.news||[]).slice(0,5);const el=$('news-list');if(!el)return;if(!L.length){el.innerHTML='<p class="small">No recent news found.</p>';return}
+    el.innerHTML=L.map(x=>`<${x.link||x.url?'a target="_blank" rel="noopener" href="'+esc(x.link||x.url)+'"':'div'} style="display:grid;gap:4px;padding:14px 0;border-bottom:1px solid var(--line)"><b style="font-weight:650;line-height:1.4">${esc(x.title||x.headline)}</b><span class="tiny">${esc(x.source||'')}${x.time||x.published_at?' · '+esc(String(x.time||x.published_at).slice(0,16)):''}</span></${x.link||x.url?'a':'div'}>`).join('')});
+}
+// search
+const q=$('q'),sug=$('sug');let tmr;
+q.addEventListener('input',()=>{clearTimeout(tmr);const v=q.value.trim();if(!v){sug.hidden=true;return}tmr=setTimeout(async()=>{let r=[];try{r=await api.search(v)}catch{}r=(Array.isArray(r)?r:r.results||[]).slice(0,6);sug.hidden=false;
+  sug.innerHTML=r.length?r.map(u=>`<button class="row" data-s="${esc(u.symbol)}"><span class="av">${esc(String(u.symbol).slice(0,2))}</span><div class="grow"><div class="t">${esc(u.symbol)}</div><div class="s">${esc(u.name||u.symbol)}${u.price?' · '+fmt.inr(u.price):''}</div></div></button>`).join(''):'<div class="row"><div class="grow"><div class="t">No match</div><div class="s">Try the NSE symbol, for example TRENT.</div></div></div>'},180)});
+const open=s=>{if(!s)return;sug.hidden=true;q.value='';sym=s.toUpperCase();render();window.scrollTo({top:$('report-state').offsetTop-80,behavior:QS.RM?'auto':'smooth'})};
+sug.addEventListener('mousedown',e=>e.preventDefault());sug.onclick=e=>{const b=e.target.closest('[data-s]');if(b)open(b.dataset.s)};
+$('chips').onclick=e=>{if(e.target.tagName==='BUTTON')open(e.target.textContent)};
+$('go').onclick=e=>{e.preventDefault();const f=sug.querySelector('[data-s]');open(f?f.dataset.s:q.value.trim())};
+q.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('go').click()}});
+q.addEventListener('blur',()=>setTimeout(()=>sug.hidden=true,180));
+if(!QS.RM){const Hn=['Search a company','Try TRENT','Try Reliance','Try “bank”','Try Infosys'];let hi=0,ci=0,del=false;const tick=()=>{if(document.activeElement===q||q.value){q.placeholder='Search a company';return setTimeout(tick,900)}const w=Hn[hi];if(!del){ci++;if(ci>=w.length){del=true;q.placeholder=w;return setTimeout(tick,1600)}}else{ci--;if(ci<=0){del=false;hi=(hi+1)%Hn.length}}q.placeholder=w.slice(0,ci)+'▏';setTimeout(tick,del?28:62)};setTimeout(tick,1600)}
+});
+</script>
+</body></html>

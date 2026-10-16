@@ -1,0 +1,3242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#111b21" id="metaThemeColor">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>QuantSync Lounge · Institutional Trading Community</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       WHATSAPP WEB & MOBILE ULTIMATE HYBRID DESIGN SYSTEM
+       ========================================================================== */
+    :root {
+      --wa-app-bg: #0c1317;
+      --wa-sidebar-bg: #111b21;
+      --wa-header-bg: #202c33;
+      --wa-border: #222d34;
+      --wa-border-subtle: rgba(134, 150, 160, 0.15);
+      --wa-panel-hover: #202c33;
+      --wa-active-item: #2a3942;
+      
+      --wa-chat-bg: #0b141a;
+      --wa-incoming-bubble: #202c33;
+      --wa-outgoing-bubble: #005c4b;
+      --wa-bubble-border: rgba(255, 255, 255, 0.04);
+      
+      --wa-input-bg: #2a3942;
+      --wa-input-placeholder: #8696a0;
+      --wa-text-primary: #e9edef;
+      --wa-text-secondary: #8696a0;
+      --wa-text-muted: #667781;
+      
+      --wa-green: #00a884;
+      --wa-green-hover: #06cf9c;
+      --wa-badge-green: #00a884;
+      --wa-blue-tick: #53bdeb;
+      --wa-gray-tick: #8696a0;
+      
+      --wa-font: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', Roboto, sans-serif;
+      --wa-font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --wa-app-bg: #f8fafc;
+      --wa-sidebar-bg: #ffffff;
+      --wa-header-bg: #ffffff;
+      --wa-border: #e2e8f0;
+      --wa-border-subtle: rgba(15, 23, 42, 0.08);
+      --wa-panel-hover: #f1f5f9;
+      --wa-active-item: #f1f5f9;
+      
+      --wa-chat-bg: #f1f5f9;
+      --wa-incoming-bubble: #ffffff;
+      --wa-outgoing-bubble: #dcfce7;
+      --wa-bubble-border: rgba(15, 23, 42, 0.08);
+      
+      --wa-input-bg: #ffffff;
+      --wa-input-placeholder: #94a3b8;
+      --wa-text-primary: #0f172a;
+      --wa-text-secondary: #334155;
+      --wa-text-muted: #64748b;
+      
+      --wa-green: #047857;
+      --wa-green-hover: #065f46;
+      --wa-badge-green: #059669;
+      --wa-blue-tick: #0284c7;
+      --wa-gray-tick: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--wa-app-bg);
+      color: var(--wa-text-primary);
+      font-family: var(--wa-font);
+      user-select: none;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    /* Outer Wrapper */
+    .wa-app-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      background: var(--wa-sidebar-bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 1400px) {
+      body { padding: 16px 24px; }
+      .wa-app-wrapper {
+        border-radius: 12px;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+        border: 1px solid var(--wa-border);
+      }
+    }
+
+    /* ── LEFT SIDEBAR ─────────────────────────────────────────────────────────── */
+    .sidebar-pane {
+      width: 420px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: var(--wa-sidebar-bg);
+      border-right: 1px solid var(--wa-border);
+      flex-shrink: 0;
+      z-index: 10;
+      position: relative;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-pane {
+        width: 100%;
+        position: absolute;
+        inset: 0;
+        transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 20;
+      }
+      body.in-chat .sidebar-pane {
+        transform: translateX(-100%);
+      }
+    }
+
+    /* Sidebar Top Header */
+    .sidebar-header {
+      min-height: 56px;
+      height: auto;
+      background: var(--wa-header-bg);
+      padding: max(10px, env(safe-area-inset-top, 10px)) 16px 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--wa-border-subtle);
+      box-shadow: none;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
+
+    .user-profile-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .user-avatar-wrap {
+      position: relative;
+      width: 40px;
+      height: 40px;
+    }
+
+    .user-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--wa-border);
+    }
+
+    .user-name-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--wa-text-primary);
+      line-height: 1.2;
+    }
+
+    .user-status-text {
+      font-size: 11.5px;
+      color: var(--wa-green);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .online-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--wa-green);
+      display: inline-block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--wa-text-secondary);
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--wa-text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+
+    .icon-btn:hover {
+      background: var(--wa-active-item);
+      color: var(--wa-text-primary);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Segmented Filter Tabs */
+    .filter-tabs-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px 6px 16px;
+      background: var(--wa-sidebar-bg);
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+
+    .filter-tab-pill {
+      background: var(--wa-header-bg);
+      border: 1px solid var(--wa-border);
+      color: var(--wa-text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .filter-tab-pill.active {
+      background: rgba(0, 168, 132, 0.18);
+      border-color: var(--wa-green);
+      color: var(--wa-green);
+      font-weight: 700;
+    }
+
+    .tab-badge {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: rgba(134, 150, 160, 0.2);
+    }
+
+    .filter-tab-pill.active .tab-badge {
+      background: var(--wa-green);
+      color: #fff;
+    }
+
+    /* Search Box */
+    .sidebar-search-box {
+      padding: 6px 16px 10px 16px;
+      background: var(--wa-sidebar-bg);
+      flex-shrink: 0;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--wa-header-bg);
+      border-radius: 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--wa-border);
+    }
+
+    .search-input-wrap input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--wa-font);
+      font-size: 13.5px;
+      color: var(--wa-text-primary);
+    }
+
+    .search-input-wrap input::placeholder {
+      color: var(--wa-text-muted);
+    }
+
+    /* Channels List Scroll Area */
+    .channels-list {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: 24px;
+    }
+
+    /* Section Category Header */
+    .channel-section-header {
+      padding: 12px 16px 6px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--wa-text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+    }
+
+    .section-count-pill {
+      font-size: 10px;
+      font-family: var(--wa-font-mono);
+      background: var(--wa-active-item);
+      padding: 1px 6px;
+      border-radius: 10px;
+      color: var(--wa-text-primary);
+    }
+
+    /* Channel Row Item */
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--wa-border-subtle);
+      transition: background 0.12s;
+      position: relative;
+    }
+
+    .channel-item:hover {
+      background: var(--wa-panel-hover);
+    }
+
+    .channel-item.active {
+      background: var(--wa-active-item);
+    }
+
+    .channel-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #2a3942;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      border: 1px solid var(--wa-border);
+    }
+
+    .channel-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .channel-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .channel-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--wa-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .channel-time {
+      font-size: 11.5px;
+      color: var(--wa-text-muted);
+      flex-shrink: 0;
+      font-family: var(--wa-font-mono);
+    }
+
+    .channel-snippet-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .channel-last-msg {
+      font-size: 13px;
+      color: var(--wa-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .channel-badge-pill {
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+    }
+
+    .channel-badge-pill.bot {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .channel-badge-pill.ai {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    /* ── RIGHT MAIN CHAT CONVERSATION PANE ──────────────────────────────────── */
+    .chat-pane {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: var(--wa-chat-bg);
+      position: relative;
+      min-width: 0;
+    }
+
+    @media (max-width: 768px) {
+      .chat-pane {
+        width: 100%;
+        position: absolute;
+        inset: 0;
+        transform: translateX(100%);
+        transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 30;
+      }
+      body.in-chat .chat-pane {
+        transform: translateX(0%);
+      }
+    }
+
+    /* Chat Header */
+    .chat-header {
+      min-height: 56px;
+      height: auto;
+      background: var(--wa-header-bg);
+      padding: max(10px, env(safe-area-inset-top, 10px)) 14px 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--wa-border-subtle);
+      box-shadow: none;
+      z-index: 5;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
+
+    .chat-header-interactive-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      min-width: 0;
+    }
+
+    .mobile-back-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--wa-green);
+      cursor: pointer;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 6px 4px 0;
+      flex-shrink: 0;
+      margin-right: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .mobile-back-btn:active {
+      opacity: 0.6;
+    }
+    .ios-back-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--wa-green);
+      letter-spacing: -0.01em;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-back-btn { display: inline-flex; }
+    }
+
+    .chat-header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #2a3942;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 1px solid var(--wa-border);
+      flex-shrink: 0;
+    }
+
+    .chat-header-titles {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .chat-header-name {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--wa-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-header-sub {
+      font-size: 11.5px;
+      color: var(--wa-text-secondary);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Doodle Background Messages Container */
+    .chat-messages-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px 5% 14px 5%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      background-color: var(--wa-chat-bg);
+      background-image: radial-gradient(rgba(134, 150, 160, 0.08) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      user-select: text;
+    }
+
+    /* Message Rows & Bubbles */
+    .message-row {
+      display: flex;
+      width: 100%;
+      margin-bottom: 4px;
+      position: relative;
+    }
+
+    .message-row.incoming { justify-content: flex-start; }
+    .message-row.outgoing { justify-content: flex-end; }
+
+    .message-bubble {
+      max-width: 82%;
+      min-width: 140px;
+      padding: 7px 10px 8px 10px;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--wa-bubble-border);
+      word-break: break-word;
+      font-size: 14px;
+      line-height: 1.4;
+      animation: fadeIn 0.15s ease-out;
+      cursor: pointer;
+      touch-action: pan-y;
+      transition: transform 0.1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message-row.incoming .message-bubble {
+      background: var(--wa-incoming-bubble);
+      color: var(--wa-text-primary);
+      border-top-left-radius: 2px;
+    }
+
+    .message-row.outgoing .message-bubble {
+      background: var(--wa-outgoing-bubble);
+      color: #ffffff;
+      border-top-right-radius: 2px;
+    }
+
+    .sender-name-bar {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .role-badge {
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-family: var(--wa-font-mono);
+    }
+    .role-bot { background: #3b82f6; color: #ffffff; }
+    .role-admin { background: #8b5cf6; color: #ffffff; }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--wa-text-muted);
+      margin-top: 4px;
+      font-family: var(--wa-font-mono);
+    }
+
+    .ticks-icon.blue { color: var(--wa-blue-tick); }
+
+    /* Stock Ticker Highlighting Chip */
+    .stock-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0, 168, 132, 0.22);
+      color: var(--wa-green);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-family: var(--wa-font-mono);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* ── INTERACTIVE BOT STOCK ANALYSIS CARD ─────────────────────────────────── */
+    .bot-stock-card {
+      background: rgba(11, 20, 26, 0.4);
+      border: 1px solid rgba(0, 168, 132, 0.3);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bot-stock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .bot-stock-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bot-stock-sym {
+      font-size: 15px;
+      font-weight: 800;
+      color: #34d399;
+      font-family: var(--wa-font-mono);
+    }
+
+    .bot-stock-sector {
+      font-size: 11px;
+      color: var(--wa-text-muted);
+    }
+
+    .bot-stock-name {
+      font-size: 12px;
+      color: var(--wa-text-secondary);
+    }
+
+    .bot-stock-score-badge {
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      font-family: var(--wa-font-mono);
+    }
+
+    .bot-stock-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .bot-metric-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .bot-metric-lbl {
+      font-size: 9.5px;
+      color: var(--wa-text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .bot-metric-val {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--wa-text-primary);
+      font-family: var(--wa-font-mono);
+    }
+    .bot-metric-val.green { color: #10b981; }
+    .bot-metric-val.red { color: #ef4444; }
+    .bot-metric-val.accent { color: #38bdf8; }
+
+    .bot-stock-stage-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .pill-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--wa-active-item);
+      color: var(--wa-text-secondary);
+    }
+    .pill-tag.stance {
+      background: rgba(0, 168, 132, 0.18);
+      color: var(--wa-green);
+    }
+    .pill-tag.link {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    /* 4 Action Buttons Grid */
+    .interactive-action-buttons-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .action-card-btn {
+      flex: 1;
+      min-width: calc(50% - 4px);
+      background: var(--wa-active-item);
+      border: 1px solid var(--wa-border);
+      color: var(--wa-text-primary);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+
+    .action-card-btn:hover {
+      background: var(--wa-green);
+      color: #fff;
+      border-color: var(--wa-green);
+    }
+
+    .action-card-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* ── INTERACTIVE TRADING POLL CARD ───────────────────────────────────────── */
+    .bot-poll-card {
+      background: rgba(11, 20, 26, 0.4);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bot-poll-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .poll-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #06b6d4;
+      letter-spacing: 0.04em;
+    }
+
+    .poll-timer-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-family: var(--wa-font-mono);
+    }
+    .poll-timer-badge.active {
+      background: rgba(6, 182, 212, 0.18);
+      color: #06b6d4;
+    }
+    .poll-timer-badge.ended {
+      background: rgba(239, 68, 68, 0.18);
+      color: #f87171;
+    }
+
+    .bot-poll-question {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--wa-text-primary);
+      line-height: 1.3;
+    }
+
+    .bot-poll-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .poll-option-row {
+      position: relative;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--wa-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.15s;
+    }
+
+    .poll-option-row:hover:not(.locked) {
+      border-color: #06b6d4;
+    }
+
+    .poll-option-row.selected {
+      border-color: #06b6d4;
+      background: rgba(6, 182, 212, 0.12);
+    }
+
+    .poll-option-row.winner {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .poll-option-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: rgba(6, 182, 212, 0.22);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+    }
+
+    .poll-option-row.winner .poll-option-bar {
+      background: rgba(16, 185, 129, 0.3);
+    }
+
+    .poll-option-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .poll-option-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--wa-text-primary);
+    }
+
+    .poll-check-icon {
+      color: #06b6d4;
+      font-weight: 800;
+    }
+
+    .poll-radio-circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1.5px solid var(--wa-text-muted);
+      display: inline-block;
+    }
+
+    .poll-option-stat {
+      font-family: var(--wa-font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--wa-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .poll-pct { color: var(--wa-text-primary); }
+
+    .bot-poll-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--wa-text-muted);
+      margin-top: 2px;
+    }
+
+    .poll-winner-label {
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    /* ── FLOATING AUTOCOMPLETE & SLASH COMMAND POPOVERS ─────────────────────── */
+    .popover-container {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 12px;
+      right: 12px;
+      background: var(--wa-sidebar-bg);
+      border: 1px solid var(--wa-border);
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+      z-index: 100;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 6px;
+      animation: popIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .popover-header {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--wa-text-muted);
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--wa-border-subtle);
+    }
+
+    .popover-item {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .popover-item:hover {
+      background: var(--wa-panel-hover);
+    }
+
+    .popover-sym-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .popover-sym {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #34d399;
+      font-family: var(--wa-font-mono);
+    }
+
+    .popover-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--wa-text-primary);
+      font-family: var(--wa-font-mono);
+    }
+
+    .popover-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--wa-text-secondary);
+      margin-top: 2px;
+    }
+
+    .popover-item.cmd-item {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cmd-icon { font-size: 18px; }
+    .cmd-name { font-size: 13.5px; font-weight: 700; color: #38bdf8; font-family: var(--wa-font-mono); }
+    .cmd-desc { font-size: 11.5px; color: var(--wa-text-secondary); }
+
+    /* ── READ-ONLY CHANNEL NOTICE BANNER ─────────────────────────────────────── */
+    .read-only-banner {
+      display: none;
+      padding: 14px 16px;
+      background: var(--wa-header-bg);
+      border-top: 1px solid var(--wa-border);
+      align-items: center;
+      gap: 12px;
+      z-index: 5;
+    }
+
+    /* ── BOTTOM CHAT COMPOSER BAR ────────────────────────────────────────────── */
+    .chat-input-bar {
+      min-height: 52px;
+      background: var(--wa-header-bg);
+      padding: 7px 10px max(10px, env(safe-area-inset-bottom, 10px)) 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid var(--wa-border-subtle);
+      z-index: 50;
+      position: relative;
+      flex-shrink: 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .ios-plus-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--wa-active-item);
+      border: 1px solid var(--wa-border-subtle);
+      color: var(--wa-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .ios-plus-btn:active {
+      transform: scale(0.92);
+      background: var(--wa-panel-hover);
+    }
+
+    .chat-input-pill {
+      flex: 1 1 0%;
+      min-width: 0;
+      background: var(--wa-input-bg);
+      border-radius: 20px;
+      padding: 4px 8px 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+      border: 1px solid var(--wa-border-subtle);
+      box-sizing: border-box;
+    }
+
+    .chat-textarea {
+      flex: 1 1 0%;
+      min-width: 0;
+      width: 100%;
+      max-height: 100px;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: var(--wa-font);
+      font-size: 14.5px;
+      color: var(--wa-text-primary);
+      resize: none;
+      line-height: 1.35;
+      padding: 4px 0;
+      box-sizing: border-box;
+    }
+
+    .chat-textarea::placeholder {
+      color: var(--wa-input-placeholder);
+      font-size: 14px;
+    }
+
+    .pill-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--wa-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      flex-shrink: 0;
+      transition: color 0.15s, transform 0.1s;
+    }
+    .pill-icon-btn:hover { color: var(--wa-green); }
+    .pill-icon-btn:active { transform: scale(0.9); }
+
+    .send-circle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--wa-green);
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.15s;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .send-circle-btn:active {
+      transform: scale(0.92);
+      background: var(--wa-green-hover);
+    }
+
+    /* ── iOS ACTION SHEET ─────────────────────────────────────────────────────── */
+    .ios-action-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12px 12px max(16px, env(safe-area-inset-bottom, 16px)) 12px;
+      animation: sheetFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes sheetFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .ios-action-sheet {
+      background: var(--wa-header-bg);
+      border-radius: 18px;
+      padding: 16px 14px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid var(--wa-border);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.35);
+      animation: sheetSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes sheetSlideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .ios-sheet-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .ios-sheet-item {
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 8px 4px;
+      border-radius: 12px;
+      transition: background 0.12s;
+    }
+    .ios-sheet-item:active {
+      background: var(--wa-panel-hover);
+      transform: scale(0.96);
+    }
+
+    .ios-sheet-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .ios-sheet-icon.poll { background: linear-gradient(135deg, #06b6d4, #0891b2); color: #fff; }
+    .ios-sheet-icon.stock { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .ios-sheet-icon.media { background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; }
+    .ios-sheet-icon.slash { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+
+    .ios-sheet-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--wa-text-primary);
+      text-align: center;
+    }
+
+    .ios-sheet-cancel {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--wa-active-item);
+      border: 1px solid var(--wa-border);
+      color: #ef4444;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s;
+    }
+    .ios-sheet-cancel:active {
+      background: var(--wa-panel-hover);
+    }
+
+    /* Quick Momentum Ticker Tray */
+    .quick-ticker-tray {
+      background: var(--wa-sidebar-bg);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+      border-top: 1px solid var(--wa-border-subtle);
+      flex-shrink: 0;
+    }
+    .quick-ticker-tray::-webkit-scrollbar { display: none; }
+
+    .ticker-pill-btn {
+      background: var(--wa-header-bg);
+      border: 1px solid var(--wa-border);
+      color: var(--wa-green);
+      font-family: var(--wa-font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── POLL MODAL ──────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 20, 26, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-card {
+      background: var(--wa-sidebar-bg);
+      border: 1px solid var(--wa-border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .poll-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .poll-preset-btn {
+      background: var(--wa-header-bg);
+      border: 1px solid var(--wa-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .poll-preset-btn.active {
+      border-color: #06b6d4;
+      background: rgba(6, 182, 212, 0.15);
+    }
+
+    .preset-icon { font-size: 16px; }
+    .preset-title { font-size: 12.5px; font-weight: 700; color: var(--wa-text-primary); margin-top: 2px; }
+    .preset-sub { font-size: 10px; color: var(--wa-text-muted); }
+
+    .poll-timer-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .timer-pill {
+      background: var(--wa-header-bg);
+      border: 1px solid var(--wa-border);
+      color: var(--wa-text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .timer-pill.active {
+      background: #06b6d4;
+      color: #fff;
+      border-color: #06b6d4;
+    }
+
+    .auth-input {
+      width: 100%;
+      background: var(--wa-input-bg);
+      border: 1px solid var(--wa-border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: var(--wa-font);
+      font-size: 14px;
+      color: var(--wa-text-primary);
+      outline: none;
+    }
+
+    .auth-submit-btn {
+      width: 100%;
+      background: var(--wa-green);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .auth-submit-btn:hover { background: var(--wa-green-hover); }
+
+    .toast-pill {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--wa-header-bg);
+      border: 1px solid var(--wa-border);
+      color: var(--wa-text-primary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      z-index: 2000;
+      display: none;
+    }
+
+    /* ==========================================================================
+       EXCLUSIVE DAY MODE (LIGHT THEME) WORLD-CLASS TYPOGRAPHY & VISIBILITY
+       ========================================================================== */
+    [data-theme="light"] .message-row.outgoing .message-bubble {
+      color: #0f172a !important;
+      background: #dcfce7 !important;
+      border: 1px solid #bbf7d0 !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+    }
+    [data-theme="light"] .message-row.incoming .message-bubble {
+      color: #0f172a !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+    }
+    [data-theme="light"] .message-body-text {
+      color: #0f172a !important;
+    }
+
+    /* Stock Ticker Chips in Messages */
+    [data-theme="light"] .stock-chip {
+      background: #ecfdf5 !important;
+      color: #047857 !important;
+      border: 1px solid #a7f3d0 !important;
+      font-weight: 800 !important;
+    }
+
+    /* Interactive Stock Analysis Card */
+    [data-theme="light"] .bot-stock-card {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07) !important;
+    }
+    [data-theme="light"] .bot-stock-sym {
+      color: #047857 !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.01em !important;
+    }
+    [data-theme="light"] .bot-stock-name {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .bot-stock-sector {
+      color: #475569 !important;
+      font-weight: 600 !important;
+    }
+    [data-theme="light"] .bot-stock-score-badge {
+      background: #ecfdf5 !important;
+      color: #047857 !important;
+      border: 1.5px solid #10b981 !important;
+    }
+    [data-theme="light"] .bot-stock-metrics-grid {
+      background: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+    }
+    [data-theme="light"] .bot-metric-lbl {
+      color: #475569 !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .bot-metric-val {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    [data-theme="light"] .bot-metric-val.green {
+      color: #047857 !important;
+    }
+    [data-theme="light"] .bot-metric-val.red {
+      color: #b91c1c !important;
+    }
+    [data-theme="light"] .bot-metric-val.accent {
+      color: #0369a1 !important;
+    }
+    [data-theme="light"] .pill-tag {
+      background: #f1f5f9 !important;
+      color: #334155 !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    [data-theme="light"] .pill-tag.stance {
+      background: #ecfdf5 !important;
+      color: #047857 !important;
+      border-color: #a7f3d0 !important;
+    }
+    [data-theme="light"] .pill-tag.link {
+      background: #e0f2fe !important;
+      color: #0284c7 !important;
+      border: 1px solid #bae6fd !important;
+    }
+    [data-theme="light"] .action-card-btn {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+    }
+    [data-theme="light"] .action-card-btn:hover {
+      background: #047857 !important;
+      color: #ffffff !important;
+      border-color: #047857 !important;
+    }
+
+    /* Trading Poll Card in Light Mode */
+    [data-theme="light"] .bot-poll-card {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07) !important;
+    }
+    [data-theme="light"] .poll-badge {
+      color: #0284c7 !important;
+    }
+    [data-theme="light"] .bot-poll-question {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .poll-option-row {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    [data-theme="light"] .poll-option-row:hover:not(.locked) {
+      border-color: #0284c7 !important;
+    }
+    [data-theme="light"] .poll-option-row.selected {
+      border-color: #0284c7 !important;
+      background: #f0f9ff !important;
+    }
+    [data-theme="light"] .poll-option-row.winner {
+      border-color: #059669 !important;
+      background: #ecfdf5 !important;
+    }
+    [data-theme="light"] .poll-option-bar {
+      background: rgba(2, 132, 199, 0.16) !important;
+    }
+    [data-theme="light"] .poll-option-row.winner .poll-option-bar {
+      background: rgba(16, 185, 129, 0.22) !important;
+    }
+    [data-theme="light"] .poll-option-text {
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .poll-option-stat {
+      color: #334155 !important;
+    }
+    [data-theme="light"] .poll-pct {
+      color: #0f172a !important;
+    }
+
+    /* Autocomplete Popover in Light Mode */
+    [data-theme="light"] .popover-container {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.15) !important;
+    }
+    [data-theme="light"] .popover-item:hover {
+      background: #f1f5f9 !important;
+    }
+    [data-theme="light"] .popover-sym {
+      color: #047857 !important;
+      font-weight: 800 !important;
+    }
+    [data-theme="light"] .popover-price {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .popover-name {
+      color: #334155 !important;
+      font-weight: 600 !important;
+    }
+    [data-theme="light"] .popover-sector {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .cmd-name {
+      color: #0284c7 !important;
+      font-weight: 800 !important;
+    }
+    [data-theme="light"] .cmd-desc {
+      color: #475569 !important;
+    }
+
+    /* Quick Momentum Ticker Tray in Light Mode */
+    [data-theme="light"] .quick-ticker-tray {
+      background: #ffffff !important;
+      border-top: 1px solid #e2e8f0 !important;
+    }
+    [data-theme="light"] .ticker-pill-btn {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #047857 !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .ticker-pill-btn:hover {
+      background: #ecfdf5 !important;
+      border-color: #047857 !important;
+    }
+
+    /* Headers & Navigation in Light Mode */
+    [data-theme="light"] .sidebar-header {
+      background: #ffffff !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+    [data-theme="light"] .chat-header {
+      background: #ffffff !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      box-shadow: none !important;
+    }
+    [data-theme="light"] .chat-header-name {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .chat-header-sub {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .channel-item-name {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="light"] .channel-item-last {
+      color: #475569 !important;
+    }
+    [data-theme="light"] .channel-section-header {
+      color: #475569 !important;
+      font-weight: 800 !important;
+    }
+    [data-theme="light"] .section-count-pill {
+      background: #f1f5f9 !important;
+      color: #334155 !important;
+      border: 1px solid #e2e8f0 !important;
+    }
+    [data-theme="light"] .filter-tab-pill {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #475569 !important;
+    }
+    [data-theme="light"] .filter-tab-pill.active {
+      background: #ecfdf5 !important;
+      border-color: #047857 !important;
+      color: #047857 !important;
+    }
+    [data-theme="light"] .search-input-wrap {
+      background: #f8fafc !important;
+      border: 1.5px solid #cbd5e1 !important;
+    }
+    [data-theme="light"] .search-input-wrap input {
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .chat-input-bar {
+      background: #f8fafc !important;
+      border-top: 1px solid #e2e8f0 !important;
+    }
+    [data-theme="light"] .chat-input-pill {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05) !important;
+    }
+    [data-theme="light"] .chat-textarea {
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .pill-icon-btn {
+      color: #475569 !important;
+    }
+    [data-theme="light"] .sender-name-bar {
+      color: #047857 !important;
+    }
+    [data-theme="light"] .ios-plus-btn {
+      background: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #047857 !important;
+    }
+    [data-theme="light"] .ios-action-sheet {
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+    [data-theme="light"] .ios-sheet-cancel {
+      background: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #ef4444 !important;
+    }
+
+    /* ── iOS PWA / STANDALONE HOME SCREEN SAFE AREA ENFORCEMENT ───────────────── */
+    @media all and (display-mode: standalone) {
+      .sidebar-header, .chat-header {
+        padding-top: max(48px, calc(env(safe-area-inset-top, 0px) + 8px)) !important;
+        min-height: calc(56px + env(safe-area-inset-top, 44px)) !important;
+      }
+      .chat-input-bar {
+        padding-bottom: max(22px, calc(env(safe-area-inset-bottom, 0px) + 10px)) !important;
+      }
+    }
+    @supports (-webkit-touch-callout: none) {
+      @media (max-width: 768px) {
+        .sidebar-header, .chat-header {
+          padding-top: max(14px, env(safe-area-inset-top, 14px));
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Notification -->
+  <div class="toast-pill" id="toastPill"></div>
+
+  <div class="wa-app-wrapper">
+
+    <!-- ── LEFT SIDEBAR ───────────────────────────────────────────────────────── -->
+    <aside class="sidebar-pane" id="sidebarPane">
+      
+      <!-- 1. Header with Profile and Actions -->
+      <header class="sidebar-header">
+        <div class="user-profile-cluster" onclick="openProfileModal()" title="View / Edit Profile">
+          <div class="user-avatar-wrap">
+            <img src="https://api.dicebear.com/7.x/initials/svg?seed=Trader&backgroundColor=00a884" id="myAvatarImg" class="user-avatar-img" alt="Trader Avatar">
+          </div>
+          <div>
+            <div class="user-name-title" id="myDisplayName">Trader</div>
+            <div class="user-status-text">
+              <span class="online-dot"></span>
+              <span id="myStatusLabel">Online · QuantSync</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          <button class="icon-btn" onclick="openProfileModal()" title="Settings & Profile" aria-label="Settings">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- 2. Segmented Filter Tabs -->
+      <nav class="filter-tabs-bar">
+        <div class="filter-tab-pill active" id="tab-all" onclick="filterByTab('all', this)">
+          <span>All</span>
+          <span class="tab-badge" id="tabBadgeAll">6</span>
+        </div>
+        <div class="filter-tab-pill" id="tab-groups" onclick="filterByTab('groups', this)">
+          <span>👥 Groups</span>
+          <span class="tab-badge" id="tabBadgeGroups">3</span>
+        </div>
+        <div class="filter-tab-pill" id="tab-personal" onclick="filterByTab('personal', this)">
+          <span>🤖 Personal</span>
+          <span class="tab-badge" id="tabBadgePersonal">3</span>
+        </div>
+      </nav>
+
+      <!-- 3. Search Box -->
+      <div class="sidebar-search-box">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--wa-text-muted); flex-shrink: 0;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="channelSearchInput" placeholder="Search channels or tickers..." oninput="filterChannels(this.value)">
+        </div>
+      </div>
+
+      <!-- 4. Channels List -->
+      <div class="channels-list" id="channelsList">
+        <!-- Rendered via JS -->
+      </div>
+    </aside>
+
+    <!-- ── RIGHT MAIN CHAT CONVERSATION PANE ──────────────────────────────────── -->
+    <main class="chat-pane" id="chatPane">
+      
+      <!-- Native Chat Header -->
+      <header class="chat-header">
+        <div class="chat-header-interactive-cluster" onclick="handleHeaderClusterClick()" title="View Channel Details">
+          <button class="mobile-back-btn" onclick="event.stopPropagation(); exitChatToSidebar(event);" aria-label="Back to channels" title="Back to channels">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            <span class="ios-back-label">Chats</span>
+          </button>
+          <div class="chat-header-avatar" id="currentChannelIcon">💬</div>
+          <div class="chat-header-titles">
+            <div class="chat-header-name">
+              <span id="currentChannelTitle">Traders Lounge</span>
+              <span class="channel-badge-pill bot" id="currentChannelBadge" style="display:none;">Alerts</span>
+            </div>
+            <div class="chat-header-sub" id="currentChannelSub">online · 24 traders active</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn" onclick="openPollModal()" title="Launch Trading Poll" aria-label="Trading Poll">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 20V10M12 20V4M6 20v-6"></path>
+            </svg>
+          </button>
+          <a href="/screener.html" target="_blank" class="icon-btn" title="Open Screener Terminal" aria-label="Screener" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <!-- Message Bubbles Scroll Area -->
+      <div class="chat-messages-container" id="messagesContainer">
+        <!-- Messages rendered via JS -->
+      </div>
+
+      <!-- Read-Only Channel Notice Bar -->
+      <div class="read-only-banner" id="readOnlyBanner">
+        <span style="font-size: 20px;">🔒</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px; color: var(--wa-text-primary);">Verified Institutional Feed</div>
+          <div style="font-size: 11.5px; color: var(--wa-text-secondary);">This is an official automated channel. Algorithmic trade updates and breakouts are delivered in real-time.</div>
+        </div>
+      </div>
+
+      <!-- Quick Momentum Ticker Tray -->
+      <div class="quick-ticker-tray" id="quickTickerTray">
+        <span style="font-size: 11px; font-weight: 700; color: var(--wa-text-muted); text-transform: uppercase;">RADAR:</span>
+        <button class="ticker-pill-btn" onclick="handleQuickTickerClick('TATAMOTORS')">📈 $TATAMOTORS</button>
+        <button class="ticker-pill-btn" onclick="handleQuickTickerClick('RELIANCE')">📈 $RELIANCE</button>
+        <button class="ticker-pill-btn" onclick="handleQuickTickerClick('INFY')">📈 $INFY</button>
+        <button class="ticker-pill-btn" onclick="handleQuickTickerClick('TCS')">📈 $TCS</button>
+        <button class="ticker-pill-btn" onclick="handleQuickTickerClick('POLYCAB')">📈 $POLYCAB</button>
+        <button class="ticker-pill-btn" onclick="handleQuickTickerClick('HDFCBANK')">📈 $HDFCBANK</button>
+      </div>
+
+      <!-- Bottom Chat Input Bar -->
+      <footer class="chat-input-bar" id="chatInputBar">
+        
+        <!-- Floating Autocomplete Dropdown Popover -->
+        <div class="popover-container" id="stockAutocompletePopover" style="display: none;"></div>
+
+        <!-- Floating Slash Commands Menu Popover -->
+        <div class="popover-container" id="slashCommandsPopover" style="display: none;"></div>
+
+        <!-- iOS WhatsApp 3-Element Bar: [+] [Input Pill] [Send] -->
+        <button class="ios-plus-btn" id="iosPlusBtn" onclick="toggleActionSheet(event)" title="Trading Tools & Media" aria-label="Tools">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="12" y2="12"></line>
+          </svg>
+        </button>
+
+        <div class="chat-input-pill">
+          <textarea 
+            id="messageInput" 
+            class="chat-textarea" 
+            rows="1" 
+            placeholder="Message or $SYMBOL..." 
+            enterkeyhint="send" 
+            onkeydown="handleInputKeydown(event)" 
+            oninput="handleInputTyping(this)"></textarea>
+
+          <button class="pill-icon-btn" onclick="insertEmoji('🚀')" title="Quick Reaction" aria-label="Insert Emoji">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+          </button>
+        </div>
+
+        <button class="send-circle-btn" id="sendBtn" onclick="handleSendCircleClick()" title="Send" aria-label="Send message">
+          <span id="sendBtnIcon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          </span>
+        </button>
+
+        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(this)">
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- ── iOS ACTION SHEET MODAL ─────────────────────────────────────────────── -->
+  <div class="ios-action-sheet-backdrop" id="iosActionSheet" style="display: none;" onclick="closeActionSheet(event)">
+    <div class="ios-action-sheet" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 2px 4px 6px 4px;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--wa-text-secondary); text-transform: uppercase; letter-spacing: 0.6px;">Trading Tools</span>
+        <button class="icon-btn" onclick="closeActionSheet()" style="width: 26px; height: 26px; font-size: 13px;" aria-label="Close sheet">✕</button>
+      </div>
+
+      <div class="ios-sheet-grid">
+        <button class="ios-sheet-item" onclick="triggerAction('poll')">
+          <div class="ios-sheet-icon poll">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 20V10M12 20V4M6 20v-6"></path>
+            </svg>
+          </div>
+          <span class="ios-sheet-label">Trading Poll</span>
+        </button>
+
+        <button class="ios-sheet-item" onclick="triggerAction('stock')">
+          <div class="ios-sheet-icon stock">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <span class="ios-sheet-label">Stock Ticker</span>
+        </button>
+
+        <button class="ios-sheet-item" onclick="triggerAction('media')">
+          <div class="ios-sheet-icon media">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <span class="ios-sheet-label">Upload Chart</span>
+        </button>
+
+        <button class="ios-sheet-item" onclick="triggerAction('slash')">
+          <div class="ios-sheet-icon slash">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="19" x2="19" y2="5"></line>
+            </svg>
+          </div>
+          <span class="ios-sheet-label">Commands /</span>
+        </button>
+      </div>
+
+      <button class="ios-sheet-cancel" onclick="closeActionSheet()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ── TRADING POLL CREATOR MODAL ───────────────────────────────────────────── -->
+  <div class="modal-overlay" id="pollModalOverlay" style="display:none;" onclick="closePollModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">📊</span>
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--wa-text-primary);">Create Trading Poll</h3>
+        </div>
+        <button class="icon-btn" onclick="closePollModal()">✕</button>
+      </div>
+
+      <div style="font-size: 12px; color: var(--wa-text-secondary); margin-bottom: 12px;">
+        Select a preset trading scenario or customize your poll:
+      </div>
+
+      <div class="poll-presets-grid">
+        <button class="poll-preset-btn active" id="preset-buysell" onclick="selectPollPreset('buysell')">
+          <span class="preset-icon">🟢🔴</span>
+          <span class="preset-title">Buy / Sell</span>
+          <span class="preset-sub">Stock decision</span>
+        </button>
+        <button class="poll-preset-btn" id="preset-nifty" onclick="selectPollPreset('nifty')">
+          <span class="preset-icon">📈📉</span>
+          <span class="preset-title">Nifty UP / Down</span>
+          <span class="preset-sub">Expiry direction</span>
+        </button>
+        <button class="poll-preset-btn" id="preset-buyignore" onclick="selectPollPreset('buyignore')">
+          <span class="preset-icon">🎯⏳</span>
+          <span class="preset-title">Buy / Ignore</span>
+          <span class="preset-sub">Breakout setup</span>
+        </button>
+        <button class="poll-preset-btn" id="preset-custom" onclick="selectPollPreset('custom')">
+          <span class="preset-icon">✍️</span>
+          <span class="preset-title">Custom Poll</span>
+          <span class="preset-sub">Freeform question</span>
+        </button>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--wa-text-muted); text-transform: uppercase;">Stock Symbol (Optional)</label>
+        <input type="text" id="pollTickerInput" class="auth-input" placeholder="e.g. TATAMOTORS, RELIANCE..." oninput="updatePollQuestionPreview()" style="margin-top: 4px;">
+      </div>
+
+      <div style="margin-top: 12px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--wa-text-muted); text-transform: uppercase;">Poll Question</label>
+        <input type="text" id="pollQuestionInput" class="auth-input" placeholder="Enter poll question..." style="margin-top: 4px;">
+      </div>
+
+      <div style="margin-top: 12px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--wa-text-muted); text-transform: uppercase;">Voting Options</label>
+        <div id="pollOptionsList" style="margin-top: 4px; display: flex; flex-direction: column; gap: 6px;"></div>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--wa-text-muted); text-transform: uppercase;">Poll Duration (Max 4h)</label>
+        <div class="poll-timer-pills" style="margin-top: 6px;">
+          <button class="timer-pill" data-mins="15" onclick="selectPollTimer(15, this)">15m</button>
+          <button class="timer-pill" data-mins="30" onclick="selectPollTimer(30, this)">30m</button>
+          <button class="timer-pill active" data-mins="60" onclick="selectPollTimer(60, this)">1 hour</button>
+          <button class="timer-pill" data-mins="120" onclick="selectPollTimer(120, this)">2 hours</button>
+          <button class="timer-pill" data-mins="240" onclick="selectPollTimer(240, this)">4 hours</button>
+        </div>
+      </div>
+
+      <button class="auth-submit-btn" onclick="submitPollCreation()" style="margin-top: 18px;">
+        🚀 Launch Trading Poll
+      </button>
+    </div>
+  </div>
+
+  <!-- ── AUTH / PROFILE MODAL ────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="authModal" style="display:none;" onclick="closeAuthModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="font-size: 38px; margin-bottom: 8px;">🔐</div>
+      <h3 style="font-size: 20px; font-weight: 700; color: var(--wa-text-primary); margin-bottom: 6px;">QuantSync Trader Profile</h3>
+      <p style="font-size: 13px; color: var(--wa-text-secondary); margin-bottom: 18px;">Sign in to join the conversation, cast poll votes, and query the AI Bot.</p>
+
+      <form onsubmit="handleAuthSubmit(event)">
+        <input type="email" id="authEmailInput" class="auth-input" placeholder="Enter your email address" required style="margin-bottom: 10px;">
+        <input type="text" id="authNameInput" class="auth-input" placeholder="Display name (e.g. Rahul Tiwari)" style="margin-bottom: 16px;">
+        <button type="submit" class="auth-submit-btn">Continue to Lounge</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Audio Engine for Crisp Feedback -->
+  <script>
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      playSent() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(950, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.08);
+        } catch(e) {}
+      },
+      playReaction() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(700, this.ctx.currentTime + 0.06);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.06);
+        } catch(e) {}
+      }
+    };
+  </script>
+
+  <!-- Main Application Script -->
+  <script>
+    let currentUser = null;
+    let channels = [];
+    let currentChannel = null;
+    let messages = [];
+    let activeTabFilter = 'all';
+    let socket = null;
+    let pollInterval = null;
+    let selectedPollPreset = 'buysell';
+    let selectedPollDuration = 60;
+    let autocompleteDebounce = null;
+    let pendingAttachment = null;
+
+    // ── INITIALIZATION ────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', async () => {
+      loadTheme();
+      loadUserFromStorage();
+      await fetchChannels();
+
+      // Default select first channel
+      if (channels.length > 0) {
+        selectChannel(channels[0].id, false);
+      }
+
+      initTouchGestures();
+    });
+
+    // ── FIREBASE & PARENT AUTH SYNCHRONIZATION ────────────────────────────────
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'AUTH_SYNC' && e.data.user) {
+        const u = e.data.user;
+        currentUser = {
+          email: u.email,
+          name: u.displayName || u.name || u.email.split('@')[0],
+          avatar_url: u.photoURL || u.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.email)}&backgroundColor=00a884`,
+          role: 'trader'
+        };
+        localStorage.setItem('quantsync_user', JSON.stringify(currentUser));
+        updateUserProfileUI();
+      }
+      if (e.data && e.data.type === 'THEME_CHANGE' && e.data.theme) {
+        document.documentElement.setAttribute('data-theme', e.data.theme);
+        localStorage.setItem('quantsync_theme', e.data.theme);
+      }
+    });
+
+    function loadUserFromStorage() {
+      try {
+        const raw = localStorage.getItem('quantsync_user');
+        if (raw) {
+          currentUser = JSON.parse(raw);
+          updateUserProfileUI();
+        } else {
+          currentUser = {
+            email: 'trader@quantsync.ai',
+            name: 'Quant Trader',
+            avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Trader&backgroundColor=00a884',
+            role: 'trader'
+          };
+          updateUserProfileUI();
+        }
+      } catch (e) {}
+    }
+
+    function updateUserProfileUI() {
+      if (!currentUser) return;
+      document.getElementById('myDisplayName').textContent = currentUser.name || 'Trader';
+      if (currentUser.avatar_url) {
+        document.getElementById('myAvatarImg').src = currentUser.avatar_url;
+      }
+    }
+
+    function openProfileModal() {
+      document.getElementById('authModal').style.display = 'flex';
+      if (currentUser) {
+        document.getElementById('authEmailInput').value = currentUser.email || '';
+        document.getElementById('authNameInput').value = currentUser.name || '';
+      }
+    }
+
+    function closeAuthModal(e) {
+      if (e && e.target !== document.getElementById('authModal')) return;
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('authEmailInput').value.trim();
+      const name = document.getElementById('authNameInput').value.trim();
+      if (!email) return;
+
+      try {
+        const res = await fetch('/api/chat/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name })
+        });
+        const d = await res.json();
+        if (d.user) {
+          currentUser = d.user;
+          localStorage.setItem('quantsync_user', JSON.stringify(currentUser));
+          updateUserProfileUI();
+          document.getElementById('authModal').style.display = 'none';
+          showToast(`Welcome, ${currentUser.name}! 🚀`);
+        }
+      } catch (err) {
+        showToast('Login failed. Please try again.');
+      }
+    }
+
+    // ── THEME SWITCHER ────────────────────────────────────────────────────────
+    function loadTheme() {
+      const saved = localStorage.getItem('quantsync_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('quantsync_theme', next);
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'THEME_SYNC', theme: next }, '*');
+      }
+    }
+
+    function showToast(text) {
+      const pill = document.getElementById('toastPill');
+      pill.textContent = text;
+      pill.style.display = 'block';
+      setTimeout(() => { pill.style.display = 'none'; }, 2600);
+    }
+
+    // ── CHANNELS FETCHING & RENDERING ─────────────────────────────────────────
+    async function fetchChannels() {
+      try {
+        const res = await fetch('/api/chat/channels');
+        const d = await res.json();
+        channels = d.channels || [];
+        renderChannels(channels);
+      } catch (e) {
+        console.error('Failed to load channels:', e);
+      }
+    }
+
+    function renderChannels(list) {
+      const container = document.getElementById('channelsList');
+      if (!list || list.length === 0) {
+        container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--wa-text-secondary);">No channels found.</div>';
+        return;
+      }
+
+      const groups = list.filter(c => (c.section || 'group') === 'group');
+      const personal = list.filter(c => (c.section || 'group') === 'personal');
+
+      let html = '';
+
+      if (activeTabFilter === 'all' || activeTabFilter === 'groups') {
+        if (groups.length > 0) {
+          html += `
+            <div class="channel-section-header">
+              <span>👥 GROUPS</span>
+              <span class="section-count-pill">${groups.length}</span>
+            </div>
+            ${groups.map(ch => renderChannelRowHtml(ch)).join('')}
+          `;
+        }
+      }
+
+      if (activeTabFilter === 'all' || activeTabFilter === 'personal') {
+        if (personal.length > 0) {
+          html += `
+            <div class="channel-section-header" style="margin-top: 14px;">
+              <span>🤖 PERSONAL & AI FEEDS</span>
+              <span class="section-count-pill">${personal.length}</span>
+            </div>
+            ${personal.map(ch => renderChannelRowHtml(ch)).join('')}
+          `;
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderChannelRowHtml(ch) {
+      const isActive = currentChannel && currentChannel.id === ch.id;
+      const timeStr = formatMessageTime(ch.last_message ? ch.last_message.created_at : ch.created_at) || '14:20';
+      let snippet = ch.description || 'Welcome to the lounge';
+      if (ch.last_message) {
+        snippet = `<strong>${escapeHtml(ch.last_message.user_name)}:</strong> ${escapeHtml(ch.last_message.text || 'Shared update')}`;
+      }
+
+      let badgeHtml = '';
+      if (ch.id === 'breakout-alert' || ch.id === 'ai-alerts') {
+        badgeHtml = '<span class="channel-badge-pill bot">BOT</span>';
+      } else if (ch.id === 'stock-analysis') {
+        badgeHtml = '<span class="channel-badge-pill ai">AI COPILOT</span>';
+      }
+
+      return `
+        <div class="channel-item ${isActive ? 'active' : ''}" id="channel-row-${ch.id}" onclick="selectChannel('${ch.id}', true)">
+          <div class="channel-avatar">
+            ${ch.icon || '💬'}
+          </div>
+          <div class="channel-content">
+            <div class="channel-header-row">
+              <div class="channel-title">
+                <span>${escapeHtml(ch.name)}</span>
+              </div>
+              <div class="channel-time">${timeStr}</div>
+            </div>
+            <div class="channel-snippet-row">
+              <div class="channel-last-msg">${snippet}</div>
+              ${badgeHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function filterByTab(tab, el) {
+      activeTabFilter = tab;
+      document.querySelectorAll('.filter-tab-pill').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      applyActiveTabFilter();
+    }
+
+    function applyActiveTabFilter() {
+      let filtered = channels;
+      if (activeTabFilter === 'groups') {
+        filtered = channels.filter(c => (c.section || 'group') === 'group');
+      } else if (activeTabFilter === 'personal') {
+        filtered = channels.filter(c => (c.section || 'group') === 'personal');
+      }
+      renderChannels(filtered);
+    }
+
+    function filterChannels(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        applyActiveTabFilter();
+        return;
+      }
+      const filtered = channels.filter(c => 
+        c.name.toLowerCase().includes(q) || 
+        c.description.toLowerCase().includes(q)
+      );
+      renderChannels(filtered);
+    }
+
+    // ── SELECT CHANNEL ────────────────────────────────────────────────────────
+    async function selectChannel(channelId, pushToHistory = true) {
+      const ch = channels.find(c => c.id === channelId);
+      if (!ch) return;
+      currentChannel = ch;
+
+      document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById(`channel-row-${ch.id}`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('currentChannelIcon').textContent = ch.icon || '💬';
+      document.getElementById('currentChannelTitle').textContent = ch.name;
+      document.getElementById('currentChannelSub').textContent = ch.channel_type === 'analysis_bot' 
+        ? '⚡ QuantSync AI Co-Pilot · Type any stock name or /command'
+        : `online · ${ch.online_count || 24} traders active`;
+
+      // Read-Only Enforcement
+      const readOnlyBar = document.getElementById('readOnlyBanner');
+      const inputBar = document.getElementById('chatInputBar');
+      const tickerTray = document.getElementById('quickTickerTray');
+
+      if (ch.is_read_only) {
+        readOnlyBar.style.display = 'flex';
+        inputBar.style.display = 'none';
+        tickerTray.style.display = 'none';
+      } else {
+        readOnlyBar.style.display = 'none';
+        inputBar.style.display = 'flex';
+        tickerTray.style.display = 'flex';
+      }
+
+      document.body.classList.add('in-chat');
+
+      connectWebSocket(ch.id);
+      await loadMessages(ch.id);
+
+      if (pollInterval) clearInterval(pollInterval);
+      pollInterval = setInterval(() => pollLatestMessages(ch.id), 3500);
+    }
+
+    function exitChatToSidebar(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      document.body.classList.remove('in-chat');
+    }
+
+    function handleHeaderClusterClick() {
+      showToast(`${currentChannel.name}: ${currentChannel.description}`);
+    }
+
+    // ── WEBSOCKET CONNECTION ──────────────────────────────────────────────────
+    function connectWebSocket(channelId) {
+      if (socket) {
+        try { socket.close(); } catch(e) {}
+      }
+
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      const wsUrl = `${protocol}//${host}/ws/chat/${channelId}?email=${encodeURIComponent(currentUser ? currentUser.email : 'guest@quantsync.ai')}&name=${encodeURIComponent(currentUser ? currentUser.name : 'Trader')}`;
+
+      try {
+        socket = new WebSocket(wsUrl);
+        socket.onmessage = (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            handleWsMessage(data);
+          } catch(err) {}
+        };
+      } catch(e) {
+        console.warn('WebSocket connection fallback to polling.');
+      }
+    }
+
+    function handleWsMessage(payload) {
+      if (!payload) return;
+      if (payload.type === 'new_message' && payload.channel_id === currentChannel?.id) {
+        const exists = messages.some(m => m.id === payload.message.id);
+        if (!exists) {
+          messages.push(payload.message);
+          appendMessageBubble(payload.message);
+          scrollToBottom();
+          if (payload.message.user_email !== currentUser?.email) {
+            AudioEngine.playReaction();
+          }
+        }
+      } else if (payload.type === 'poll_update' && payload.channel_id === currentChannel?.id) {
+        const msg = messages.find(m => m.id === payload.message_id);
+        if (msg) {
+          msg.attachment_url = JSON.stringify(payload.poll);
+          const cardContainer = document.getElementById(`poll-card-${payload.message_id}`);
+          if (cardContainer) {
+            const div = document.createElement('div');
+            div.innerHTML = renderPollCardHtml(payload.message_id, payload.poll);
+            cardContainer.replaceWith(div.firstElementChild);
+          }
+        }
+      } else if (payload.type === 'reaction_update' && payload.channel_id === currentChannel?.id) {
+        updateMessageReactions(payload.message_id, payload.reactions);
+      }
+    }
+
+    // ── MESSAGES LOADING & RENDERING ──────────────────────────────────────────
+    async function loadMessages(channelId) {
+      try {
+        const res = await fetch(`/api/chat/messages/${channelId}?limit=50&current_user_email=${encodeURIComponent(currentUser ? currentUser.email : '')}`);
+        const d = await res.json();
+        messages = d.messages || [];
+        renderAllMessages(messages);
+        scrollToBottom();
+      } catch(e) {
+        console.error('Failed to load messages:', e);
+      }
+    }
+
+    async function pollLatestMessages(channelId) {
+      if (!currentChannel || currentChannel.id !== channelId) return;
+      try {
+        const res = await fetch(`/api/chat/messages/${channelId}?limit=30&current_user_email=${encodeURIComponent(currentUser ? currentUser.email : '')}`);
+        const d = await res.json();
+        const latestList = d.messages || [];
+        if (latestList.length > 0 && messages.length > 0) {
+          const lastLoadedId = messages[messages.length - 1].id;
+          const newItems = latestList.filter(m => m.id > lastLoadedId);
+          if (newItems.length > 0) {
+            newItems.forEach(m => {
+              messages.push(m);
+              appendMessageBubble(m);
+            });
+            scrollToBottom();
+          }
+        }
+      } catch(e) {}
+    }
+
+    function renderAllMessages(msgList) {
+      const container = document.getElementById('messagesContainer');
+      container.innerHTML = '';
+      if (!msgList || msgList.length === 0) {
+        container.innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--wa-text-muted);">No messages yet. Send a message to start!</div>';
+        return;
+      }
+      msgList.forEach((msg, idx) => {
+        const isFirstOfGroup = idx === 0 || msgList[idx - 1].user_email !== msg.user_email;
+        const div = document.createElement('div');
+        div.innerHTML = buildMessageHtml(msg, isFirstOfGroup);
+        container.appendChild(div.firstElementChild);
+      });
+    }
+
+    function appendMessageBubble(msg) {
+      const container = document.getElementById('messagesContainer');
+      const isFirstOfGroup = messages.length <= 1 || messages[messages.length - 2].user_email !== msg.user_email;
+      const div = document.createElement('div');
+      div.innerHTML = buildMessageHtml(msg, isFirstOfGroup);
+      container.appendChild(div.firstElementChild);
+    }
+
+    function buildMessageHtml(msg, isFirstOfGroup) {
+      const isOutgoing = currentUser && msg.user_email.toLowerCase() === currentUser.email.toLowerCase();
+      const rowClass = isOutgoing ? 'outgoing' : 'incoming';
+      const timeStr = formatMessageTime(msg.created_at);
+      const formattedText = formatMessageContent(msg.text);
+
+      let senderHeader = '';
+      if (!isOutgoing && isFirstOfGroup) {
+        let badgeHtml = '';
+        if (msg.user_role === 'quant_bot') badgeHtml = '<span class="role-badge role-bot">AI BOT</span>';
+        else if (msg.user_role === 'admin') badgeHtml = '<span class="role-badge role-admin">ADMIN</span>';
+
+        senderHeader = `
+          <div class="sender-name-bar" style="color: #38bdf8;">
+            <span>${escapeHtml(msg.user_name || 'Trader')}</span>
+            ${badgeHtml}
+          </div>
+        `;
+      }
+
+      let extraCardHtml = '';
+      if (msg.attachment_type === 'stock_card' && msg.attachment_url) {
+        try {
+          const cardData = JSON.parse(msg.attachment_url);
+          extraCardHtml = renderStockCardHtml(cardData);
+        } catch(e) {}
+      } else if (msg.attachment_type === 'poll' && msg.attachment_url) {
+        try {
+          const pollData = JSON.parse(msg.attachment_url);
+          extraCardHtml = renderPollCardHtml(msg.id, pollData);
+        } catch(e) {}
+      } else if (msg.attachment_url && msg.attachment_type !== 'poll') {
+        extraCardHtml = `<img src="${msg.attachment_url}" style="max-width:100%; border-radius:8px; margin-top:6px;" alt="Attachment">`;
+      }
+
+      return `
+        <div class="message-row ${rowClass}" id="msg-row-${msg.id}">
+          <div class="message-bubble" id="bubble-${msg.id}">
+            ${senderHeader}
+            <div class="message-body-text">${formattedText}</div>
+            ${extraCardHtml}
+            <div class="message-meta">
+              <span>${timeStr}</span>
+              ${isOutgoing ? '<span class="ticks-icon blue">✓✓</span>' : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── RENDER STOCK ANALYSIS CARD ────────────────────────────────────────────
+    function renderStockCardHtml(card) {
+      if (!card || !card.symbol) {
+        if (card && card.buttons) {
+          return `
+            <div class="interactive-action-buttons-grid">
+              ${card.buttons.map(b => `
+                <button class="action-card-btn" onclick="handleActionButtonClick('${b.id}', '${b.symbol}')">
+                  ${escapeHtml(b.label)}
+                </button>
+              `).join('')}
+            </div>
+          `;
+        }
+        return '';
+      }
+
+      const sym = escapeHtml(card.symbol);
+      const name = escapeHtml(card.name || sym);
+      const sector = escapeHtml(card.sector || 'Equity');
+      const price = Number(card.price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      const pivot = Number(card.pivot || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      const tgt1 = Number(card.target_1 || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      const sl = Number(card.stop_loss || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      const score = card.dna_score || 0;
+      const stage = escapeHtml(card.stage || 'Stage 2');
+      const stance = escapeHtml(card.stance || 'BULLISH');
+
+      const buttons = card.buttons || [
+        { id: 'technical', label: '📊 Technical', symbol: card.symbol },
+        { id: 'financial', label: '💼 Financial', symbol: card.symbol },
+        { id: 'dna', label: '🧬 DNA Report', symbol: card.symbol },
+        { id: 'new_stock', label: '🔍 New Stock', symbol: card.symbol }
+      ];
+
+      return `
+        <div class="bot-stock-card" onclick="event.stopPropagation();">
+          <div class="bot-stock-header">
+            <div>
+              <div class="bot-stock-title">
+                <span class="bot-stock-sym">${sym}</span>
+                <span class="bot-stock-sector">${sector}</span>
+              </div>
+              <div class="bot-stock-name">${name}</div>
+            </div>
+            <div class="bot-stock-score-badge">
+              🧬 ${score}/100
+            </div>
+          </div>
+
+          <div class="bot-stock-metrics-grid">
+            <div class="bot-metric-box">
+              <div class="bot-metric-lbl">LTP</div>
+              <div class="bot-metric-val">₹${price}</div>
+            </div>
+            <div class="bot-metric-box">
+              <div class="bot-metric-lbl">Pivot</div>
+              <div class="bot-metric-val accent">₹${pivot}</div>
+            </div>
+            <div class="bot-metric-box">
+              <div class="bot-metric-lbl">Target 1</div>
+              <div class="bot-metric-val green">₹${tgt1}</div>
+            </div>
+            <div class="bot-metric-box">
+              <div class="bot-metric-lbl">Stop Loss</div>
+              <div class="bot-metric-val red">₹${sl}</div>
+            </div>
+          </div>
+
+          <div class="bot-stock-stage-row">
+            <span class="pill-tag">${stage}</span>
+            <span class="pill-tag stance">${stance}</span>
+            <a href="/stock-detail.html?symbol=${sym}" target="_blank" class="pill-tag link">Full Chart ↗</a>
+          </div>
+
+          <div class="interactive-action-buttons-grid">
+            ${buttons.map(b => `
+              <button class="action-card-btn" onclick="handleActionButtonClick('${b.id}', '${b.symbol}')">
+                ${escapeHtml(b.label)}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ── RENDER POLL CARD ──────────────────────────────────────────────────────
+    function renderPollCardHtml(msgId, poll) {
+      if (!poll) return '';
+      const now = new Date();
+      const expiresAt = poll.expires_at ? new Date(poll.expires_at) : null;
+      const isEnded = poll.status === 'ended' || (expiresAt && now > expiresAt);
+      const totalVotes = poll.total_votes || 0;
+      const userEmail = (currentUser ? currentUser.email : '').toLowerCase();
+
+      let myVotedOptId = null;
+      (poll.options || []).forEach(opt => {
+        if ((opt.votes || []).includes(userEmail)) {
+          myVotedOptId = opt.id;
+        }
+      });
+
+      let maxVotes = -1;
+      let winner = null;
+      (poll.options || []).forEach(opt => {
+        const vCount = (opt.votes || []).length;
+        if (vCount > maxVotes && vCount > 0) {
+          maxVotes = vCount;
+          winner = opt;
+        }
+      });
+
+      let timerText = '⏳ Active';
+      if (isEnded) {
+        timerText = '🏁 Poll Ended';
+      } else if (expiresAt) {
+        const diffMs = expiresAt - now;
+        const mins = Math.max(0, Math.floor(diffMs / 60000));
+        const hours = Math.floor(mins / 60);
+        const remMins = mins % 60;
+        timerText = hours > 0 ? `⏳ ${hours}h ${remMins}m left` : `⏳ ${remMins}m left`;
+      }
+
+      return `
+        <div class="bot-poll-card" id="poll-card-${msgId}" onclick="event.stopPropagation();">
+          <div class="bot-poll-header">
+            <span class="poll-badge">📊 TRADING POLL</span>
+            <span class="poll-timer-badge ${isEnded ? 'ended' : 'active'}">${timerText}</span>
+          </div>
+
+          <div class="bot-poll-question">
+            ${escapeHtml(poll.question)}
+          </div>
+
+          <div class="bot-poll-options">
+            ${(poll.options || []).map(opt => {
+              const vCount = (opt.votes || []).length;
+              const pct = totalVotes > 0 ? Math.round((vCount / totalVotes) * 100) : 0;
+              const isSelected = myVotedOptId === opt.id;
+              const isWinner = isEnded && winner && winner.id === opt.id;
+
+              return `
+                <div class="poll-option-row ${isSelected ? 'selected' : ''} ${isEnded ? 'locked' : ''} ${isWinner ? 'winner' : ''}" 
+                     onclick="${isEnded ? '' : `submitPollVote(${msgId}, '${opt.id}')`}">
+                  <div class="poll-option-bar" style="width: ${pct}%;"></div>
+                  <div class="poll-option-content">
+                    <div class="poll-option-text">
+                      ${isSelected ? '<span class="poll-check-icon">✓</span>' : '<span class="poll-radio-circle"></span>'}
+                      <span>${escapeHtml(opt.text)}</span>
+                    </div>
+                    <div class="poll-option-stat">
+                      <span class="poll-pct">${pct}%</span>
+                      <span class="poll-votes">(${vCount})</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="bot-poll-footer">
+            <span>Total: ${totalVotes} ${totalVotes === 1 ? 'vote' : 'votes'}</span>
+            ${isEnded && winner ? `<span class="poll-winner-label">🏆 Result: ${escapeHtml(winner.text)}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // ── ACTION BUTTON CLICKS ──────────────────────────────────────────────────
+    function handleActionButtonClick(actionId, symbol) {
+      if (!actionId) return;
+      if (actionId === 'new_stock') {
+        const input = document.getElementById('messageInput');
+        input.value = '';
+        input.placeholder = 'Type stock name (e.g. TATAMOTORS, INFY)...';
+        input.focus();
+        triggerAutocomplete('TATA');
+        return;
+      }
+      if (actionId === 'select_sym') {
+        const input = document.getElementById('messageInput');
+        input.value = symbol;
+        sendMessage();
+        return;
+      }
+      const input = document.getElementById('messageInput');
+      input.value = `[ACTION:${actionId}:${symbol}]`;
+      sendMessage();
+    }
+
+    async function submitPollVote(msgId, optId) {
+      if (!currentUser) {
+        openProfileModal();
+        return;
+      }
+      try {
+        AudioEngine.playReaction();
+        const res = await fetch(`/api/chat/poll/${msgId}/vote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentUser.email, option_id: optId })
+        });
+        const d = await res.json();
+        if (d.status === 'ok' || d.status === 'ended') {
+          const msg = messages.find(m => m.id === msgId);
+          if (msg) {
+            msg.attachment_url = JSON.stringify(d.poll);
+            const cardContainer = document.getElementById(`poll-card-${msgId}`);
+            if (cardContainer) {
+              const div = document.createElement('div');
+              div.innerHTML = renderPollCardHtml(msgId, d.poll);
+              cardContainer.replaceWith(div.firstElementChild);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Vote failed:', e);
+      }
+    }
+
+    // ── SENDING MESSAGES ──────────────────────────────────────────────────────
+    async function sendMessage() {
+      if (!currentUser) {
+        openProfileModal();
+        return;
+      }
+      if (!currentChannel) return;
+
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text && !pendingAttachment) return;
+
+      input.value = '';
+      autoResizeTextarea(input);
+      handleInputTyping(input);
+      hideAutocomplete();
+      hideSlashCommandsMenu();
+
+      AudioEngine.playSent();
+      if (navigator.vibrate) navigator.vibrate(15);
+
+      try {
+        await fetch(`/api/chat/messages/${currentChannel.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: currentUser.email,
+            text: text,
+            attachment_url: pendingAttachment || undefined
+          })
+        });
+        pendingAttachment = null;
+      } catch (e) {
+        showToast('Failed to send message.');
+      }
+    }
+
+    const SVG_SEND = `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+    const SVG_MIC = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>`;
+
+    function handleSendCircleClick() {
+      const input = document.getElementById('messageInput');
+      if (input && !input.value.trim() && !pendingAttachment) {
+        input.focus();
+        return;
+      }
+      sendMessage();
+    }
+
+    function toggleActionSheet(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      const sheet = document.getElementById('iosActionSheet');
+      if (!sheet) return;
+      sheet.style.display = (sheet.style.display === 'none' || !sheet.style.display) ? 'flex' : 'none';
+    }
+
+    function closeActionSheet(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      const sheet = document.getElementById('iosActionSheet');
+      if (sheet) sheet.style.display = 'none';
+    }
+
+    function triggerAction(action) {
+      closeActionSheet();
+      const input = document.getElementById('messageInput');
+      if (action === 'poll') {
+        openPollModal();
+      } else if (action === 'stock') {
+        if (input) {
+          input.value = '$';
+          input.focus();
+          handleInputTyping(input);
+        }
+      } else if (action === 'media') {
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) fileInput.click();
+      } else if (action === 'slash') {
+        if (input) {
+          input.value = '/';
+          input.focus();
+          handleInputTyping(input);
+        }
+      }
+    }
+
+    function handleInputKeydown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function handleInputTyping(el) {
+      autoResizeTextarea(el);
+      const text = el.value;
+
+      const sendIcon = document.getElementById('sendBtnIcon');
+      if (sendIcon) {
+        sendIcon.innerHTML = text.trim() ? SVG_SEND : SVG_MIC;
+      }
+
+      if (text.startsWith('/') && !text.includes(' ')) {
+        showSlashCommandsMenu(text);
+        hideAutocomplete();
+        return;
+      } else {
+        hideSlashCommandsMenu();
+      }
+
+      let querySym = null;
+      if (text.startsWith('/chart ') || text.startsWith('/dna ') || text.startsWith('/finance ') || text.startsWith('/technical ')) {
+        querySym = text.split(' ')[1] || '';
+      } else if (currentChannel && currentChannel.id === 'stock-analysis') {
+        querySym = text.trim();
+      } else if (text.includes('$')) {
+        const parts = text.split('$');
+        querySym = parts[parts.length - 1];
+      }
+
+      if (querySym && querySym.length >= 2 && !querySym.includes('\n')) {
+        clearTimeout(autocompleteDebounce);
+        autocompleteDebounce = setTimeout(() => {
+          triggerAutocomplete(querySym);
+        }, 120);
+      } else {
+        hideAutocomplete();
+      }
+    }
+
+    function autoResizeTextarea(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    function insertEmoji(char) {
+      const input = document.getElementById('messageInput');
+      input.value += char;
+      input.focus();
+      handleInputTyping(input);
+    }
+
+    function handleQuickTickerClick(sym) {
+      if (currentChannel && currentChannel.id === 'stock-analysis') {
+        const input = document.getElementById('messageInput');
+        input.value = sym;
+        sendMessage();
+      } else {
+        insertEmoji(`$${sym} `);
+      }
+    }
+
+    // ── AUTOCOMPLETE & SLASH COMMANDS ─────────────────────────────────────────
+    async function triggerAutocomplete(q) {
+      try {
+        const res = await fetch(`/api/chat/autocomplete?q=${encodeURIComponent(q)}`);
+        const list = await res.json();
+        renderAutocompletePopover(list);
+      } catch (e) {}
+    }
+
+    function renderAutocompletePopover(list) {
+      const pop = document.getElementById('stockAutocompletePopover');
+      if (!list || list.length === 0) {
+        pop.style.display = 'none';
+        return;
+      }
+
+      pop.innerHTML = `
+        <div class="popover-header">Matching Stocks (Tap to Analyze)</div>
+        ${list.map(s => `
+          <div class="popover-item" onclick="selectAutocompleteItem('${escapeHtml(s.symbol)}')">
+            <div class="popover-sym-row">
+              <span class="popover-sym">${escapeHtml(s.symbol)}</span>
+              <span class="popover-price">₹${Number(s.curr_price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div class="popover-name-row">
+              <span>${escapeHtml(s.company_name || s.symbol)}</span>
+              <span>${escapeHtml(s.sector || '')}</span>
+            </div>
+          </div>
+        `).join('')}
+      `;
+      pop.style.display = 'block';
+    }
+
+    function hideAutocomplete() {
+      document.getElementById('stockAutocompletePopover').style.display = 'none';
+    }
+
+    function selectAutocompleteItem(sym) {
+      const input = document.getElementById('messageInput');
+      const cur = input.value;
+      if (cur.startsWith('/chart ')) input.value = `/chart ${sym}`;
+      else if (cur.startsWith('/dna ')) input.value = `/dna ${sym}`;
+      else if (cur.startsWith('/finance ')) input.value = `/finance ${sym}`;
+      else if (cur.startsWith('/technical ')) input.value = `/technical ${sym}`;
+      else input.value = sym;
+
+      hideAutocomplete();
+      sendMessage();
+    }
+
+    function showSlashCommandsMenu(filter) {
+      const menu = document.getElementById('slashCommandsPopover');
+      const commands = [
+        { cmd: '/chart', desc: 'Instant Candlestick Chart & Pivot Geometry', icon: '📈' },
+        { cmd: '/dna', desc: '10-D Stock DNA Radar Score & Pattern Breakdown', icon: '🧬' },
+        { cmd: '/finance', desc: 'Fundamental Valuation, P/E, ROCE & Solvency', icon: '💼' },
+        { cmd: '/technical', desc: 'EMA Stack, RSI, ATR & Support / Resistance', icon: '📊' },
+        { cmd: '/poll', desc: 'Launch a Community Trading Poll', icon: '🗳️' }
+      ];
+
+      const matched = commands.filter(c => c.cmd.startsWith(filter.toLowerCase()));
+      if (matched.length === 0) {
+        menu.style.display = 'none';
+        return;
+      }
+
+      menu.innerHTML = `
+        <div class="popover-header">QuantSync Slash Commands</div>
+        ${matched.map(c => `
+          <div class="popover-item cmd-item" onclick="selectSlashCommand('${c.cmd}')">
+            <span class="cmd-icon">${c.icon}</span>
+            <div style="flex:1;">
+              <div class="cmd-name">${c.cmd}</div>
+              <div class="cmd-desc">${c.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      `;
+      menu.style.display = 'block';
+    }
+
+    function hideSlashCommandsMenu() {
+      document.getElementById('slashCommandsPopover').style.display = 'none';
+    }
+
+    function selectSlashCommand(cmd) {
+      if (cmd === '/poll') {
+        document.getElementById('messageInput').value = '';
+        hideSlashCommandsMenu();
+        openPollModal();
+        return;
+      }
+      const input = document.getElementById('messageInput');
+      input.value = `${cmd} `;
+      hideSlashCommandsMenu();
+      input.focus();
+      triggerAutocomplete('TATA');
+    }
+
+    // ── POLL MODAL LOGIC ──────────────────────────────────────────────────────
+    function openPollModal() {
+      document.getElementById('pollModalOverlay').style.display = 'flex';
+      selectPollPreset('buysell');
+    }
+
+    function closePollModal(e) {
+      if (e && e.target !== document.getElementById('pollModalOverlay')) return;
+      document.getElementById('pollModalOverlay').style.display = 'none';
+    }
+
+    function selectPollPreset(preset) {
+      selectedPollPreset = preset;
+      document.querySelectorAll('.poll-preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`preset-${preset}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const ticker = document.getElementById('pollTickerInput').value.trim() || 'TATAMOTORS';
+      const qInput = document.getElementById('pollQuestionInput');
+      const optList = document.getElementById('pollOptionsList');
+
+      if (preset === 'buysell') {
+        qInput.value = `${ticker}: Buy breakout or Sell here?`;
+        optList.innerHTML = `
+          <input type="text" class="auth-input poll-option-input" value="Buy Breakout 🟢">
+          <input type="text" class="auth-input poll-option-input" value="Sell / Wait 🔴">
+        `;
+      } else if (preset === 'nifty') {
+        qInput.value = 'Nifty Expiry Direction: Will Nifty close UP or DOWN?';
+        optList.innerHTML = `
+          <input type="text" class="auth-input poll-option-input" value="Nifty Closes UP 🚀">
+          <input type="text" class="auth-input poll-option-input" value="Nifty Closes DOWN 📉">
+        `;
+      } else if (preset === 'buyignore') {
+        qInput.value = `${ticker} Breakout Radar: Buy or Ignore setup?`;
+        optList.innerHTML = `
+          <input type="text" class="auth-input poll-option-input" value="Buy Setup 🟢">
+          <input type="text" class="auth-input poll-option-input" value="Ignore / Wait ⏳">
+        `;
+      } else if (preset === 'custom') {
+        qInput.value = '';
+        optList.innerHTML = `
+          <input type="text" class="auth-input poll-option-input" placeholder="Option 1">
+          <input type="text" class="auth-input poll-option-input" placeholder="Option 2">
+          <input type="text" class="auth-input poll-option-input" placeholder="Option 3 (Optional)">
+        `;
+      }
+    }
+
+    function updatePollQuestionPreview() {
+      if (selectedPollPreset === 'buysell' || selectedPollPreset === 'buyignore') {
+        selectPollPreset(selectedPollPreset);
+      }
+    }
+
+    function selectPollTimer(mins, el) {
+      selectedPollDuration = mins;
+      document.querySelectorAll('.timer-pill').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+    }
+
+    async function submitPollCreation() {
+      if (!currentUser) {
+        openProfileModal();
+        return;
+      }
+      if (!currentChannel) return;
+
+      const question = document.getElementById('pollQuestionInput').value.trim();
+      if (!question) {
+        showToast('Please enter a poll question.');
+        return;
+      }
+
+      const options = [];
+      document.querySelectorAll('.poll-option-input').forEach(inp => {
+        const val = inp.value.trim();
+        if (val) options.push(val);
+      });
+
+      if (options.length < 2) {
+        showToast('At least 2 options required.');
+        return;
+      }
+
+      const ticker = document.getElementById('pollTickerInput').value.trim();
+
+      try {
+        const res = await fetch('/api/chat/poll/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            channel_id: currentChannel.id,
+            email: currentUser.email,
+            question: question,
+            options: options,
+            duration_minutes: selectedPollDuration,
+            symbol: ticker || undefined
+          })
+        });
+        const d = await res.json();
+        if (d.status === 'ok') {
+          closePollModal();
+          AudioEngine.playSent();
+          showToast('Trading Poll launched! 🚀');
+        }
+      } catch (e) {
+        showToast('Failed to create poll.');
+      }
+    }
+
+    // ── MOBILE SWIPE-TO-REPLY GESTURE ─────────────────────────────────────────
+    function initTouchGestures() {
+      const container = document.getElementById('messagesContainer');
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let activeBubble = null;
+      let activeMsgId = null;
+
+      container.addEventListener('touchstart', (e) => {
+        const bubble = e.target.closest('.message-bubble');
+        if (!bubble) return;
+        activeBubble = bubble;
+        const row = bubble.closest('.message-row');
+        activeMsgId = row ? Number(row.id.replace('msg-row-', '')) : null;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      container.addEventListener('touchmove', (e) => {
+        if (!activeBubble) return;
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = e.touches[0].clientY - touchStartY;
+        if (dx > 10 && Math.abs(dy) < 25) {
+          const moveX = Math.min(dx, 50);
+          activeBubble.style.transform = `translateX(${moveX}px)`;
+          activeBubble.style.transition = 'none';
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchend', (e) => {
+        if (!activeBubble) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        activeBubble.style.transition = 'transform 0.18s ease-out';
+        activeBubble.style.transform = 'translateX(0px)';
+
+        if (dx > 40 && activeMsgId) {
+          const msg = messages.find(m => m.id === activeMsgId);
+          if (msg) {
+            const input = document.getElementById('messageInput');
+            input.value = `@${msg.user_name} `;
+            input.focus();
+            if (navigator.vibrate) navigator.vibrate(20);
+          }
+        }
+        activeBubble = null;
+        activeMsgId = null;
+      });
+    }
+
+    // ── ATTACHMENT UPLOAD ─────────────────────────────────────────────────────
+    async function handleFileUpload(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64 = e.target.result;
+        try {
+          showToast('Uploading screenshot...');
+          const res = await fetch('/api/chat/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_base64: base64, file_name: file.name })
+          });
+          const d = await res.json();
+          if (d.url) {
+            pendingAttachment = d.url;
+            sendMessage();
+          }
+        } catch (err) {
+          showToast('Upload failed.');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ── TEXT FORMATTING ───────────────────────────────────────────────────────
+    function formatMessageContent(text) {
+      if (!text) return '';
+      let clean = escapeHtml(text);
+
+      clean = clean.replace(/\$([A-Z0-9_\-]+)/g, (match, sym) => {
+        return `<a href="/stock-detail.html?symbol=${sym}" target="_blank" class="stock-chip" onclick="event.stopPropagation();">📈 $${sym}</a>`;
+      });
+
+      clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      clean = clean.replace(/\n/g, '<br>');
+      return clean;
+    }
+
+    function escapeHtml(str) {
+      return (str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatMessageTime(isoStr) {
+      if (!isoStr) return '';
+      try {
+        const dt = new Date(isoStr);
+        return dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function scrollToBottom() {
+      const c = document.getElementById('messagesContainer');
+      c.scrollTop = c.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>

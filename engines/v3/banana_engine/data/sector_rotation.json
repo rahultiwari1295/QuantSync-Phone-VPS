@@ -1,0 +1,152 @@
+[
+  {
+    "sector": "General Industrials",
+    "stock_count": 1022,
+    "avg_daily_pct": 0.51,
+    "avg_rs_rating": 48.6,
+    "turnover_cr": 59563.1,
+    "pct_above_50dma": 47.5,
+    "leaders": [
+      "KAVDEFENCE",
+      "NIACL",
+      "RADHIKAJWE"
+    ]
+  },
+  {
+    "sector": "Industrial Manufacturing",
+    "stock_count": 129,
+    "avg_daily_pct": 0.4,
+    "avg_rs_rating": 49.9,
+    "turnover_cr": 11718.6,
+    "pct_above_50dma": 51.9,
+    "leaders": [
+      "JINDWORLD",
+      "RAYMOND",
+      "INDORAMA"
+    ]
+  },
+  {
+    "sector": "Financial Services",
+    "stock_count": 60,
+    "avg_daily_pct": 0.27,
+    "avg_rs_rating": 49.7,
+    "turnover_cr": 7824.3,
+    "pct_above_50dma": 53.3,
+    "leaders": [
+      "INNOVACAP",
+      "CAPACITE",
+      "SAMMAANCAP"
+    ]
+  },
+  {
+    "sector": "Information Technology",
+    "stock_count": 30,
+    "avg_daily_pct": 0.55,
+    "avg_rs_rating": 42.0,
+    "turnover_cr": 2312.5,
+    "pct_above_50dma": 46.7,
+    "leaders": [
+      "STLTECH",
+      "MTARTECH",
+      "INTENTECH"
+    ]
+  },
+  {
+    "sector": "Automotive",
+    "stock_count": 18,
+    "avg_daily_pct": -0.18,
+    "avg_rs_rating": 52.4,
+    "turnover_cr": 2295.3,
+    "pct_above_50dma": 33.3,
+    "leaders": [
+      "RICOAUTO",
+      "MOTILALOFS",
+      "ATULAUTO"
+    ]
+  },
+  {
+    "sector": "Healthcare & Pharma",
+    "stock_count": 31,
+    "avg_daily_pct": -0.52,
+    "avg_rs_rating": 62.3,
+    "turnover_cr": 2067.0,
+    "pct_above_50dma": 58.1,
+    "leaders": [
+      "SMSPHARMA",
+      "GPTHEALTH",
+      "ORCHPHARMA"
+    ]
+  },
+  {
+    "sector": "Energy & Petrochemicals",
+    "stock_count": 3,
+    "avg_daily_pct": 1.59,
+    "avg_rs_rating": 72.7,
+    "turnover_cr": 1858.4,
+    "pct_above_50dma": 100.0,
+    "leaders": [
+      "ANTELOPUS",
+      "RELIANCE",
+      "CHENNPETRO"
+    ]
+  },
+  {
+    "sector": "Telecommunications",
+    "stock_count": 1,
+    "avg_daily_pct": -2.31,
+    "avg_rs_rating": 40.0,
+    "turnover_cr": 1664.6,
+    "pct_above_50dma": 0.0,
+    "leaders": [
+      "BHARTIARTL"
+    ]
+  },
+  {
+    "sector": "Defence & Capital Goods",
+    "stock_count": 2,
+    "avg_daily_pct": 0.55,
+    "avg_rs_rating": 47.5,
+    "turnover_cr": 1018.3,
+    "pct_above_50dma": 50.0,
+    "leaders": [
+      "HAL",
+      "BEL"
+    ]
+  },
+  {
+    "sector": "Consumer Goods",
+    "stock_count": 4,
+    "avg_daily_pct": 0.55,
+    "avg_rs_rating": 32.0,
+    "turnover_cr": 1015.6,
+    "pct_above_50dma": 25.0,
+    "leaders": [
+      "TRENT",
+      "HINDUNILVR",
+      "ITC"
+    ]
+  },
+  {
+    "sector": "Infrastructure",
+    "stock_count": 2,
+    "avg_daily_pct": -0.11,
+    "avg_rs_rating": 46.5,
+    "turnover_cr": 741.8,
+    "pct_above_50dma": 0.0,
+    "leaders": [
+      "ADANIPORTS",
+      "LT"
+    ]
+  },
+  {
+    "sector": "Conglomerate",
+    "stock_count": 1,
+    "avg_daily_pct": 1.28,
+    "avg_rs_rating": 67.0,
+    "turnover_cr": 311.7,
+    "pct_above_50dma": 0.0,
+    "leaders": [
+      "ADANIENT"
+    ]
+  }
+]

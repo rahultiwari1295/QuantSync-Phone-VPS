@@ -1,0 +1,15 @@
+[Unit]
+Description=QuantSync data collectors (scheduler + ops queue)
+After=network-online.target
+
+[Service]
+WorkingDirectory=/root/quantsync
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/root/quantsync/.env.collectors
+ExecStart=/root/quantsync/venv/bin/python3 -m collectors.run daemon
+Restart=always
+RestartSec=10
+MemoryMax=1500M
+
+[Install]
+WantedBy=multi-user.target

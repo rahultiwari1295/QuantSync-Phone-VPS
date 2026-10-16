@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Strategy · QuantSync Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="app.css"><script src="data.js"></script><script src="app.js"></script>
+<style>
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.rulechips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.rulechips span{font-family:var(--mono);font-size:12.5px;padding:5px 9px;border-radius:8px;background:var(--brand-soft);color:var(--brand)}
+.rulechips span.j{background:transparent;color:var(--ink3);font-family:var(--f);font-weight:700;padding:5px 2px}
+.anchor{scroll-margin-top:80px}
+.chead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.heatmap{overflow-x:auto}
+.heatmap table{border-collapse:separate;border-spacing:4px;font-size:12px;font-variant-numeric:tabular-nums;min-width:640px;width:100%}
+.heatmap th{font-weight:650;color:var(--ink3);padding:2px 4px;text-align:center}
+.heatmap th:first-child{text-align:left}
+.heatmap td{height:34px;border-radius:7px;text-align:center;font-weight:650;min-width:40px}
+.heatmap td.y{font-weight:750;color:var(--ink);text-align:left;padding-left:4px;background:none}
+.heatmap td.tot{background:var(--sunk);color:var(--ink)}
+.exitmix{display:grid;gap:10px}
+.exitmix .meter{height:14px}
+.exitmix .lg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--ink2)}
+.exitmix .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+/* AI section */
+.aisec{border-radius:28px;padding:clamp(20px,3vw,32px);background:linear-gradient(180deg,var(--ai-soft),color-mix(in srgb,var(--ai-soft) 30%,var(--bg)));border:1px solid color-mix(in srgb,var(--ai-fill) 30%,transparent);display:grid;gap:20px}
+.aibtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.aibtn{display:flex;gap:14px;align-items:center;text-align:left;padding:16px;border-radius:18px;background:var(--surface);border:1px solid var(--line);transition:transform .2s var(--ease),box-shadow .2s,border-color .2s}
+.aibtn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--ai-fill)}
+.aibtn i{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--ai-fill);color:var(--ai-ink);flex:none}
+.aibtn b{display:block;font-size:15.5px}
+.aibtn span{font-size:13px;color:var(--ink2)}
+.aibtn[aria-busy="true"]{pointer-events:none;opacity:.7}
+.opt{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:16px}
+.opt h3{font-size:19px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cmpt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+.cmpt th{font-size:12px;color:var(--ink3);font-weight:650;text-align:right;padding:8px 10px;border-bottom:1px solid var(--line)}
+.cmpt th:first-child,.cmpt td:first-child{text-align:left;padding-left:0}
+.cmpt td{padding:11px 10px;text-align:right;border-bottom:1px solid var(--line)}
+.cmpt tr:last-child td{border-bottom:0}
+.cmpt td.a{font-weight:750;color:var(--ai)}
+.cmpt td .chg{display:block;font-size:11.5px;font-weight:650;color:var(--up)}
+.learn{display:grid;gap:10px}
+.learn .it{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:12px;align-items:center;font-size:14px}
+.learn .it span{color:var(--ink2);font-size:12.5px;display:block}
+.work{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:18px;background:var(--surface);border:1px dashed var(--ai-fill)}
+.work .stx{display:grid;gap:7px;margin-top:10px}
+.work .stx div{font-size:13.5px;color:var(--ink3);display:flex;gap:8px;align-items:center}
+.work .stx div.done{color:var(--ink2)} .work .stx div.on{color:var(--ink);font-weight:600}
+.valid{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--ink2);flex-wrap:wrap}
+.valid .tl{display:flex;height:10px;border-radius:9px;overflow:hidden;flex:1;min-width:200px;gap:2px}
+.valid .tl i{display:block;height:100%}
+.trtabs{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.reason{font-size:12px;font-weight:650;padding:3px 8px;border-radius:7px;background:var(--sunk);color:var(--ink2)}
+@media (max-width:640px){.aibtns{grid-template-columns:minmax(0,1fr)}.learn .it{grid-template-columns:minmax(0,1fr) 80px}}
+.yrcmp{display:grid;gap:8px}.yrcmp .r{display:grid;grid-template-columns:48px minmax(0,1fr) 92px;gap:10px;align-items:center;font-size:13px}.yrcmp .r .bars{display:grid;gap:3px}.yrcmp .r .bars i{display:block;height:8px;border-radius:5px}.yrcmp .r b{font-variant-numeric:tabular-nums;text-align:right;font-size:12.5px}
+.more{display:flex;justify-content:center;margin-top:10px}
+</style>
+</head>
+<body data-page="strategy"><main class="main">
+
+<a class="crumb" href="strategies.html" data-i="back" data-s="16">Strategies</a>
+<div class="phead" style="margin-top:14px">
+  <div class="txt">
+    <div class="badges" id="badges"><span class="skel" style="width:180px;height:24px"></span></div>
+    <h1 class="t-1" id="name"><span class="skel" style="display:inline-block;width:260px;height:36px"></span></h1>
+    <p class="lede" id="lede"></p>
+    <div class="rulechips" id="chips"></div>
+  </div>
+  <div class="acts" id="acts"></div>
+</div>
+
+<nav class="subnav" aria-label="On this page"><a href="#results" class="on">Results</a><a href="#ai">AI enhance</a><a href="#trades">Trades</a><a href="#detail">Breakdown</a></nav>
+
+<section class="sec anchor" id="results" style="margin-top:26px">
+  <div class="chead"><div><h2 class="t-2">How it did</h2><p class="small" style="margin-top:4px" id="res-note">Every match, followed until it closed.</p></div><div class="seg" id="yr"></div></div>
+  <div id="res-state"></div>
+  <div class="kpis" id="kp"></div>
+  <div class="panel pad" style="margin-top:16px" id="eq-panel">
+    <div class="chead"><div class="legend" id="eq-legend"></div><span class="tiny">Value of ₹1,00,000 following every match, equal amounts per trade</span></div>
+    <div class="chart" id="eq"></div>
+  </div>
+  <p class="tiny" style="margin-top:10px" id="eq-note"></p>
+</section>
+
+<section class="sec anchor" id="ai"><div class="aisec" id="aisec"><div class="skel" style="height:120px"></div></div></section>
+
+<section class="sec anchor" id="trades">
+  <div class="trtabs"><h2 class="t-2">Every trade</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="seg" id="tt"><button data-v="open" aria-pressed="false">Open</button><button data-v="closed" aria-pressed="true">Closed</button></div><div class="seg" id="tw"><button data-v="all" aria-pressed="true">All</button><button data-v="w" aria-pressed="false">Wins</button><button data-v="l" aria-pressed="false">Losses</button></div></div></div>
+  <div id="trs"></div>
+  <p class="tiny" style="margin-top:10px">Returns include 0.10% costs on each side. Live trades are marked with a green dot; the rest were tested on past data.</p>
+</section>
+
+<section class="sec anchor" id="detail">
+  <div class="sech"><h2>Breakdown</h2><p class="small">Where the returns came from, month by month, and how trades usually ended.</p></div>
+  <div class="panel pad heatmap"><div class="tiny" style="margin-bottom:8px">Return of the trades that closed in each month</div><table id="hm"></table></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel pad"><h3 class="t-3">Size of each trade’s result</h3><p class="tiny" style="margin:4px 0 10px">How many trades ended in each return range</p><div class="chart" id="dist"></div></div>
+    <div class="panel pad exitmix" id="exitmix"><h3 class="t-3">How trades ended</h3></div>
+  </div>
+</section>
+
+<div class="sheet" id="rules" role="dialog" aria-label="Strategy rules"><div class="grab"></div><h3>Strategy rules</h3><div id="rules-body"></div><button class="btn" style="margin-top:14px;width:100%" data-close>Close</button></div>
+
+<p class="disclaim">QuantSync Lab is a research and tracking tool. Scans and results are informational only and are not investment advice or a recommendation to buy or sell. QuantSync is not a SEBI-registered investment adviser. Past results, tested or live, do not predict future results.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+const {lab,fmt,auth}=QD;const {icon,state,toast,equity,vbars,sheet,line}=QS;const $=id=>document.getElementById(id);const esc=fmt.esc;
+const id=QD.param('id');
+if(!id){state($('res-state'),'empty',{title:'No strategy chosen',body:'Open a strategy from the Strategies page.',action:'See strategies',href:'strategies.html',primary:true});$('name').textContent='Strategy';return}
+await auth.whenReady();
+let s,cat,bt=null,year='All',enh=null,tt='closed',tw='all',openT=[],closedT=[],shown=40;
+try{[s,cat]=await Promise.all([lab.strategy(id),lab.catalog()])}catch(e){$('name').textContent='Strategy';state($('res-state'),'error',{title:e.status===404?'Strategy not found':'This did not load',body:e.status===404?'It may be private or archived. Sign in if it is yours.':e.message,action:e.status===404&&!auth.user?'Sign in':'Try again',onAction:()=>e.status===404&&!auth.user?auth.signIn().then(()=>location.reload()):location.reload()});['kp','eq-panel','aisec'].forEach(k=>$(k).hidden=true);return}
+document.title=s.name+' · QuantSync Lab';
+const engine=s.source==='engine',mine=s.mine;
+// ---- header
+const srcName=s.kind==='flagship'?'QuantSync':mine?'Yours':s.owner?'@'+s.owner:'Community';const srcCat=s.kind==='flagship'?'q':mine?'y':'f';
+$('badges').innerHTML=`<span class="src cat-${srcCat}" style="margin-right:6px">${esc(srcName)}</span><span class="pill">${s.tf==='1W'?'Weekly':'Daily'}</span>${engine||s.enhanced?`<span class="pill ai">${icon('spark',13)}${engine?'AI enhanced':'AI-enhanced entry'}</span>`:''}${s.exit_choice==='ai'?`<span class="pill ai">${icon('spark',13)}AI exit</span>`:''}${s.live_from?`<span class="pill up"><i class="d"></i>Live since ${fmt.date(s.live_from)} ${String(s.live_from).slice(0,4)}</span>`:''}${mine?`<span class="pill">${s.visibility==='public'?'Public':'Private'}</span>`:''}`;
+$('name').textContent=s.name;
+$('lede').textContent=engine?'A QuantSync strategy. The live engine checks every NSE stock after each close and records every entry and exit.':'Checks every NSE stock after each close and lists the ones that fit these rules.'+(s.followers?` Followed by ${s.followers} ${s.followers===1?'person':'people'}.`:'');
+const dr=QD.describeRule(cat,s.info&&s.info.entry);
+$('chips').innerHTML=engine?'':dr.lines.filter(l=>l.d===0).map(l=>`<span>${esc(l.t)}</span>`).join(`<span class="j">${s.info.entry.any?'or':'and'}</span>`);
+$('rules-body').innerHTML=`<div class="tiny" style="font-weight:700;margin-bottom:6px">${engine?'Entry':'Buy when '+dr.head.toLowerCase()}</div><ul style="margin:0 0 16px;padding-left:18px;display:grid;gap:4px">${engine?'<li>The QuantSync engine’s own rules (AI Alpha or AI Pattern setups), filtered by its AI model.</li>':dr.lines.map(l=>`<li style="margin-left:${l.d*14}px">${esc(l.t)}</li>`).join('')}${s.enhanced?`<li style="color:var(--ai)">AI filter: only matches with an AI score of ${s.ai_gate} or more</li>`:''}</ul><div class="tiny" style="font-weight:700;margin-bottom:6px">Sell when any of these happens</div><ul style="margin:0 0 16px;padding-left:18px;display:grid;gap:4px">${engine?'<li>The engine’s stop, target, trailing and time exits.</li>':QD.describeExit(cat,s.info.exit).map(x=>`<li>${esc(x)}</li>`).join('')}${s.exit_choice==='ai'?'<li style="color:var(--ai)">Exit chosen by the AI (see AI enhance).</li>':''}</ul><p class="tiny">Entries at the next open after a match. Costs of 0.10% per side included.</p>`;
+// actions
+let alertsOn=false;
+async function acts(){
+  if(auth.user){try{const a=await lab.alerts();alertsOn=!!(a.items||[]).find(i=>i.id===id&&i.on)}catch{}}
+  $('acts').innerHTML=`<button class="btn ${alertsOn?'primary':''}" id="al">${icon('bell',16)}${alertsOn?'Alerts on':'Get alerts'}</button>${mine&&!engine?`<a class="btn" href="scanner.html?from=${id}">${icon('edit',16)}Edit rules</a>`:''}${!mine?`<button class="btn" id="cp">${icon('copy',16)}Copy and edit</button>`:''}${mine&&!engine?`<button class="btn ghost" id="pub">${s.visibility==='public'?'Make private':'Make public'}</button>`:''}<button class="btn ghost" id="rl">${icon('info',16)}Full rules</button>`;
+  $('rl').onclick=()=>sheet('rules');
+  $('al').onclick=async()=>{if(!auth.user){await auth.signIn().catch(e=>toast(e.message));if(!auth.user)return}const nx=!alertsOn;try{await lab.follow(id,s.kind==='flagship'?true:nx,nx);alertsOn=nx;toast(nx?'Alerts on. New matches show in Matches.':'Alerts off.');acts()}catch(e){toast(e.message)}};
+  if($('cp'))$('cp').onclick=async()=>{if(!auth.user){await auth.signIn().catch(e=>toast(e.message));if(!auth.user)return}try{const r=await lab.copyStrategy(id);toast('Copied to your strategies');location.href='strategy.html?id='+r.id}catch(e){toast(e.message)}};
+  if($('pub'))$('pub').onclick=async()=>{try{await lab.setVisibility(id,s.visibility!=='public');s.visibility=s.visibility==='public'?'private':'public';toast(s.visibility==='public'?'Now public. Others can follow it.':'Now private.');acts()}catch(e){toast(e.message)}};
+}
+acts();
+
+// ---- results
+async function loadBt(){
+  state($('res-state'),'loading',{n:1,flat:true});
+  for(let i=0;i<200;i++){
+    let r;try{r=await lab.strategyBacktest(id)}catch(e){state($('res-state'),'error',{body:e.message,action:'Try again',onAction:loadBt});return}
+    if(r.status==='done'){$('res-state').innerHTML='';return r.result}
+    if(r.status==='failed'){state($('res-state'),'error',{title:'The past test did not finish',body:r.error||'Please try again in a few minutes.'});return}
+    $('res-state').innerHTML=`<div class="work" style="margin-bottom:16px"><span class="spin" style="color:var(--brand);margin-top:3px"></span><div><b>Testing this strategy on past data</b><div class="tiny">Usually under a minute. This page updates by itself.</div></div></div>`;
+    await new Promise(z=>setTimeout(z,3000));
+  }
+}
+bt=await loadBt();
+if(!bt){$('kp').hidden=true;$('eq-panel').hidden=true}
+else{
+  const yrs=(bt.years||[]).map(String);const segs=[...yrs,...(bt.summary.Live?['Live']:[]),'All'];
+  $('yr').innerHTML=segs.map(y=>`<button data-v="${y}" aria-pressed="${y==='All'}">${y==='All'?'All years':y==='Live'?'Live only':y}</button>`).join('');
+  $('yr').addEventListener('change',e=>{year=e.detail;kp();renderAI();drawT()});
+  $('res-note').textContent=engine?'Every trade the engine took. Before the live date it is a walk-forward test of the same rules; after it, recorded live.':'Every match since 2023, followed until it closed. The green area is the live record.';
+  kp();
+  const an=bt.analytics||{};const bench=(await lab.benchmark(an.first_date,s.tf)).points;
+  $('eq-legend').innerHTML=`<span><i style="--c:var(--brand)"></i>${esc(s.name)}</span>${bench&&bench.length?'<span><i class="dash" style="--c:var(--ink3)"></i>Nifty 50</span>':''}`;
+  equity($('eq'),an.equity,{bench,liveFrom:s.live_from||bt.live_since,name:s.name,h:290});
+  $('eq-note').textContent=(bt.note?bt.note+' ':'')+'Tested with entries at the next day’s open and costs of 0.10% per side. Past results do not predict future results.';
+  breakdown(an);
+}
+function kp(){const d=(bt.summary||{})[year]||{};const k=(l,v,h,c='')=>`<div class="kpi"><span class="l">${l}</span><span class="v ${c}">${v}</span><span class="h">${h}</span></div>`;
+  $('kp').innerHTML=!d.trades?`<div class="kpi"><span class="l">${year==='All'?'All years':year}</span><span class="v">—</span><span class="h">No closed trades in this period.</span></div>`:
+   k('Trades',fmt.int(d.trades),`${fmt.int(d.wins)} won, ${fmt.int(d.losses)} lost`)+k('Made money',fmt.plain(d.win_rate,1),'of closed trades',d.win_rate>=50?'up':'')+k('Average per trade',fmt.pct(d.avg_ret,2),d.median_ret!=null?`median ${fmt.pct(d.median_ret)}`:'after costs',fmt.tone(d.avg_ret))
+   +k('Profit factor',d.profit_factor??'—','gains ÷ losses')+k('Worst fall from a peak',fmt.pct(d.max_dd),'equal-weight curve','dn')+k('Average days held',d.avg_bars!=null?Math.round(d.avg_bars):'—',s.tf==='1W'?'weeks':'trading days');}
+
+// ---- AI enhance
+async function loadEnh(){if(engine)return null;try{return await lab.enhancement(id)}catch(e){return{status:'failed',reason:e.message}}}
+enh=await loadEnh();renderAI();
+function cmpTable(a,b,head){const row=(l,x,y,f,good)=>`<tr><td>${l}</td><td>${f(x)}</td><td class="a">${f(y)}${good!=null&&QD.ok(x)&&QD.ok(y)&&y!==x?`<span class="chg">${good?(y>x?'better':'lower'):''}</span>`:''}</td></tr>`;
+  return `<div style="overflow-x:auto"><table class="cmpt"><thead><tr><th></th><th>Yours</th><th>${head}</th></tr></thead><tbody>${row('Trades',a.trades,b.trades,fmt.int)}${row('Made money',a.win_rate,b.win_rate,v=>fmt.plain(v,1),true)}${row('Average per trade',a.avg_ret,b.avg_ret,v=>fmt.pct(v,2),true)}</tbody></table></div>`}
+function yrCompare(r,gate){const ys=Object.keys(r.plain_by_year||{});if(!ys.length)return'';const mx=Math.max(1,...ys.flatMap(y=>[QD.plainStat(r,y).win_rate||0,QD.gateStat(r,gate,y).win_rate||0]));
+  return `<div><h4 style="font-size:15px;margin-bottom:10px">Win rate by year</h4><div class="yrcmp">${ys.map(y=>{const a=QD.plainStat(r,y),b=QD.gateStat(r,gate,y);return `<div class="r"><span class="tiny" style="font-weight:700">${y}</span><div class="bars"><i style="width:${(a.win_rate||0)/mx*100}%;background:var(--line2)"></i><i style="width:${(b.win_rate||0)/mx*100}%;background:var(--ai-fill)"></i></div><b>${fmt.plain(a.win_rate)} → <span style="color:var(--ai)">${fmt.plain(b.win_rate)}</span></b></div>`}).join('')}</div><div class="legend" style="margin-top:8px"><span><i style="--c:var(--line2)"></i>Yours</span><span><i style="--c:var(--ai-fill)"></i>AI version</span></div></div>`}
+function renderAI(){
+  const box=$('aisec');
+  const head=`<div style="display:grid;gap:8px;max-width:700px"><span class="pill ai" style="justify-self:start">${icon('spark',13)}AI enhance</span><h2 class="t-2">Make it better with AI</h2><p class="small">The AI studies every past result of this scan and learns which ones tended to work. Each year is scored by a model trained only on earlier years, so it never sees the result it is judging. Nothing changes until you choose.</p></div>`;
+  if(engine){box.innerHTML=head+`<div class="opt"><h3>Already enhanced by QuantSync <span class="pill up">${icon('check',13)}In use</span></h3><p class="small">Every match from this strategy is already filtered by our AI model. Copy it to make your own version you can change.</p></div>`;return}
+  const st=enh&&enh.status,r=enh&&enh.result,busy=st==='queued'||st==='running';
+  let h=head;
+  if(mine)h+=`<div class="aibtns"><button class="aibtn" id="ai-entry" ${busy?'aria-busy="true"':''}><i>${icon('spark',22)}</i><div><b>Enhance entry</b><span>Pick the matches that tend to work</span></div></button><button class="aibtn" id="ai-exit" ${busy?'aria-busy="true"':''}><i>${icon('spark',22)}</i><div><b>Enhance exit</b><span>Close trades at better moments</span></div></button></div>`;
+  else h+=`<p class="small">${s.enhanced?'The owner enhanced this strategy with AI.':'Only the owner can enhance a strategy. Copy it to make your own.'}</p>`;
+  h+=`<div id="work" ${busy?'':'hidden'}>${busy?workBox('The AI is studying this strategy',null):''}</div>`;
+  if(st==='insufficient')h+=`<p class="small">${esc(enh.reason||'There are not enough past results yet for the AI to learn from.')}</p>`;
+  if(st==='failed')h+=`<p class="dn" style="font-weight:600">The last run did not finish. ${esc(enh.reason||'')} Please try again.</p>`;
+  if(st==='done'&&r){
+    const opts=QD.pickOptions(r);const yv=year==='Live'?'All':year;
+    if(!opts.length&&!s.enhanced)h+=`<div class="opt"><h3>Your entry is already solid</h3><p class="small">We tested it carefully and found no change that clearly helps, so it stays as it is.${r.leak&&r.leak.passed===false?' A safety check on the AI did not pass, so we are not offering a change.':''}</p></div>`;
+    opts.forEach(o=>{const inUse=s.ai_gate===o.gate;const a=QD.plainStat(r,yv),b=QD.gateStat(r,o.gate,yv);
+      h+=`<div class="opt"><h3>${esc(o.title)}${inUse?` <span class="pill up">${icon('check',13)}In use</span>`:''}</h3><p class="small" style="margin-top:-8px">${esc(o.blurb)}</p>
+       <div class="split" style="gap:20px">${cmpTable(a,b,'AI version')}${yrCompare(r,o.gate)}</div>
+       <div class="valid"><span style="font-weight:650">${icon('shield',15)} Checked on years it did not train on</span><span class="tiny">${r.leak&&r.leak.passed?'Shuffle test passed: the AI could not find a pattern in random labels.':''}</span></div>
+       ${(r.drivers||[]).length?`<div><h4 style="font-size:15px;margin-bottom:8px">What the AI learned</h4><ul class="signs" style="list-style:none;padding:0;margin:0;display:grid;gap:8px">${r.drivers.map(x=>`<li style="display:flex;gap:8px;font-size:14px"><span style="color:var(--ai)">${icon('spark',16)}</span>${esc(x)}</li>`).join('')}</ul></div>`:''}
+       <p class="tiny">Past results ${yv==='All'?'across the report years':'in '+yv}. Your live record restarts from the day you switch.</p>
+       <div style="display:flex;gap:8px;flex-wrap:wrap">${inUse?(mine?`<button class="btn ghost sm" data-gate="">${icon('undo',15)}Back to my original</button>`:''):(mine?`<button class="btn ai sm" data-gate="${o.gate}">${icon('spark',15)}Use this version</button>`:'')}</div></div>`});
+    if(!opts.length&&s.enhanced&&mine)h+=`<div class="opt"><h3>Enhanced by AI <span class="pill up">${icon('check',13)}In use</span></h3><div><button class="btn ghost sm" data-gate="">${icon('undo',15)}Back to my original</button></div></div>`;
+  }
+  if(enh&&enh.exit){const x=enh.exit;
+    if(x.improved&&x.best)h+=`<div class="opt"><h3>Better exit found${s.exit_choice==='ai'?` <span class="pill up">${icon('check',13)}In use</span>`:''}</h3><p class="small" style="margin-top:-8px">The AI tried ${x.tested} ways to close a trade and kept the one that held up best: ${esc(QD.describeExit(cat,x.best_exit).join(', ').toLowerCase())}.</p>${cmpTable(x.yours,x.best,'AI exit')}<p class="tiny">Chosen on 2020–22, shown on the report years.${s.ai_gate!==x.gate?' Tested with a different entry version; run it again to refresh.':''}</p><div style="display:flex;gap:8px;flex-wrap:wrap">${mine?(s.exit_choice==='ai'?`<button class="btn ghost sm" data-exit="user">${icon('undo',15)}Back to my own exit</button>`:(s.ai_gate===x.gate||s.ai_gate==null?`<button class="btn ai sm" data-exit="ai">${icon('spark',15)}Use this exit</button>`:'')):''}</div></div>`;
+    else h+=`<div class="opt"><h3>Your exit is already solid</h3><p class="small">We tried ${x.tested||'many'} alternatives and none clearly beat yours, so it stays as it is.</p></div>`;}
+  if(!st||st==='none')h+=mine?'':'<p class="small">The AI has not studied this strategy yet.</p>';
+  box.innerHTML=h;
+  if(busy)pollEnh();
+  const be=$('ai-entry'),bx=$('ai-exit');
+  if(be)be.onclick=()=>runAI('entry');if(bx)bx.onclick=()=>runAI('exit');
+  box.querySelectorAll('[data-gate]').forEach(b=>b.onclick=async()=>{const g=b.dataset.gate?+b.dataset.gate:null;b.disabled=true;try{await lab.setGate(id,g);toast(g?'Done. Your enhanced version is live; its record starts today.':'Back to your original. Its record starts today.');location.reload()}catch(e){toast(e.message);b.disabled=false}});
+  box.querySelectorAll('[data-exit]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{if(b.dataset.exit==='ai'&&s.ai_gate==null)await lab.setGate(id,enh.exit.gate);await lab.setExitChoice(id,b.dataset.exit);toast(b.dataset.exit==='ai'?'Done. Your enhanced exit is live; its record starts today.':'Back to your own exit.');location.reload()}catch(e){toast(e.message);b.disabled=false}});
+}
+function workBox(t,j){return `<div class="work" aria-live="polite"><span class="spin" style="color:var(--ai);margin-top:3px"></span><div style="flex:1;min-width:0"><b>${t}</b><div class="tiny" id="wstage">${j?(j.status==='queued'?`In line${j.position?' · position '+j.position:''}${j.eta_s?' · about '+Math.max(1,Math.round(j.eta_s/60))+' min':''}`:(j.stage||'Working')):'Working'}. You can leave this page; the result will be here when you come back.</div><div class="bar" style="margin-top:12px"><i style="--c:var(--ai-fill);width:${Math.max(4,(j&&j.progress)||4)}%"></i></div></div></div>`}
+let polling=false;async function pollEnh(){if(polling)return;polling=true;while(true){await new Promise(z=>setTimeout(z,4000));const e=await loadEnh();if(e&&e.status!=='queued'&&e.status!=='running'){enh=e;polling=false;renderAI();QS.bars($('aisec'));return}}}
+async function runAI(kind){
+  const w=$('work');w.hidden=false;['ai-entry','ai-exit'].forEach(k=>$(k)&&$(k).setAttribute('aria-busy','true'));
+  const job=async(start,label)=>{const {job_id}=await start();w.innerHTML=workBox(label,null);await QD.waitJob(job_id,j=>{w.innerHTML=workBox(label,j)});enh=await loadEnh()};
+  try{
+    if(kind==='entry')await job(()=>lab.enhance(id),'The AI is studying your entries');
+    else{let gate=QD.exitGate(s.ai_gate,QD.pickOptions(enh&&enh.result));
+      if(gate==null){await job(()=>lab.enhance(id),'Step 1 of 2 · the AI is studying your entries');gate=QD.exitGate(s.ai_gate,QD.pickOptions(enh&&enh.result))}
+      if(gate==null){toast('The AI could not find a safe improvement to build an exit on yet.');}
+      else await job(()=>lab.enhanceExit(id,gate),(s.ai_gate==null?'Step 2 of 2 · ':'')+'the AI is studying your exits');}
+  }catch(e){toast(e.message)}
+  renderAI();QS.bars($('aisec'));if(location.hash!=='#ai')$('ai').scrollIntoView({behavior:QS.RM?'auto':'smooth'});
+}
+
+// ---- trades
+async function loadTrades(){
+  state($('trs'),'loading',{n:5});
+  try{openT=await lab.trades(id,'active')}catch{openT=[]}
+  if(engine){try{closedT=await lab.trades(id,'closed')}catch{closedT=[]}}else closedT=((bt&&bt.trades)||[]).filter(t=>!t.is_open);
+  const seg=$('tt').children;seg[0].textContent=`Open · ${openT.length}`;seg[1].textContent=`Closed · ${closedT.length}${!engine&&closedT.length>=300?'+':''}`;
+  drawT();
+}
+function drawT(){
+  let L=(tt==='open'?openT:closedT);if(tt==='closed'&&year!=='All')L=L.filter(t=>year==='Live'?t.origin==='live':String(t.entry_date||'').startsWith(year));
+  L=L.filter(t=>tw==='all'||(tw==='w'?t.ret_pct>0:t.ret_pct<=0));
+  if(!L.length){state($('trs'),'empty',{title:tt==='open'?'Nothing open right now':'No trades match this filter',body:tt==='open'?'New matches appear after the next market close.':''});return}
+  $('trs').innerHTML=`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Stock</th><th>${tt==='open'?'Matched':'Bought'}</th><th class="rt">Entry</th><th class="rt">${tt==='open'?'Now':'Exit'}</th><th class="rt">Return</th><th class="rt">${tt==='open'?'Days':'Bars'}</th><th>${tt==='open'?'Strategy':'Why it closed'}</th></tr></thead><tbody>${L.slice(0,shown).map(t=>`<tr><td><a href="xray.html?s=${encodeURIComponent(t.symbol)}"><b>${esc(t.symbol)}</b></a>${t.origin==='live'||tt==='open'?' <span class="pill up" style="height:18px;padding:0 7px;font-size:10.5px"><i class="d"></i>Live</span>':''}</td><td>${fmt.dateY(t.entry_date||t.signal_date)}</td><td class="rt">${fmt.inr(t.entry_price)}</td><td class="rt">${fmt.inr(t.exit_price)}</td><td class="rt ${fmt.tone(t.ret_pct)}" style="font-weight:750">${fmt.pct(t.ret_pct)}</td><td class="rt">${tt==='open'?(t.age_days??'—'):(t.bars??'—')}</td><td>${tt==='open'?esc(t.group||''):`<span class="reason">${esc(exitText(t.exit_reason))}</span>`}</td></tr>`).join('')}</tbody></table></div>${L.length>shown?`<div class="more"><button class="btn sm" id="tmore">Show more</button></div>`:''}`;
+  const m=$('tmore');if(m)m.onclick=()=>{shown+=60;drawT()};
+}
+function exitText(r){const s=String(r||'').toLowerCase();if(s.includes('target'))return'Target hit';if(s.includes('trail'))return'Trailing stop';if(s.includes('stop'))return'Stop hit';if(s.includes('time')||s.includes('max'))return'Time limit';if(s==='rule')return'Exit rule';return r?String(r).replace(/_/g,' '):'Closed'}
+$('tt').addEventListener('change',e=>{tt=e.detail;shown=40;drawT()});$('tw').addEventListener('change',e=>{tw=e.detail;shown=40;drawT()});
+loadTrades();
+
+// ---- breakdown
+function breakdown(an){
+  const M=an.monthly||[];
+  if(!M.length){$('hm').innerHTML='<tr><td class="small">No closed trades yet.</td></tr>'}
+  else{const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const by={};M.forEach(m=>by[m.month]=m);const yrs=[...new Set(M.map(m=>m.month.slice(0,4)))];
+    let h='<thead><tr><th>Year</th>'+MO.map(m=>`<th>${m}</th>`).join('')+'<th>Year</th></tr></thead><tbody>';
+    yrs.forEach(y=>{let tot=1,any=false;h+=`<tr><td class="y">${y}</td>`;MO.forEach((m,i)=>{const k=`${y}-${String(i+1).padStart(2,'0')}`,x=by[k];if(!x){h+='<td style="background:var(--sunk)"></td>';return}any=true;tot*=1+x.ret/100;const c=x.ret>=0?'var(--up)':'var(--dn)',a=Math.min(70,8+Math.abs(x.ret)*5);h+=`<td style="background:color-mix(in srgb,${c} ${a}%,var(--surface));color:${a>45?'var(--surface)':'var(--ink)'}" title="${m} ${y}: ${fmt.pct(x.ret)} from ${x.trades} trades, ${fmt.plain(x.win_rate)} won">${x.ret>=0?'+':'−'}${Math.abs(x.ret).toFixed(1)}</td>`});const T=(tot-1)*100;h+=`<td class="tot ${fmt.tone(T)}">${any?fmt.pct(T,0):''}</td></tr>`});
+    $('hm').innerHTML=h+'</tbody>';}
+  const D=an.dist||[];if(D.length)vbars($('dist'),D.map(b=>({v:b.n,l:(b.lo<=-14?'≤':'')+(b.lo>0?'+':'')+b.lo+'%',c:b.lo<0?'var(--dn)':'var(--up)',t:`${b.n} trades between ${b.lo}% and ${b.hi}%`})),{h:200,every:2,label:'How trade results were spread'});else $('dist').innerHTML='<p class="tiny">No closed trades yet.</p>';
+  const E=an.exits||[],C={'Target hit':'var(--up)','Trailing stop':'var(--brand)','Time limit':'var(--line2)','Stop hit':'var(--dn)','Exit rule':'var(--cat-q)'};
+  $('exitmix').innerHTML=`<h3 class="t-3">How trades ended</h3>${E.length?`<div class="meter" style="height:14px">${E.map(e=>`<i style="flex:${e.n};background:${C[e.label]||'var(--warn)'}" title="${esc(e.label)} ${e.pct}%"></i>`).join('')}</div><div class="lg">${E.map(e=>`<span><i style="background:${C[e.label]||'var(--warn)'}"></i>${esc(e.label)} · ${e.pct}%</span>`).join('')}</div>`:'<p class="tiny">No closed trades yet.</p>'}<hr class="hr"><div class="grid g2" style="gap:12px"><div><div class="tiny">Average winner</div><b style="font-size:22px" class="up">${fmt.pct(an.avg_win)}</b></div><div><div class="tiny">Average loser</div><b style="font-size:22px" class="dn">${fmt.pct(an.avg_loss)}</b></div><div><div class="tiny">Longest losing streak</div><b style="font-size:22px">${an.max_losing_streak??'—'} trades</b></div><div><div class="tiny">Best and worst trade</div><b style="font-size:16px"><span class="up">${fmt.pct((bt.summary.All||{}).best)}</span> / <span class="dn">${fmt.pct((bt.summary.All||{}).worst)}</span></b></div></div>`;
+}
+// subnav highlight
+const links=[...document.querySelectorAll('.subnav a')];const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-40% 0px -55% 0px'});['results','ai','trades','detail'].forEach(k=>io.observe($(k)));
+if(location.hash==='#ai')setTimeout(()=>$('ai').scrollIntoView({behavior:'auto'}),50);
+});
+</script>
+</body></html>

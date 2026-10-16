@@ -1,0 +1,62 @@
+{
+  "test_period": "2025-01-01 to 2026-09-07",
+  "total_test_candidates": 6209,
+  "systems": {
+    "baseline_v4": {
+      "trade_count": 1863,
+      "win_rate": 47.88,
+      "profit_factor": 0.96,
+      "total_r": -26.98,
+      "avg_r": -0.014,
+      "expectancy_r": -0.014,
+      "max_drawdown_r": 66.87,
+      "sharpe_ratio": -0.23,
+      "avg_winner_r": 0.671,
+      "avg_loser_r": -0.644,
+      "runners_count": 20
+    },
+    "exit_ablation": {
+      "trade_count": 1863,
+      "win_rate": 34.51,
+      "profit_factor": 1.04,
+      "total_r": 13.76,
+      "avg_r": 0.007,
+      "expectancy_r": 0.007,
+      "max_drawdown_r": 30.84,
+      "sharpe_ratio": 0.15,
+      "avg_winner_r": 0.602,
+      "avg_loser_r": -0.306,
+      "runners_count": 17
+    },
+    "signal_ablation": {
+      "trade_count": 1863,
+      "win_rate": 48.95,
+      "profit_factor": 1.0,
+      "total_r": -0.17,
+      "avg_r": -0.0,
+      "expectancy_r": -0.0,
+      "max_drawdown_r": 56.14,
+      "sharpe_ratio": -0.0,
+      "avg_winner_r": 0.652,
+      "avg_loser_r": -0.626,
+      "runners_count": 19
+    },
+    "enhanced_v5": {
+      "trade_count": 1727,
+      "win_rate": 35.21,
+      "profit_factor": 1.07,
+      "total_r": 22.42,
+      "avg_r": 0.013,
+      "expectancy_r": 0.013,
+      "max_drawdown_r": 20.03,
+      "sharpe_ratio": 0.28,
+      "avg_winner_r": 0.581,
+      "avg_loser_r": -0.296,
+      "runners_count": 11
+    }
+  },
+  "negative_filter": {
+    "setups_filtered": 136,
+    "threshold": 0.28
+  }
+}

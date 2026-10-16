@@ -1,0 +1,1352 @@
+[
+  {
+    "symbol": "RAMCOSYS",
+    "date": "2025-05-22",
+    "pattern": "BASE",
+    "combined_score": 0.5886,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.6306,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 19.99,
+        "shap_impact": 0.2102,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "vol_ratio_50",
+        "value": 21.33,
+        "shap_impact": -0.1294,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "KHAICHEM",
+    "date": "2025-06-30",
+    "pattern": "HTF",
+    "combined_score": 0.5796,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4358,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.1147,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.6,
+        "shap_impact": 0.1146,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "ORCHPHARMA",
+    "date": "2026-06-12",
+    "pattern": "HTF",
+    "combined_score": 0.576,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.2666,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.71,
+        "shap_impact": 0.117,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "flag_pole_height_pct",
+        "value": 28.14,
+        "shap_impact": 0.0756,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "PRIVISCL",
+    "date": "2025-06-05",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5573,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 2.0,
+        "shap_impact": 0.094,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.94,
+        "shap_impact": -0.0842,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "upper_wick_pct",
+        "value": 0.06,
+        "shap_impact": -0.0551,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "IMFA",
+    "date": "2025-10-09",
+    "pattern": "HTF",
+    "combined_score": 0.5553,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.2586,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.53,
+        "shap_impact": 0.1243,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "flag_pole_height_pct",
+        "value": 17.94,
+        "shap_impact": 0.0781,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "KHAICHEM",
+    "date": "2025-07-03",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5531,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4309,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.1858,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.32,
+        "shap_impact": 0.1383,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "CUPID",
+    "date": "2026-06-19",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.547,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.8,
+        "shap_impact": 0.0826,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma50",
+        "value": 40.45,
+        "shap_impact": -0.0723,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "cir",
+        "value": 0.99,
+        "shap_impact": 0.0617,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "CARERATING",
+    "date": "2025-06-11",
+    "pattern": "HTF",
+    "combined_score": 0.5429,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.74,
+        "shap_impact": 0.0976,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.8,
+        "shap_impact": -0.0645,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "dist_sma50",
+        "value": 37.12,
+        "shap_impact": -0.0564,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "PARADEEP",
+    "date": "2025-05-28",
+    "pattern": "HTF",
+    "combined_score": 0.5321,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.2188,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.5,
+        "shap_impact": 0.0784,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.84,
+        "shap_impact": -0.0733,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "KIRLOSENG",
+    "date": "2026-06-22",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5269,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.6386,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 20.0,
+        "shap_impact": 0.1822,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.0,
+        "shap_impact": 0.1111,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "INDOTHAI",
+    "date": "2025-01-16",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5239,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4138,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 44.37,
+        "shap_impact": -0.1269,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.0923,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "CONFIPET",
+    "date": "2026-06-03",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5212,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5632,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.2,
+        "shap_impact": 0.128,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 24.22,
+        "shap_impact": -0.068,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "BLISSGVS",
+    "date": "2026-05-26",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5171,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5068,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 20.0,
+        "shap_impact": 0.1604,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.0,
+        "shap_impact": 0.1083,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "IZMO",
+    "date": "2025-09-26",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5156,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4228,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.3358,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dry_up_ratio",
+        "value": 0.39,
+        "shap_impact": -0.144,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "CUPID",
+    "date": "2026-07-06",
+    "pattern": "HTF",
+    "combined_score": 0.5133,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.3074,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.14,
+        "shap_impact": 0.0989,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "upper_wick_pct",
+        "value": 0.07,
+        "shap_impact": -0.0636,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "AVALON",
+    "date": "2025-10-03",
+    "pattern": "BASE",
+    "combined_score": 0.5129,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 0.9,
+        "shap_impact": -0.0896,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.6,
+        "shap_impact": 0.0776,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 7.73,
+        "shap_impact": 0.0346,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "ONIDA",
+    "date": "2026-05-07",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5121,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4909,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 19.98,
+        "shap_impact": 0.2021,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 0.9,
+        "shap_impact": 0.0976,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "VOLTAMP",
+    "date": "2026-04-22",
+    "pattern": "BASE",
+    "combined_score": 0.5114,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.6,
+        "shap_impact": 0.0871,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.82,
+        "shap_impact": -0.0587,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "risk_pct",
+        "value": 4.9,
+        "shap_impact": 0.0244,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "ADANIENSOL",
+    "date": "2026-05-27",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5099,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.1164,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.6,
+        "shap_impact": 0.0847,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.78,
+        "shap_impact": -0.0738,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "BLISSGVS",
+    "date": "2026-06-29",
+    "pattern": "HTF",
+    "combined_score": 0.5083,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.6,
+        "shap_impact": 0.0909,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.77,
+        "shap_impact": -0.0728,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_mean_r",
+        "value": 1.6,
+        "shap_impact": 0.0503,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "MASFIN",
+    "date": "2026-01-06",
+    "pattern": "BASE",
+    "combined_score": 0.5065,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "dist_sma50",
+        "value": 7.62,
+        "shap_impact": 0.1318,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.0758,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.84,
+        "shap_impact": -0.0568,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "AUROPHARMA",
+    "date": "2026-05-06",
+    "pattern": "BASE",
+    "combined_score": 0.5055,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 0.91,
+        "shap_impact": -0.0922,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.6,
+        "shap_impact": 0.082,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 6.82,
+        "shap_impact": 0.0296,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SASKEN",
+    "date": "2026-05-11",
+    "pattern": "HTF",
+    "combined_score": 0.5053,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5054,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 20.0,
+        "shap_impact": 0.1671,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "vol_ratio_50",
+        "value": 22.44,
+        "shap_impact": -0.146,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "ARVIND",
+    "date": "2026-06-24",
+    "pattern": "BASE",
+    "combined_score": 0.5043,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.5,
+        "shap_impact": 0.0851,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.88,
+        "shap_impact": -0.0607,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_mean_r",
+        "value": 1.5,
+        "shap_impact": 0.0508,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SIGMAADV",
+    "date": "2026-05-27",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.5026,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5268,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.3339,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 0.8,
+        "shap_impact": 0.0797,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "AXISCADES",
+    "date": "2025-05-22",
+    "pattern": "BASE",
+    "combined_score": 0.5,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4929,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 0.98,
+        "shap_impact": 0.0698,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 0.97,
+        "shap_impact": -0.0307,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "MARATHON",
+    "date": "2025-07-14",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4991,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.52,
+        "shap_impact": 0.1022,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.94,
+        "shap_impact": -0.0808,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.0663,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SILGO",
+    "date": "2025-08-20",
+    "pattern": "BASE",
+    "combined_score": 0.4988,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5265,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "w_base_depth",
+        "value": 0.28,
+        "shap_impact": 0.1062,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 0.77,
+        "shap_impact": 0.0852,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SHAILY",
+    "date": "2025-05-20",
+    "pattern": "HTF",
+    "combined_score": 0.4972,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "dist_sma50",
+        "value": 7.0,
+        "shap_impact": 0.1481,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.27,
+        "shap_impact": 0.0909,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.9,
+        "shap_impact": -0.0869,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "PREMEXPLN",
+    "date": "2026-05-25",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.496,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5227,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 20.0,
+        "shap_impact": 0.1354,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 0.98,
+        "shap_impact": 0.1045,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "USHAMART",
+    "date": "2026-05-27",
+    "pattern": "BASE",
+    "combined_score": 0.4951,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.0823,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.77,
+        "shap_impact": -0.0711,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 8.48,
+        "shap_impact": 0.0295,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "ABDL",
+    "date": "2025-10-21",
+    "pattern": "BASE",
+    "combined_score": 0.4938,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 0.76,
+        "shap_impact": -0.0786,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.0701,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 11.49,
+        "shap_impact": 0.0323,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "DELHIVERY",
+    "date": "2025-08-04",
+    "pattern": "BASE",
+    "combined_score": 0.4934,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.43,
+        "shap_impact": 0.0723,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.9,
+        "shap_impact": -0.0569,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 8.53,
+        "shap_impact": 0.0312,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "BLUEJET",
+    "date": "2025-03-18",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4934,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4721,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.0,
+        "shap_impact": 0.0725,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 0.99,
+        "shap_impact": 0.0366,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "IRISDOREME",
+    "date": "2026-06-15",
+    "pattern": "HTF",
+    "combined_score": 0.4932,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "dist_sma50",
+        "value": 7.56,
+        "shap_impact": 0.117,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.31,
+        "shap_impact": 0.0929,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.81,
+        "shap_impact": -0.0854,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "LLOYDSENGG",
+    "date": "2026-05-25",
+    "pattern": "HTF",
+    "combined_score": 0.4928,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.2824,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.24,
+        "shap_impact": 0.1016,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.78,
+        "shap_impact": -0.0709,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "SKMEGGPROD",
+    "date": "2025-07-14",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4919,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4361,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.07,
+        "shap_impact": 0.0932,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma50",
+        "value": 31.16,
+        "shap_impact": -0.0412,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "BSE",
+    "date": "2025-05-13",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4912,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.1783,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.3,
+        "shap_impact": 0.0768,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.92,
+        "shap_impact": -0.0721,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "GVPIL",
+    "date": "2026-05-25",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4899,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.447,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma50",
+        "value": 43.76,
+        "shap_impact": -0.0801,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "w_vol_ratio",
+        "value": 0.3,
+        "shap_impact": 0.0728,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SIGMAADV",
+    "date": "2026-06-11",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4899,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5198,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 1.0,
+        "shap_impact": 0.3103,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 23.97,
+        "shap_impact": -0.0543,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "SAIL",
+    "date": "2026-01-27",
+    "pattern": "BASE",
+    "combined_score": 0.4887,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.0757,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.82,
+        "shap_impact": -0.0599,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "risk_pct",
+        "value": 4.22,
+        "shap_impact": 0.0296,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SHAREINDIA",
+    "date": "2026-07-07",
+    "pattern": "BASE",
+    "combined_score": 0.4887,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5265,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "bar_ret",
+        "value": 20.0,
+        "shap_impact": 0.1685,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "vol_ratio_50",
+        "value": 117.81,
+        "shap_impact": -0.1503,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "BANDHANBNK",
+    "date": "2026-04-27",
+    "pattern": "HTF",
+    "combined_score": 0.4854,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.31,
+        "shap_impact": 0.0932,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.91,
+        "shap_impact": -0.0823,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "dist_sma50",
+        "value": 7.92,
+        "shap_impact": 0.0662,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "SOLEX",
+    "date": "2025-10-31",
+    "pattern": "HTF",
+    "combined_score": 0.4838,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.5054,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.0,
+        "shap_impact": 0.0518,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 7.13,
+        "shap_impact": 0.0382,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "MANCREDIT",
+    "date": "2025-05-27",
+    "pattern": "BASE",
+    "combined_score": 0.4825,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 0.8,
+        "shap_impact": -0.0749,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.0716,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma50",
+        "value": 16.0,
+        "shap_impact": 0.0368,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "ONGC",
+    "date": "2026-04-28",
+    "pattern": "BASE",
+    "combined_score": 0.4823,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.4,
+        "shap_impact": 0.1099,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "cir",
+        "value": 0.93,
+        "shap_impact": -0.0698,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "upper_wick_pct",
+        "value": 0.07,
+        "shap_impact": -0.0582,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "SETL",
+    "date": "2026-07-02",
+    "pattern": "52W_HIGH",
+    "combined_score": 0.4822,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.482,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.0,
+        "shap_impact": 0.1099,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 53.39,
+        "shap_impact": -0.0968,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "SOLEX",
+    "date": "2025-11-20",
+    "pattern": "BASE",
+    "combined_score": 0.4811,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4453,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.0,
+        "shap_impact": 0.1024,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "analog_top_similarity",
+        "value": 0.97,
+        "shap_impact": -0.0396,
+        "effect": "Bearish Drag"
+      }
+    ]
+  },
+  {
+    "symbol": "SHANKARA",
+    "date": "2025-07-29",
+    "pattern": "BASE",
+    "combined_score": 0.4807,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 0.77,
+        "shap_impact": -0.0835,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "base_depth_pct",
+        "value": 30.24,
+        "shap_impact": -0.0716,
+        "effect": "Bearish Drag"
+      },
+      {
+        "feature": "analog_weighted_r",
+        "value": 1.49,
+        "shap_impact": 0.0692,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  },
+  {
+    "symbol": "GODFRYPHLP",
+    "date": "2025-05-30",
+    "pattern": "HTF",
+    "combined_score": 0.4806,
+    "size_pct": 1.25,
+    "top_3_shap_reasons": [
+      {
+        "feature": "cir",
+        "value": 1.0,
+        "shap_impact": 0.4204,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "w_vol_ratio",
+        "value": 0.34,
+        "shap_impact": 0.1238,
+        "effect": "Bullish Catalyst"
+      },
+      {
+        "feature": "dist_sma20",
+        "value": 1.86,
+        "shap_impact": 0.0781,
+        "effect": "Bullish Catalyst"
+      }
+    ]
+  }
+]

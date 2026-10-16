@@ -1,0 +1,15 @@
+[Unit]
+Description=QuantSync Lab worker (Fast jobs (scan, backtest))
+After=network.target
+[Service]
+User=qslab
+WorkingDirectory=/opt/quantsync-lab/app
+Environment=QSLAB_CONFIG=/opt/quantsync-lab/config.yaml
+ExecStart=/opt/quantsync-lab/venv/bin/python -m lab.worker fast
+Restart=always
+MemoryMax=700M
+CPUQuota=60%
+Nice=10
+NoNewPrivileges=true
+[Install]
+WantedBy=multi-user.target

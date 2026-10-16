@@ -1,0 +1,43 @@
+{
+  "lock_name": "QuantSync V11 Production 5-Strategy + Arbiter Hash Lock",
+  "version": "1.0.0",
+  "locked_at": "2026-09-16T15:35:00Z",
+  "hash_algorithm": "SHA-256",
+  "locked_files": {
+    "quantsync_v11/config/strategy_1_rs_leader_best_config.json": {
+      "sha256": "79e555990ee069afb16a83be4b93525d73cdb858c45d354ed14a9ab66bec7d13",
+      "bytes": 2045,
+      "status": "FROZEN_LOCKED"
+    },
+    "quantsync_v11/config/strategy_2_apex_base_best_config.json": {
+      "sha256": "8dd38591749ef5834be2bfef1b2161610d4fcca6cf45574984557c94afe6da02",
+      "bytes": 2393,
+      "status": "FROZEN_LOCKED"
+    },
+    "quantsync_v11/config/strategy_3_power_earnings_gap_best_config.json": {
+      "sha256": "1f7418f2eb7fca3f086a1abb856513622fc284ff8ea026d7232acabec9a6aee1",
+      "bytes": 1410,
+      "status": "FROZEN_LOCKED"
+    },
+    "quantsync_v11/config/strategy_4_high_tight_flag_best_config.json": {
+      "sha256": "bed74276923bdf87bae773e2f6577564df93fbf12290307cd50e6d3109024552",
+      "bytes": 1498,
+      "status": "FROZEN_LOCKED"
+    },
+    "quantsync_v11/config/strategy_5_stage2_base_best_config.json": {
+      "sha256": "a887d93ed2197c0d4a74b3fe49892d128d8abb834608be32b3ac9e1a45aacd44",
+      "bytes": 1455,
+      "status": "FROZEN_LOCKED"
+    },
+    "quantsync_v11/config/master_portfolio_strategies_config.json": {
+      "sha256": "30a876223d6e4cc1a15657f268c18550bdb043c88d2530a2efec34ec7a471b22",
+      "bytes": 2794,
+      "status": "FROZEN_LOCKED"
+    },
+    "quantsync_v11/decision/arbiter.py": {
+      "sha256": "f3f581ef62085f0f5e511a967cad45e18681d3f8203311675be7c9aba8e9d5ab",
+      "bytes": 4089,
+      "status": "FROZEN_LOCKED"
+    }
+  }
+}
