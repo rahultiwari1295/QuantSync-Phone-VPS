@@ -11,11 +11,11 @@ from contextlib import asynccontextmanager
 import pandas as pd
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 
-from . import __version__, db, engine_feed, jobs, pipeline, service, store
+from . import __version__, board, db, engine_feed, entitlements, jobs, pipeline, service, store, universe
 from .auth import mirror_strategy_ids, optional_uid, require_uid
 from .catalog import catalog
 from .config import Config, load_config
@@ -81,6 +81,7 @@ def _bad(e: Exception):
 def health(request: Request):
     cfg = cfg_of(request)
     return {"ok": True, "version": __version__, "data": {tf: store.meta(cfg, tf) for tf in ("1D", "1W")},
+            "snapshot": {tf: store.snap_meta(cfg, tf) for tf in ("1D", "1W")}, "universe": universe.label(cfg),
             "auth": {"mode": cfg.auth_mode, "firebase_project_id": cfg.firebase_project_id or None}}
 
 
@@ -89,8 +90,38 @@ def get_catalog():
     return catalog()
 
 
+# ---- precomputed screens board -------------------------------------------------------------------------------------
+@router.get("/screens/board")
+def screens_board(request: Request, con=Depends(get_con)):
+    """Every ready-made screen in one small answer (top rows each). Built by `lab.cli board`; cached by browsers and the edge."""
+    b = board.load(con)
+    if not b:
+        raise HTTPException(503, "The screens are being prepared. Try again in a minute.")
+    hdr = {"ETag": f'"{b["etag"]}"', "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=1800"}
+    if request.headers.get("if-none-match", "").strip('"') == b["etag"]:
+        return Response(status_code=304, headers=hdr)
+    return Response(content=b["body"], media_type="application/json", headers=hdr)
+
+
+@router.get("/screens/{screen_id}")
+def screen_full(screen_id: str, response: Response, con=Depends(get_con)):
+    r = board.one(con, screen_id)
+    if not r:
+        raise HTTPException(404, "Screen not found.")
+    response.headers["Cache-Control"] = "public, max-age=60, s-maxage=300, stale-while-revalidate=1800"
+    return r
+
+
+@router.get("/universe")
+def universe_info(response: Response, con=Depends(get_con)):
+    r = con.execute("SELECT count(*) n, sum(free_backtest) free, max(updated_at) at, min(CASE WHEN free_backtest=1 THEN turnover_cr END) floor FROM universe").fetchone()
+    response.headers["Cache-Control"] = "public, max-age=600"
+    return {"stocks": r["n"], "free": r["free"] or 0, "updated_at": r["at"], "min_turnover_cr": r["floor"]}
+
+
 @router.post("/scan")
-async def scan(body: RuleBody, request: Request, uid: str | None = Depends(optional_uid)):
+async def scan(body: RuleBody, request: Request, uid: str | None = Depends(optional_uid), con=Depends(get_con)):
+    entitlements.hit(entitlements.client_key(request, uid), entitlements.limits(entitlements.plan_of(con, uid))["scans_per_hour"], "scans")
     try:
         return await run_in_threadpool(pipeline.scan, cfg_of(request), body.entry, body.tf)
     except RuleError as e:
@@ -326,6 +357,57 @@ def matches(request: Request, uid: str | None = Depends(optional_uid), con=Depen
     return {"signed_in": bool(uid), "latest_days": LATEST_DAYS, "rows": rows[:1000], "counts": {"latest": n_latest, "older": len(rows) - n_latest}}
 
 
+_changes_cache: dict = {}
+
+
+@router.get("/changes")
+def changes(request: Request, response: Response, days: int = 30, uid: str | None = Depends(optional_uid), con=Depends(get_con)):
+    """Stocks that entered or left the strategies switched on in Your alerts (QuantSync strategies always count), newest first.
+    One answer for the Activity page instead of one request per strategy. Signed out = QuantSync strategies only."""
+    cfg = cfg_of(request)
+    days = max(1, min(days, 90))
+    key = (uid or "", days)
+    hit = _changes_cache.get(key)
+    response.headers["Cache-Control"] = "private, max-age=30"
+    if hit and time.time() - hit[0] < 60:
+        return hit[1]
+    today_ = pd.Timestamp.today().normalize()
+    cut = (today_ - pd.Timedelta(days=days)).strftime("%Y-%m-%d")
+    ev: list[dict] = []
+    subs = [x for x in _alert_subs(con, uid) if x["on"]]
+    for x in subs:
+        s, base = x["s"], {"sid": x["s"]["id"], "name": x["s"]["name"], "cat": x["cat"]}
+        try:
+            eng = _engine(cfg, s)
+            if eng:
+                opened = [{"symbol": a["symbol"], "date": a["entry_date"], "price": a["entry_price"], "chg": a["ret_pct"]} for a in engine_feed.active(cfg, eng)]
+                closed = engine_feed.trades(cfg, eng, "closed", 400)
+            else:
+                opened = [{"symbol": r["symbol"], "date": r["signal_date"], "price": r["entry_price"], "chg": r["ret_pct"]}
+                          for r in con.execute("SELECT * FROM live_trades WHERE version_id=? AND is_open=1 AND signal_date>=? ORDER BY signal_date DESC LIMIT 300", (s["current_version"], cut))]
+                closed = [dict(r) for r in con.execute("SELECT * FROM live_trades WHERE version_id=? AND is_open=0 AND exit_date>=? ORDER BY exit_date DESC LIMIT 300", (s["current_version"], cut))]
+        except Exception:  # noqa: BLE001 - one strategy must not hide the others
+            log.exception("changes failed for %s", s["id"])
+            continue
+        for o in opened:
+            if o["date"] and str(o["date"])[:10] >= cut:
+                ev.append({**base, "kind": "add", "sym": o["symbol"], "date": str(o["date"])[:10], "price": o["price"], "chg": o["chg"]})
+        for t in closed:
+            if not t.get("exit_date") or str(t["exit_date"])[:10] < cut:
+                continue
+            try:
+                held = max(1, (pd.Timestamp(t["exit_date"]) - pd.Timestamp(t["entry_date"] or t["signal_date"])).days)
+            except Exception:  # noqa: BLE001
+                held = None
+            ev.append({**base, "kind": "out", "sym": t["symbol"], "date": str(t["exit_date"])[:10], "ret": t.get("ret_pct"), "held": held, "reason": t.get("exit_reason")})
+    ev.sort(key=lambda e: (e["date"], e["kind"] == "add", e["sym"]), reverse=True)
+    out = {"signed_in": bool(uid), "strategies": len(subs), "days": days, "items": ev[:600]}
+    if len(_changes_cache) > 500:
+        _changes_cache.clear()
+    _changes_cache[key] = (time.time(), out)
+    return out
+
+
 @router.get("/strategies/{sid}/trades")
 def trades(sid: str, request: Request, status: str = "active", limit: int = 1000, uid: str | None = Depends(optional_uid), con=Depends(get_con)):
     s = _visible(con, sid, uid)
@@ -464,7 +546,8 @@ def report(sid: str, reason: str = "", uid: str | None = Depends(optional_uid), 
 def me(uid: str = Depends(require_uid), con=Depends(get_con)):
     _ensure_user(con, uid)
     u = con.execute("SELECT * FROM users WHERE uid=?", (uid,)).fetchone()
-    return {"handle": u["handle"], "plan": u["plan"], "pricing_enabled": con.execute("SELECT v FROM app_config WHERE k='pricing_enabled'").fetchone()[0] == "true"}
+    return {"handle": u["handle"], "plan": u["plan"], "limits": entitlements.limits(u["plan"]),
+            "pricing_enabled": con.execute("SELECT v FROM app_config WHERE k='pricing_enabled'").fetchone()[0] == "true"}
 
 
 @router.put("/me/handle")

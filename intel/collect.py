@@ -337,26 +337,42 @@ def fii_dii(con, net: Net, U: Universe) -> int:
 
 
 # ---------------------------------------------------------------- the world
-MARKETS = [("^GSPC", "S&P 500", "US"), ("^IXIC", "Nasdaq", "US"), ("^DJI", "Dow Jones", "US"), ("^FTSE", "FTSE 100", "Europe"),
-           ("^GDAXI", "DAX", "Europe"), ("^N225", "Nikkei 225", "Asia"), ("^HSI", "Hang Seng", "Asia"), ("000001.SS", "Shanghai", "Asia"),
-           ("^NSEI", "Nifty 50", "India"), ("^NSEBANK", "Bank Nifty", "India"), ("^INDIAVIX", "India VIX", "India"),
-           ("BZ=F", "Brent crude", "Commodities"), ("GC=F", "Gold", "Commodities"), ("SI=F", "Silver", "Commodities"), ("HG=F", "Copper", "Commodities"),
-           ("DX-Y.NYB", "Dollar index", "FX & rates"), ("INR=X", "USD / INR", "FX & rates"), ("^TNX", "US 10-year yield", "FX & rates"),
-           ("BTC-USD", "Bitcoin", "Other")]
+MARKETS = [("^GSPC", "S&P 500", "US", "World"), ("^IXIC", "Nasdaq", "US", "World"), ("^DJI", "Dow Jones", "US", "World"), ("^FTSE", "FTSE 100", "Europe", "World"),
+           ("^GDAXI", "DAX", "Europe", "World"), ("^N225", "Nikkei 225", "Asia", "World"), ("^HSI", "Hang Seng", "Asia", "World"), ("000001.SS", "Shanghai", "Asia", "World"),
+           ("^NSEI", "Nifty 50", "India", "India"), ("^NSEBANK", "Bank Nifty", "India", "India"), ("^BSESN", "Sensex", "India", "India"),
+           ("^NSEMDCP50", "Nifty Midcap", "India", "India"), ("^CNXSC", "Nifty Smallcap", "India", "India"), ("^INDIAVIX", "India VIX", "India", "India"),
+           ("BZ=F", "Brent crude", "Commodities", "Commodities & FX"), ("GC=F", "Gold", "Commodities", "Commodities & FX"), ("SI=F", "Silver", "Commodities", "Commodities & FX"),
+           ("HG=F", "Copper", "Commodities", "Commodities & FX"), ("DX-Y.NYB", "Dollar index", "FX & rates", "Commodities & FX"),
+           ("INR=X", "USD / INR", "FX & rates", "Commodities & FX"), ("^TNX", "US 10-year yield", "FX & rates", "Commodities & FX"), ("BTC-USD", "Bitcoin", "Other", "Other")]
 
 
 def global_markets(con, net: Net, U: Universe) -> int:
+    """One call per ticker: today's 15-minute line (sparkline), previous close, day high and low. A ticker Yahoo
+    does not know is skipped and shows in source_state; the rest are unaffected."""
+    import json as _json
     n = 0
-    for key, name, region in MARKETS:
+    for key, name, region, grp in MARKETS:
         try:
-            d = net.json(f"https://query1.finance.yahoo.com/v8/finance/chart/{key}?range=5d&interval=1d", "yahoo")
+            d = net.json(f"https://query1.finance.yahoo.com/v8/finance/chart/{key}?range=1d&interval=15m", "yahoo")
             res = d["chart"]["result"][0]
-            closes = [x for x in res["indicators"]["quote"][0]["close"] if x is not None]
-            last = res["meta"].get("regularMarketPrice") or closes[-1]
-            prev = res["meta"].get("chartPreviousClose") if len(closes) < 2 else closes[-2]
+            meta = res["meta"]
+            q = res["indicators"]["quote"][0]
+            closes = [x for x in (q.get("close") or []) if x is not None]
+            last = meta.get("regularMarketPrice") or (closes[-1] if closes else None)
+            prev = meta.get("chartPreviousClose") or meta.get("previousClose")
+            if last is None:
+                continue
+            if not prev and len(closes) > 1:
+                prev = closes[0]
             chg = (last / prev - 1) * 100 if prev else None
-            con.execute("INSERT OR REPLACE INTO markets(key,name,region,last,chg_pct,as_of) VALUES(?,?,?,?,?,?)",
-                        (key, name, region, last, chg, iso(None)))
+            hi = meta.get("regularMarketDayHigh") or (max(closes) if closes else None)
+            lo = meta.get("regularMarketDayLow") or (min(closes) if closes else None)
+            step = max(1, len(closes) // 40)                      # at most ~40 points: a sparkline needs no more
+            spark = [round(x, 4) for x in closes[::step]]
+            if closes and spark[-1] != round(closes[-1], 4):
+                spark.append(round(closes[-1], 4))
+            con.execute("""INSERT OR REPLACE INTO markets(key,name,region,last,chg_pct,as_of,prev,hi,lo,spark_json,grp) VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
+                        (key, name, region, last, chg, iso(None), prev, hi, lo, _json.dumps(spark), grp))
             n += 1
         except (Blocked, KeyError, IndexError, TypeError, ValueError):
             continue
@@ -419,6 +435,7 @@ JOBS = {
     "meetings": [("board_meetings", board_meetings)],
     "insider": [("insider", insider), ("sast", sast), ("pledges", pledges)],
     "flows": [("deals", deals), ("fii_dii", fii_dii)],
+    "markets": [("global_markets", global_markets)],
     "world": [("global_markets", global_markets), ("news", news)],
 }
 

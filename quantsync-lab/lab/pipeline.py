@@ -7,7 +7,7 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from . import ai, metrics, simulator, store
+from . import ai, metrics, simulator, store, universe
 from .catalog import FEATURE_KEYS, MODEL_FEATURES
 from .config import Config
 from .rules import canonical, normalise, normalise_exit, rule_hash
@@ -41,10 +41,11 @@ def _fields(rule) -> list[str]:
     return out
 
 
-def scan(cfg: Config, entry: dict, tf: str, limit: int = 200) -> dict:
+def scan(cfg: Config, entry: dict, tf: str, limit: int = 200, extra: list[str] | None = None) -> dict:
     entry = normalise(entry)
     base = ["symbol", "date", "close", "ret_1", "rsi_14", "vol_ratio"]
     cols = base + [f for f in _fields(entry) if f not in base and f in FEATURE_KEYS][:8]
+    cols += [f for f in (extra or []) if f not in cols and f in FEATURE_KEYS]
     df = store.signals(cfg, entry, tf, only_last=True, columns=",".join(f'"{c}"' for c in cols))
     m = store.meta(cfg, tf)
     records = df.sort_values("symbol").head(limit).assign(date=lambda d: d["date"].astype(str)).to_dict("records")
@@ -72,7 +73,7 @@ def run_trades(cfg: Config, entry: dict, exit_: dict, tf: str, sg: pd.DataFrame 
     """start: only simulate from this date (live tracking needs months, not 8 years)."""
     entry, exit_ = normalise(entry), normalise_exit(exit_)
     progress(10, "Finding entries")
-    sg = _signal_frame(cfg, entry, tf, start=start) if sg is None else sg
+    sg = universe.restrict(cfg, _signal_frame(cfg, entry, tf, start=start)) if sg is None else sg   # heavy work: liquid universe only
     if not len(sg):
         return pd.DataFrame(columns=simulator.TRADE_COLS), sg
     bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=start or cfg.train_start, columns=SIM_COLS)
@@ -93,7 +94,7 @@ def summarise_trades(cfg: Config, trades: pd.DataFrame, tf: str) -> dict:
     return {"tf": tf, "as_of": (store.meta(cfg, tf) or {}).get("as_of"), "years": yrs,
             "summary": metrics.by_year(trades, yrs), "months": metrics.monthly_counts(rep),
             "open_trades": int(trades["is_open"].sum()) if len(trades) else 0,
-            "trades": recent_trades(rep), "analytics": metrics.analytics(rep), "metrics_v": metrics.METRICS_V}
+            "trades": recent_trades(rep), "analytics": metrics.analytics(rep), "metrics_v": metrics.METRICS_V, **universe.label(cfg)}
 
 
 TRADE_COLS = ["symbol", "signal_date", "entry_date", "entry_price", "exit_date", "exit_price", "exit_reason", "ret_pct", "bars", "is_open"]

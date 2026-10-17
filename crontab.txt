@@ -51,3 +51,10 @@
 # Lab: the daily cook (qslab-cook.timer) now also joins intel facts. Refresh the strategy library every Saturday:
 0 8 * * 6         cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli library >> /root/quantsync/logs/lab_library.log 2>&1
 30 19 * * 1-5       cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli cook >> /root/quantsync/logs/lab_cook.log 2>&1
+# Fast data (Screens board, market strip, News Today). Lab paths: adjust if the lab lives elsewhere.
+*/15 * * * *      cd /root/quantsync && ./venv/bin/python3 -m intel.run markets >> logs/intel.log 2>&1
+*/15 * * * *      cd /root/quantsync && ./venv/bin/python3 -m intel.run home    >> logs/intel.log 2>&1
+# Screens board: rebuilt only when the data changed, so this is cheap. Weekdays after the daily cook, then every 30 min.
+*/30 * * * *      cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli board >> /root/quantsync/logs/lab_board.log 2>&1
+# The 500 most-traded stocks that get the heavy work: re-ranked on the 1st of each month.
+30 7 1 * *        cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli universe >> /root/quantsync/logs/lab_board.log 2>&1

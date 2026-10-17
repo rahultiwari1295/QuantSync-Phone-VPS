@@ -68,6 +68,10 @@ CREATE TABLE IF NOT EXISTS markets (
   key TEXT PRIMARY KEY, name TEXT, region TEXT, last REAL, chg_pct REAL, as_of TEXT
 );
 
+CREATE TABLE IF NOT EXISTS news_home (
+  id INTEGER PRIMARY KEY CHECK (id = 1), built_at TEXT, body_json TEXT
+);
+
 CREATE TABLE IF NOT EXISTS facts_daily (
   symbol TEXT, known_at TEXT,
   mcap_cr REAL, pe REAL, pb REAL, earnings_yield REAL, dividend_yield REAL, roe REAL, roce REAL, debt_to_equity REAL,
@@ -121,6 +125,11 @@ def connect(path: str | None = None, ro: bool = False) -> sqlite3.Connection:
 def migrate(con: sqlite3.Connection | None = None) -> None:
     c = con or connect()
     c.executescript(SCHEMA)
+    for col, typ in (("prev", "REAL"), ("hi", "REAL"), ("lo", "REAL"), ("spark_json", "TEXT"), ("grp", "TEXT")):   # added later: old databases get them here
+        try:
+            c.execute(f"ALTER TABLE markets ADD COLUMN {col} {typ}")
+        except sqlite3.OperationalError:
+            pass
     c.commit()
     if con is None:
         c.close()

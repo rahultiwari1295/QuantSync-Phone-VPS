@@ -5,6 +5,8 @@
   insider   insider trades, SAST, pledges      every 30 min, 09:00-21:00
   flows     bulk/block deals, FII/DII          18:30 and 20:30
   world     global markets + news + policy     hourly, and inside the briefs
+  markets   index, commodity and FX tiles + sparklines   every 15 min
+  home      News Today page (mood, top stories, sections)  every 15 min
   read      filing reader (local model)        every 20 min
   fields    company + ownership facts          16:45 daily (before the Lab cook)
   morning   full sweep + morning brief         07:00
@@ -46,11 +48,16 @@ def main(argv=None) -> int:
         out = collect.run()
     elif job == "read":
         out = reader.run(budget_s=int(os.environ.get("QS_READ_BUDGET", "1100")))
+    elif job == "home":
+        from . import home
+        out = home.run()
     elif job == "fields":
         out = fields.run()
     elif job in ("morning", "evening"):
         groups = ["world", "filings", "meetings", "insider"] + (["flows"] if job == "evening" else [])
         out = {"collect": collect.run(groups), "brief": brief.run(job)}
+        from . import home
+        out["home"] = home.run()
     else:
         print(__doc__); return 2
     print(json.dumps(out, default=str))

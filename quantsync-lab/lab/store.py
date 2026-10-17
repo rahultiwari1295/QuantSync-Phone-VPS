@@ -106,12 +106,60 @@ def cook(cfg: Config, tf: str = "1D", symbols: list[str] | None = None) -> dict:
     meta = {"fsv": FSV, "tf": tf, "symbols": done, "rows": rows, "skipped": skipped,
             "as_of": str(pd.Timestamp(last).date()), "seconds": round(time.time() - t0, 1), "fact_sources": sources}
     (target / "_meta.json").write_text(json.dumps(meta))
+    try:
+        meta["snapshot"] = build_snapshot(cfg, tf)
+    except Exception as e:  # noqa: BLE001 - scans fall back to the full store until the next successful build
+        meta["snapshot"] = {"error": f"{type(e).__name__}: {e}"}
     return meta
 
 
 def meta(cfg: Config, tf: str) -> dict | None:
     p = cfg.tf_dir(tf) / "_meta.json"
     return json.loads(p.read_text()) if p.exists() else None
+
+
+# ---- snapshot: the last few bars of every stock in ONE small file ------------------------------------------------
+# A "scan today" only needs the latest bar plus a little look-back for [n] lags. Reading that from one 20 MB file takes
+# ~50 ms; globbing 2,700 full-history files took ~13 s. The snapshot is rebuilt at the end of every cook.
+def snap_path(cfg: Config, tf: str) -> Path:
+    return cfg.features_dir / f"snap_tf={tf}.parquet"
+
+
+def snap_meta(cfg: Config, tf: str) -> dict | None:
+    p = cfg.features_dir / f"snap_tf={tf}.json"
+    try:
+        return json.loads(p.read_text()) if p.exists() else None
+    except (OSError, ValueError):
+        return None
+
+
+def build_snapshot(cfg: Config, tf: str = "1D") -> dict:
+    """Keep the last `snapshot_bars` rows of every symbol of the current cooked store. Atomic (temp file, then rename)."""
+    t0, frames = time.time(), []
+    for p in sorted(cfg.tf_dir(tf).glob("*.parquet")):
+        try:
+            t = pq.read_table(p).to_pandas()
+            frames.append(t.tail(int(cfg.snapshot_bars)))
+        except Exception:  # noqa: BLE001 - one unreadable file must not block the snapshot
+            continue
+    if not frames:
+        raise RuntimeError("no cooked symbols to snapshot")
+    df = pd.concat(frames, ignore_index=True)
+    out = snap_path(cfg, tf)
+    tmp = out.with_suffix(".tmp")
+    pq.write_table(pa.Table.from_pandas(df, preserve_index=False), tmp, compression="zstd")
+    tmp.replace(out)
+    m = meta(cfg, tf) or {}
+    info = {"tf": tf, "as_of": m.get("as_of"), "symbols": int(df["symbol"].nunique()), "rows": int(len(df)),
+            "built_at": time.time(), "seconds": round(time.time() - t0, 1)}
+    (cfg.features_dir / f"snap_tf={tf}.json").write_text(json.dumps(info))
+    return info
+
+
+def snapshot_fresh(cfg: Config, tf: str) -> bool:
+    """The snapshot exists and was built from the data that is live now."""
+    s, m = snap_meta(cfg, tf), meta(cfg, tf)
+    return bool(s and m and s.get("as_of") == m.get("as_of") and snap_path(cfg, tf).exists())
 
 
 def connect(cfg: Config) -> duckdb.DuckDBPyConnection:
@@ -130,7 +178,8 @@ def signals(cfg: Config, rule: dict, tf: str, start: str | None = None, end: str
     c: Compiled = compile_rule(rule)
     con = connect(cfg)
     try:
-        src = f"read_parquet('{_glob(cfg, tf)}')"
+        fast = only_last and not start and not end and snapshot_fresh(cfg, tf)
+        src = f"read_parquet('{snap_path(cfg, tf)}')" if fast else f"read_parquet('{_glob(cfg, tf)}')"
         lo = ""
         m = meta(cfg, tf) if only_last else None
         as_of = m.get("as_of") if m else None

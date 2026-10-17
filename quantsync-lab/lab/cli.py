@@ -1,4 +1,4 @@
-"""python -m lab.cli cook|live|build-flagships|backtest-all|seed-flagship ..."""
+"""python -m lab.cli cook|live|snapshot|universe|board|library|build-flagships|backtest-all|seed-flagship ..."""
 from __future__ import annotations
 
 import argparse
@@ -15,6 +15,9 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("cook"); c.add_argument("--tf", choices=["1D", "1W", "all"], default="all")
     sub.add_parser("live")
+    sn = sub.add_parser("snapshot", help="rebuild the one-file latest-bars snapshot that makes scans instant"); sn.add_argument("--tf", choices=["1D", "1W", "all"], default="all")
+    sub.add_parser("universe", help="re-pick the ~500 liquid stocks that get past tests and strategy tracking (monthly)")
+    bd = sub.add_parser("board", help="work out every ready-made screen for the app (cheap: does nothing if the data has not changed)"); bd.add_argument("--force", action="store_true")
     sub.add_parser("library", help="create/refresh the public strategy library and run every past test")
     sub.add_parser("backtest-all", help="backtest every flagship + public strategy (cached for the UI)")
     b = sub.add_parser("build-flagships", help="create AI Alpha + AI Pattern, run past tests and the AI score gate"); b.add_argument("--no-ai", action="store_true")
@@ -29,7 +32,21 @@ def main(argv=None):
                 print(json.dumps(store.cook(cfg, tf)))
         finally:
             lock.unlink(missing_ok=True)
-        con = db.connect(cfg); print("live rows:", service.update_live(cfg, con))
+        con = db.connect(cfg)
+        from . import board, universe
+        if not con.execute("SELECT 1 FROM universe LIMIT 1").fetchone():
+            print("universe:", json.dumps(universe.build(cfg, con)))
+        print("live rows:", service.update_live(cfg, con))
+        print("board:", json.dumps(board.build(cfg, con, force=True)))
+    elif a.cmd == "snapshot":
+        for tf in (["1D", "1W"] if a.tf == "all" else [a.tf]):
+            print(json.dumps(store.build_snapshot(cfg, tf)))
+    elif a.cmd == "universe":
+        from . import universe
+        print(json.dumps(universe.build(cfg, db.connect(cfg))))
+    elif a.cmd == "board":
+        from . import board
+        print(json.dumps(board.build(cfg, db.connect(cfg), force=a.force)))
     elif a.cmd == "live":
         print("live rows:", service.update_live(cfg, db.connect(cfg)))
     elif a.cmd == "library":

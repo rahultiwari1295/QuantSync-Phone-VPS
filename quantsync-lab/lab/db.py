@@ -60,6 +60,11 @@ CREATE TABLE IF NOT EXISTS reports(id INTEGER PRIMARY KEY AUTOINCREMENT, strateg
 CREATE TABLE IF NOT EXISTS app_config(k TEXT PRIMARY KEY, v TEXT);
 CREATE TABLE IF NOT EXISTS holdings(uid TEXT NOT NULL, symbol TEXT NOT NULL, qty REAL NOT NULL, avg_price REAL NOT NULL,
   updated_at REAL NOT NULL, PRIMARY KEY(uid, symbol));
+CREATE TABLE IF NOT EXISTS universe(symbol TEXT PRIMARY KEY, free_backtest INTEGER NOT NULL DEFAULT 0, liquidity_rank INTEGER,
+  turnover_cr REAL, last_close REAL, bars INTEGER, added_on TEXT, removed_on TEXT, updated_at REAL);
+CREATE INDEX IF NOT EXISTS ix_universe_free ON universe(free_backtest);
+CREATE TABLE IF NOT EXISTS screen_results(screen_id TEXT PRIMARY KEY, tf TEXT, as_of TEXT, n INTEGER NOT NULL, rows_json TEXT NOT NULL, error TEXT, built_at REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS board_cache(id INTEGER PRIMARY KEY CHECK(id=1), sig TEXT, etag TEXT, built_at REAL NOT NULL, body_json TEXT NOT NULL);
 INSERT OR IGNORE INTO app_config VALUES('pricing_enabled','false');
 INSERT OR IGNORE INTO plans VALUES('free','Free',5,0),('pro','Pro',100,0);
 """

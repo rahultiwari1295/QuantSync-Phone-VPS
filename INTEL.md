@@ -59,3 +59,8 @@ Each job takes a lock, so a slow run never overlaps the next. A failing source i
 - No buy/sell calls anywhere. Facts, summaries and user-written rules only.
 
 Tests: `python -m pytest tests/test_intel.py` and `cd quantsync-lab && python -m pytest`.
+
+## Fast data (precomputed)
+- `GET /api/intel2/markets` now returns per-tile `prev`, `hi`, `lo`, `spark` (today's line) and `grp` (India / World / Commodities & FX). Job `markets` (every 15 min). Yahoo tickers for Sensex (`^BSESN`), Nifty Midcap (`^NSEMDCP50`) and Smallcap (`^CNXSC`) must be checked on the VPS; an unknown ticker is skipped and the tile just does not show.
+- `GET /api/intel2/home` is the News "Today" page written by job `home` (every 15 min and after the morning/evening briefs). Counts only; no model text.
+- Lab: `GET /lab/v1/screens/board` (all 59 screens in one cacheable response), `GET /lab/v1/screens/{id}`, `GET /lab/v1/changes`, `GET /lab/v1/universe`. See quantsync-lab/README.

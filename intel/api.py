@@ -179,8 +179,30 @@ def calendar(response: Response, days: int = Query(14, ge=1, le=90)):
 
 @router.get("/markets")
 def markets(response: Response):
-    response.headers["Cache-Control"] = "public, max-age=120"
-    return {"items": _q("SELECT * FROM markets ORDER BY region, name"), "flows": _q("SELECT * FROM flows ORDER BY day DESC LIMIT 10")}
+    response.headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=300"
+
+    def build():
+        items = _q("SELECT * FROM markets ORDER BY region, name")
+        for m in items:
+            try:
+                m["spark"] = json.loads(m.pop("spark_json") or "[]")
+            except (TypeError, ValueError):
+                m["spark"] = []
+        return {"items": items, "flows": _q("SELECT * FROM flows ORDER BY day DESC LIMIT 10")}
+    return _cached("markets", 30, build)
+
+
+@router.get("/home")
+def home(response: Response):
+    """The News 'Today' page, written ahead of time by `python -m intel.run home`."""
+    response.headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=300"
+    r = _q("SELECT built_at, body_json FROM news_home WHERE id=1")
+    if not r:
+        response.status_code = 404
+        return {"empty": True}
+    b = json.loads(r[0]["body_json"])
+    b["as_of"] = r[0]["built_at"]
+    return b
 
 
 @router.get("/status")
