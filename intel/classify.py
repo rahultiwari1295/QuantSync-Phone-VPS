@@ -80,4 +80,5 @@ def summary(typ: str, company: str, headline: str, detail: str = "", numbers: di
         return f"{who} will hold a board meeting on {n.get('meeting_date', 'a set date')}.\nAgenda: {(n.get('purpose') or headline)[:140]}."
     line1 = (headline or "").strip().rstrip(".")[:180]
     line2 = (detail or "").strip().replace("\n", " ")[:200]
-    return f"{who}: {line1}.\n{line2}" if line2 and line2.lower() not in line1.lower() else f"{who}: {line1}."
+    head = f"{company}: {line1}." if company and company.lower() not in line1.lower() else f"{line1}."
+    return f"{head}\n{line2}" if line2 and line2.lower() not in line1.lower() else head

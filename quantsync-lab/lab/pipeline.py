@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from . import ai, metrics, simulator, store
-from .catalog import MODEL_FEATURES
+from .catalog import FEATURE_KEYS, MODEL_FEATURES
 from .config import Config
 from .rules import canonical, normalise, normalise_exit, rule_hash
 
@@ -25,9 +25,27 @@ def exit_hash(exit_: dict) -> str:
     return hashlib.sha256(canonical(exit_).encode()).hexdigest()[:16]
 
 
+def _fields(rule) -> list[str]:
+    """Fields a rule reads, in order, so a scan can show the numbers it filtered on."""
+    out = []
+    def walk(x):
+        if isinstance(x, dict):
+            if "f" in x and isinstance(x["f"], str) and x["f"] not in out:
+                out.append(x["f"])
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    walk(rule)
+    return out
+
+
 def scan(cfg: Config, entry: dict, tf: str, limit: int = 200) -> dict:
     entry = normalise(entry)
-    df = store.signals(cfg, entry, tf, only_last=True, columns='"symbol","date","close","rsi_14","ret_1","vol_ratio"')
+    base = ["symbol", "date", "close", "ret_1", "rsi_14", "vol_ratio"]
+    cols = base + [f for f in _fields(entry) if f not in base and f in FEATURE_KEYS][:8]
+    df = store.signals(cfg, entry, tf, only_last=True, columns=",".join(f'"{c}"' for c in cols))
     m = store.meta(cfg, tf)
     records = df.sort_values("symbol").head(limit).assign(date=lambda d: d["date"].astype(str)).to_dict("records")
     clean = [{k: (None if (isinstance(v, float) and np.isnan(v)) else v) for k, v in r.items()} for r in records]

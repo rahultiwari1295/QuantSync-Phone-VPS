@@ -18,7 +18,10 @@ def _rows(con, sql, args=()):
 
 
 def _ev(r: dict) -> dict:
-    return {k: r.get(k) for k in ("id", "symbol", "company", "ts", "type", "category", "source", "url", "headline", "summary", "sentiment", "impact")}
+    from .classify import LABEL
+    d = {k: r.get(k) for k in ("id", "symbol", "company", "ts", "type", "category", "source", "url", "headline", "summary", "sentiment", "impact", "ai_status")}
+    d["label"] = LABEL.get(d["type"], (d["type"] or "").replace("_", " ").capitalize())
+    return d
 
 
 def build(kind: str = "morning") -> dict:

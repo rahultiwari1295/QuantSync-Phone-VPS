@@ -216,6 +216,12 @@ def list_strategies(request: Request, scope: str = "mine", uid: str | None = Dep
     for s in con.execute(q, a).fetchall():
         try:
             out.append(_card(con, s, uid, cfg_of(request)))
+            if scope == "library" and out[-1].get("record") is None:  # no past test yet: queue one (once per version)
+                try:
+                    v = con.execute("SELECT * FROM strategy_versions WHERE id=?", (s["current_version"],)).fetchone()
+                    service.ensure_backtest(con, s, v)
+                except Exception:  # noqa: BLE001
+                    log.exception("could not queue library test for %s", s["id"])
         except Exception:  # noqa: BLE001 - one bad record must not hide the whole list
             log.exception("card failed for %s", s["id"])
             out.append({"id": s["id"], "name": s["name"], "tf": s["tf"], "kind": s["kind"], "visibility": s["visibility"], "owner": None,
