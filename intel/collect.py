@@ -353,7 +353,10 @@ def global_markets(con, net: Net, U: Universe) -> int:
     n = 0
     for key, name, region, grp in MARKETS:
         try:
-            d = net.json(f"https://query1.finance.yahoo.com/v8/finance/chart/{key}?range=1d&interval=15m", "yahoo")
+            try:
+                d = net.json(f"https://query1.finance.yahoo.com/v8/finance/chart/{key}?range=1d&interval=15m", "yahoo")
+            except Exception:
+                d = net.json(f"https://query2.finance.yahoo.com/v8/finance/chart/{key}?range=1d&interval=15m", "yahoo")
             res = d["chart"]["result"][0]
             meta = res["meta"]
             q = res["indicators"]["quote"][0]

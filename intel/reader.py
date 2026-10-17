@@ -92,13 +92,24 @@ def available() -> bool:
 
 
 def _verify(out: dict, text: str) -> dict:
+    if not isinstance(out, dict):
+        out = {"summary": str(out)[:400] if out else "", "what_changed": "", "sentiment": "neutral", "key_numbers": []}
     flat = re.sub(r"[\s,]", "", text)
     keep = []
-    for k in (out.get("key_numbers") or [])[:5]:
-        v = str((k or {}).get("value", ""))
-        digits = re.sub(r"[^\d.]", "", v)
+    raw_keys = out.get("key_numbers")
+    if not isinstance(raw_keys, list):
+        raw_keys = []
+    for item in raw_keys[:5]:
+        if isinstance(item, dict):
+            lbl = str(item.get("label", ""))[:80]
+            val = str(item.get("value", ""))[:40]
+        elif isinstance(item, str):
+            lbl, val = "other", item[:40]
+        else:
+            continue
+        digits = re.sub(r"[^\d.]", "", val)
         if digits and digits.strip(".") and digits in flat:
-            keep.append({"label": str(k.get("label", ""))[:80], "value": v[:40]})
+            keep.append({"label": lbl, "value": val})
     out["key_numbers"] = keep
     if out.get("sentiment") not in ("positive", "negative", "neutral"):
         out["sentiment"] = "neutral"

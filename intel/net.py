@@ -20,7 +20,7 @@ SITES = {
     "nsearch": {"warm": None, "gap": 0.6, "headers": {"User-Agent": UA, "Referer": "https://www.nseindia.com/"}},
     "bse": {"warm": None, "gap": 0.8, "headers": {"User-Agent": UA, "Accept": "application/json, text/plain, */*",
                                                   "Origin": "https://www.bseindia.com", "Referer": "https://www.bseindia.com/"}},
-    "yahoo": {"warm": None, "gap": 0.4, "headers": {"User-Agent": UA, "Accept": "application/json"}},
+    "yahoo": {"warm": None, "gap": 0.4, "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36", "Accept": "application/json, text/plain, */*"}},
     "web": {"warm": None, "gap": 0.3, "headers": {"User-Agent": UA}},
 }
 
