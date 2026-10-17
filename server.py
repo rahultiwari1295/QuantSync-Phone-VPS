@@ -3282,3 +3282,16 @@ try:
     app.include_router(intel_router)
 except Exception as _e:  # noqa: BLE001 - the terminal must start even if intel is broken
     logging.getLogger(__name__).warning("intel api not loaded: %s", _e)
+
+# ── QuantSync Lab API (/lab/v1) ───────────────────────────────────────────────
+try:
+    import sys
+    _lab_dir = "/opt/quantsync-lab"
+    if _lab_dir not in sys.path:
+        sys.path.insert(0, _lab_dir)
+    from lab.api import router as lab_router, load_config, db as lab_db
+    app.state.cfg = load_config()
+    lab_db.migrate(app.state.cfg)
+    app.include_router(lab_router)
+except Exception as _e:
+    logging.getLogger(__name__).warning("lab api not loaded: %s", _e)

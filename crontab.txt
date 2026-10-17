@@ -50,3 +50,4 @@
 0 17 * * *        cd /root/quantsync && ./venv/bin/python3 -m intel.run evening  >> logs/intel.log 2>&1
 # Lab: the daily cook (qslab-cook.timer) now also joins intel facts. Refresh the strategy library every Saturday:
 0 8 * * 6         cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli library >> /root/quantsync/logs/lab_library.log 2>&1
+30 19 * * 1-5       cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli cook >> /root/quantsync/logs/lab_cook.log 2>&1

@@ -34,6 +34,9 @@ else
     echo "[=] QuantSync Scheduler is already running."
 fi
 
+# 4. Ensure Cron Daemon is active inside Ubuntu
+proot-distro login ubuntu -- bash -c "pgrep -x cron >/dev/null || service cron start" 2>/dev/null
+
 sleep 2
 tmux ls
 echo "[✓] QuantSync Autonomous Stack is Active!"
