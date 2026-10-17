@@ -26,7 +26,7 @@ from .net import Net
 
 OLLAMA = os.environ.get("QS_OLLAMA", "http://127.0.0.1:11434").rstrip("/")
 HEAVY = os.environ.get("QS_OLLAMA_HEAVY", "").rstrip("/")
-MODEL = os.environ.get("QS_LLM_MODEL", "gemma4:e2b")
+MODEL = os.environ.get("QS_LLM_MODEL", "qwen2.5:1.5b")
 HEAVY_MODEL = os.environ.get("QS_LLM_HEAVY_MODEL", MODEL)
 CHUNK = 9000          # characters per chunk (~2.3K tokens)
 MAX_CHUNKS = 6
