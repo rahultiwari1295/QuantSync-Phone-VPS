@@ -3275,3 +3275,10 @@ def api_screener_records(
 # ── New QuantSync app (web/app) and its helper routes ──────────────────────
 import app_routes  # noqa: E402
 app_routes.register(app, APP_DIR)
+
+# ── QuantSync intelligence (filings, deals, insiders, briefs) at /api/intel2 ──
+try:
+    from intel.api import router as intel_router  # noqa: E402
+    app.include_router(intel_router)
+except Exception as _e:  # noqa: BLE001 - the terminal must start even if intel is broken
+    logging.getLogger(__name__).warning("intel api not loaded: %s", _e)

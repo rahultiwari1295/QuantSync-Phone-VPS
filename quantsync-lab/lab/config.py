@@ -49,4 +49,8 @@ def load_config(path: str | os.PathLike | None = None) -> Config:
         raw = yaml.safe_load(Path(path).read_text()) or {}
     known = Config.__dataclass_fields__.keys()
     kw = {k: (Path(v) if k in _PATH_KEYS else str(v) if k in _DATE_KEYS else v) for k, v in raw.items() if k in known and k != "extra"}
-    return Config(**kw)
+    extra = dict(raw.get("extra") or {})
+    for k in ("cors_origins", "intel_db", "hist_db"):  # allowed at top level too
+        if k in raw:
+            extra[k] = raw[k]
+    return Config(**kw, extra=extra)

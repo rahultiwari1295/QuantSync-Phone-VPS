@@ -88,6 +88,24 @@ def compute(df: pd.DataFrame, tf: str = "1D") -> pd.DataFrame:
     f["close_loc"] = (c - l) / rg * 100
     f["upper_wick_pct"] = (h - np.maximum(c, o)) / rg * 100
     f["dist_hh20_pct"] = (c / f["hh_20"] - 1) * 100
+    # longer returns, all-time high, 52-week low distance, narrow-range day, streaks
+    for n in (60, 120, 250):
+        f[f"ret_{n}"] = (c / c.shift(n) - 1) * 100
+    f["ath"] = h.cummax()
+    f["dist_ath_pct"] = (c / f["ath"] - 1) * 100
+    f["dist_ll52_pct"] = (c / f["ll_52"] - 1) * 100
+    f["vol_sma_50"] = v.rolling(50, min_periods=50).mean()
+    f["vol_ratio_50"] = v / f["vol_sma_50"].replace(0, np.nan)
+    f["dist_ema_20_pct"] = (c / f["ema_20"] - 1) * 100
+    f["sma_50_slope"] = (f["sma_50"] / f["sma_50"].shift(10) - 1) * 100
+    f["sma_200_slope"] = (f["sma_200"] / f["sma_200"].shift(20) - 1) * 100
+    hl = h - l
+    f["is_nr7"] = (hl <= hl.rolling(7, min_periods=7).min()).astype("float64")
+    up = (c > pc).astype(int)
+    f["up_streak"] = up.groupby((up != up.shift()).cumsum()).cumsum() * up
+    dn = (c < pc).astype(int)
+    f["down_streak"] = dn.groupby((dn != dn.shift()).cumsum()).cumsum() * dn
+    f.loc[pc.isna(), ["is_nr7"]] = np.nan
     add_signals(f, tf)
     cols = [k for k in f.columns if k != "date"]
     f[cols] = f[cols].replace([np.inf, -np.inf], np.nan).astype("float32")

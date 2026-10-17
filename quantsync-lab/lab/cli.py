@@ -15,6 +15,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("cook"); c.add_argument("--tf", choices=["1D", "1W", "all"], default="all")
     sub.add_parser("live")
+    sub.add_parser("library", help="create/refresh the public strategy library and run every past test")
     sub.add_parser("backtest-all", help="backtest every flagship + public strategy (cached for the UI)")
     b = sub.add_parser("build-flagships", help="create AI Alpha + AI Pattern, run past tests and the AI score gate"); b.add_argument("--no-ai", action="store_true")
     s = sub.add_parser("seed-flagship"); s.add_argument("name"); s.add_argument("--tf", default="1D"); s.add_argument("file", help="JSON with entry/exit")
@@ -31,6 +32,12 @@ def main(argv=None):
         con = db.connect(cfg); print("live rows:", service.update_live(cfg, con))
     elif a.cmd == "live":
         print("live rows:", service.update_live(cfg, db.connect(cfg)))
+    elif a.cmd == "library":
+        from . import library
+        res = library.build(cfg, db.connect(cfg))
+        bad = [r for r in res if not r["ok"]]
+        print(f"library: {len(res) - len(bad)} ok, {len(bad)} failed")
+        return 1 if bad else 0
     elif a.cmd == "build-flagships":
         from . import flagship
         con = db.connect(cfg)

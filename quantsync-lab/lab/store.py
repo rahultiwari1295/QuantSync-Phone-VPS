@@ -74,6 +74,8 @@ def cook(cfg: Config, tf: str = "1D", symbols: list[str] | None = None) -> dict:
     shutil.rmtree(tmp, ignore_errors=True)
     tmp.mkdir(parents=True)
     done, skipped, rows, last = 0, [], 0, None
+    from .facts import Facts
+    facts = Facts(cfg)
     for sym, d in iter_candles(cfg, symbols):
         try:
             if isinstance(d, Exception):
@@ -82,12 +84,16 @@ def cook(cfg: Config, tf: str = "1D", symbols: list[str] | None = None) -> dict:
                 skipped.append(sym)
                 continue
             f = compute(to_weekly(d) if tf == "1W" else d, tf)
-            f.insert(0, "symbol", sym)
+            f = facts.enrich(sym, f).copy()
+            fk = [k for k in f.columns if k not in ("date",)]
+            f = pd.concat([pd.DataFrame({"symbol": sym}, index=f.index), f[["date"]], f[fk].astype("float32")], axis=1)
             pq.write_table(pa.Table.from_pandas(f, preserve_index=False), tmp / f"{sym}.parquet", compression="zstd")
             rows += len(f); done += 1
             last = max(last, f["date"].max()) if last is not None else f["date"].max()
         except Exception as e:  # one bad symbol must never block the cook
             skipped.append(f"{sym}:{type(e).__name__}")
+    sources = facts.available
+    facts.close()
     if done == 0:
         shutil.rmtree(tmp, ignore_errors=True)
         raise RuntimeError("cook produced no symbols; keeping previous data")
@@ -98,7 +104,7 @@ def cook(cfg: Config, tf: str = "1D", symbols: list[str] | None = None) -> dict:
     tmp.rename(target)
     shutil.rmtree(prev, ignore_errors=True)
     meta = {"fsv": FSV, "tf": tf, "symbols": done, "rows": rows, "skipped": skipped,
-            "as_of": str(pd.Timestamp(last).date()), "seconds": round(time.time() - t0, 1)}
+            "as_of": str(pd.Timestamp(last).date()), "seconds": round(time.time() - t0, 1), "fact_sources": sources}
     (target / "_meta.json").write_text(json.dumps(meta))
     return meta
 

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from . import FSV
+from .facts import FACT_FEATURES
 from .signals import SIGNALS
 
 F = lambda key, label, group, kind="number", unit="": {"key": key, "label": label, "group": group, "kind": kind, "unit": unit}
@@ -29,7 +30,15 @@ FEATURES: list[dict] = [
     F("gap_pct", "Gap vs prior close", "Candle", unit="%"), F("body_pct", "Candle body", "Candle", unit="%"),
     F("close_loc", "Close within bar range", "Candle", unit="%"), F("upper_wick_pct", "Upper wick", "Candle", unit="%"),
     F("is_green", "Green candle", "Candle", kind="bool"), F("is_inside_bar", "Inside bar", "Candle", kind="bool"),
+    F("ret_60", "Change 60 bars", "Momentum", unit="%"), F("ret_120", "Change 120 bars", "Momentum", unit="%"), F("ret_250", "Change 250 bars", "Momentum", unit="%"),
+    F("ath", "All-time high", "Levels", unit="₹"), F("dist_ath_pct", "Distance from all-time high", "Levels", unit="%"),
+    F("dist_ll52_pct", "Distance above 52-wk low", "Levels", unit="%"), F("dist_ema_20_pct", "Distance from EMA 20", "Trend", unit="%"),
+    F("sma_50_slope", "SMA 50 slope (10 bars)", "Trend", unit="%"), F("sma_200_slope", "SMA 200 slope (20 bars)", "Trend", unit="%"),
+    F("vol_sma_50", "Avg volume (50)", "Volume"), F("vol_ratio_50", "Volume vs 50-bar avg", "Volume", unit="x"),
+    F("up_streak", "Up days in a row", "Candle"), F("down_streak", "Down days in a row", "Candle"),
+    F("is_nr7", "Narrowest range of 7 bars", "Candle", kind="bool"),
     *[F(k, label, "QuantSync signals", kind="bool") for k, label in SIGNALS.items()],
+    *FACT_FEATURES,
 ]
 FEATURE_KEYS = {f["key"] for f in FEATURES}
 BOOL_KEYS = {f["key"] for f in FEATURES if f["kind"] == "bool"}

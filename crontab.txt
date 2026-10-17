@@ -37,3 +37,16 @@
 
 # 11. Data collectors (listing, corporate actions, news, results, shareholding, ratios, coverage) run from ONE service,
 #     not cron: systemctl enable --now quantsync_collectors   (see DEPLOY_COLLECTORS.md; schedules live in collectors/registry.py)
+
+# ── QuantSync intelligence (intel/) ─ all times IST (set CRON_TZ or the phone's clock to Asia/Kolkata) ──
+*/5 8-20 * * 1-5  cd /root/quantsync && ./venv/bin/python3 -m intel.run filings  >> logs/intel.log 2>&1
+7 * * * *         cd /root/quantsync && ./venv/bin/python3 -m intel.run meetings >> logs/intel.log 2>&1
+*/30 9-21 * * 1-5 cd /root/quantsync && ./venv/bin/python3 -m intel.run insider  >> logs/intel.log 2>&1
+30 18,20 * * 1-5  cd /root/quantsync && ./venv/bin/python3 -m intel.run flows    >> logs/intel.log 2>&1
+15 * * * *        cd /root/quantsync && ./venv/bin/python3 -m intel.run world    >> logs/intel.log 2>&1
+*/20 * * * *      cd /root/quantsync && ./venv/bin/python3 -m intel.run read     >> logs/intel_reader.log 2>&1
+45 16 * * 1-5     cd /root/quantsync && ./venv/bin/python3 -m intel.run fields   >> logs/intel.log 2>&1
+0 7 * * *         cd /root/quantsync && ./venv/bin/python3 -m intel.run morning  >> logs/intel.log 2>&1
+0 17 * * *        cd /root/quantsync && ./venv/bin/python3 -m intel.run evening  >> logs/intel.log 2>&1
+# Lab: the daily cook (qslab-cook.timer) now also joins intel facts. Refresh the strategy library every Saturday:
+0 8 * * 6         cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli library >> /root/quantsync/logs/lab_library.log 2>&1

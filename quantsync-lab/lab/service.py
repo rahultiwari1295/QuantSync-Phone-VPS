@@ -175,7 +175,8 @@ def update_live(cfg: Config, con: sqlite3.Connection) -> int:
             ex = json.loads(e[0]).get("best_exit") if e and e[0] else None
             exit_ = ex or exit_
         try:
-            trades, sg = pipeline.run_trades(cfg, entry, exit_, tf)
+            start = str((pd.Timestamp(v["live_from"]) - pd.Timedelta(days=200 if tf == "1D" else 900)).date()) if v["live_from"] else None
+            trades, sg = pipeline.run_trades(cfg, entry, exit_, tf, start=start)
         except Exception:
             log.exception("live update failed for %s", v["id"]); continue
         if v["ai_gate"] and v["ai_enhancement_id"]:

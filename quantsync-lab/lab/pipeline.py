@@ -35,27 +35,31 @@ def scan(cfg: Config, entry: dict, tf: str, limit: int = 200) -> dict:
             "rows": clean}
 
 
-def _signal_frame(cfg, entry, tf, extra_cols=()):
+def _signal_frame(cfg, entry, tf, extra_cols=(), start=None):
     cols = '"symbol","date","close",' + ",".join(f'"{c}"' for c in MODEL_FEATURES)
-    return store.signals(cfg, entry, tf, start=cfg.train_start, columns=cols)
+    return store.signals(cfg, entry, tf, start=start or cfg.train_start, columns=cols)
 
 
-def _rule_exit_arrays(cfg, exit_, tf, bars):
+def _rule_exit_arrays(cfg, exit_, tf, bars, start=None):
     arrs = {}
     for it in exit_.get("any", []):
         if it["type"] == "rule":
-            sg = store.signals(cfg, it["rule"], tf, start=cfg.train_start)
+            sg = store.signals(cfg, it["rule"], tf, start=start or cfg.train_start)
             arrs = simulator.sig_arrays(sg, bars)
     return arrs
 
 
-def run_trades(cfg: Config, entry: dict, exit_: dict, tf: str, sg: pd.DataFrame | None = None, progress: Progress = _noop):
+def run_trades(cfg: Config, entry: dict, exit_: dict, tf: str, sg: pd.DataFrame | None = None, progress: Progress = _noop,
+               start: str | None = None):
+    """start: only simulate from this date (live tracking needs months, not 8 years)."""
     entry, exit_ = normalise(entry), normalise_exit(exit_)
     progress(10, "Finding entries")
-    sg = _signal_frame(cfg, entry, tf) if sg is None else sg
-    bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=cfg.train_start, columns=SIM_COLS)
+    sg = _signal_frame(cfg, entry, tf, start=start) if sg is None else sg
+    if not len(sg):
+        return pd.DataFrame(columns=simulator.TRADE_COLS), sg
+    bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=start or cfg.train_start, columns=SIM_COLS)
     progress(40, "Simulating trades")
-    trades = simulator.simulate(bars, simulator.sig_arrays(sg, bars), exit_, tf, _rule_exit_arrays(cfg, exit_, tf, bars))
+    trades = simulator.simulate(bars, simulator.sig_arrays(sg, bars), exit_, tf, _rule_exit_arrays(cfg, exit_, tf, bars, start))
     return trades, sg
 
 
