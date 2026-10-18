@@ -94,6 +94,32 @@ def restrict(cfg: Config, frame: pd.DataFrame, col: str = "symbol") -> pd.DataFr
     return frame if free is None else frame[frame[col].isin(free)].reset_index(drop=True)
 
 
+def restrict_asof(cfg: Config, sg: pd.DataFrame, tf: str = "1D") -> pd.DataFrame:
+    """Keep a signal only if liq_rank <= cfg.free_universe_size on the signal date."""
+    if not cfg.restrict_universe or not len(sg):
+        return sg
+    xp = store.xsec_path(cfg, tf)
+    if not xp.exists():
+        return restrict(cfg, sg)
+    con = store.connect(cfg)
+    try:
+        con.register("signals_in", sg)
+        res = con.execute(f"""
+            SELECT s.*
+            FROM signals_in s
+            JOIN read_parquet('{xp}') x
+              ON s.symbol = x.symbol AND CAST(s.date AS TIMESTAMP) = x.date
+            WHERE x.liq_rank IS NOT NULL AND x.liq_rank <= {int(cfg.free_universe_size)}
+            ORDER BY s.date, s.symbol
+        """).df()
+        return res.reset_index(drop=True)
+    finally:
+        con.close()
+
+
 def label(cfg: Config) -> dict:
     free = free_symbols(cfg)
-    return {"universe": "free" if free is not None else "all", "universe_n": len(free) if free is not None else None}
+    n = len(free) if free is not None else None
+    txt = f"the {cfg.free_universe_size} most traded stocks on each day" if free is not None else "all stocks"
+    return {"universe": "free" if free is not None else "all", "universe_n": n, "label": txt}
+

@@ -306,3 +306,12 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
   - Updated website (`parts.js` and `views/strategies.js`) to display "₹1,00,000 split across up to 10 trades at a time", show CAGR and "Taken X of Y matches", handle equity scaling, and display honest max drawdown.
   - Test suite: Added `tests/test_portfolio.py` (5 tests covering two-trade hand example, 1000 overlapping trades, max_dd bounds, determinism, summarize/analytics integration). Updated `test_app_api.py::test_analytics_shape_and_math` for new portfolio equity. All 60 tests passed.
 
+- **Phase 2 (Liquidity measured on each day / Remove selection bias)**:
+  - Added `turnover_med_20` = rolling 20-bar median of `close * volume` (1D only; NaN for 1W) in `features.compute()`.
+  - Added `store.build_xsec(cfg, tf="1D")` producing `xsec_1D.parquet` with columns `date, symbol, liq_rank, rs60_pct` using DuckDB window ranking over cooked feature parquets and joining Nifty benchmark (`api.BENCH`) for 60-bar relative return. Called automatically in `store.cook()` and `cli.py snapshot`.
+  - Added `universe.restrict_asof(cfg, sg, tf="1D")` to filter past signals by `liq_rank <= cfg.free_universe_size` on the exact signal date. Replaced `universe.restrict()` in `pipeline.run_trades()`. Updated label text to `"the 500 most traded stocks on each day"`.
+  - Exposed `liq_rank` and `rs60_pct` under group `"Market"` in `catalog.py`. Joined `xsec` in `store.signals()` (for both full history and fast snapshot scans).
+  - Verified `StockHistory` delisted count on phone VPS: 0 symbols with no bars in last 30 days (all 2371 symbols active). Added survivorship bias note to `HONEST` notice in `public/app/js/parts.js`.
+  - Test suite: Added `tests/test_xsec.py` (3 tests verifying point-in-time invariance across date appends, elimination of selection bias on a 2019 illiquid / 2026 liquid stock, and catalog/signals integration). Updated `tests/test_board.py` for as-of liquidity rank. All 63 tests passed.
+
+

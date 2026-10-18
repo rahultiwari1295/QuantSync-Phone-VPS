@@ -41,6 +41,8 @@ def main(argv=None):
     elif a.cmd == "snapshot":
         for tf in (["1D", "1W"] if a.tf == "all" else [a.tf]):
             print(json.dumps(store.build_snapshot(cfg, tf)))
+            if tf == "1D":
+                print(json.dumps(store.build_xsec(cfg, tf)))
     elif a.cmd == "universe":
         from . import universe
         print(json.dumps(universe.build(cfg, db.connect(cfg))))

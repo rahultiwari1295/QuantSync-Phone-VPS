@@ -69,6 +69,7 @@ def compute(df: pd.DataFrame, tf: str = "1D") -> pd.DataFrame:
     f["vol_sma_20"] = v.rolling(20, min_periods=20).mean()
     f["vol_ratio"] = v / f["vol_sma_20"].replace(0, np.nan)
     f["turnover"] = c * v
+    f["turnover_med_20"] = (c * v).rolling(20, min_periods=20).median() if tf == "1D" else np.nan
     f["hh_20"] = h.shift(1).rolling(20, min_periods=20).max()   # prior 20-bar high: close > hh_20 is a breakout
     f["ll_20"] = l.shift(1).rolling(20, min_periods=20).min()
     yb = YEAR_BARS[tf]

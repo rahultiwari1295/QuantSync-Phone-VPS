@@ -37,6 +37,8 @@ FEATURES: list[dict] = [
     F("vol_sma_50", "Avg volume (50)", "Volume"), F("vol_ratio_50", "Volume vs 50-bar avg", "Volume", unit="x"),
     F("up_streak", "Up days in a row", "Candle"), F("down_streak", "Down days in a row", "Candle"),
     F("is_nr7", "Narrowest range of 7 bars", "Candle", kind="bool"),
+    F("liq_rank", "Liquidity rank (1 = most traded)", "Market"),
+    F("rs60_pct", "Relative strength vs Nifty, 60 bars (percentile)", "Market", unit="%"),
     *[F(k, label, "QuantSync signals", kind="bool") for k, label in SIGNALS.items()],
     *FACT_FEATURES,
 ]

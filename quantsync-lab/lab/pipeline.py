@@ -73,7 +73,7 @@ def run_trades(cfg: Config, entry: dict, exit_: dict, tf: str, sg: pd.DataFrame 
     """start: only simulate from this date (live tracking needs months, not 8 years)."""
     entry, exit_ = normalise(entry), normalise_exit(exit_)
     progress(10, "Finding entries")
-    sg = universe.restrict(cfg, _signal_frame(cfg, entry, tf, start=start)) if sg is None else sg   # heavy work: liquid universe only
+    sg = universe.restrict_asof(cfg, _signal_frame(cfg, entry, tf, start=start), tf=tf) if sg is None else sg   # heavy work: liquid universe only
     if not len(sg):
         return pd.DataFrame(columns=simulator.TRADE_COLS), sg
     bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=start or cfg.train_start, columns=SIM_COLS)

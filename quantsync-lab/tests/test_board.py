@@ -60,7 +60,11 @@ def test_backtests_only_use_free_universe(c2):
     free = universe.free_symbols(c2)
     exit_ = {"v": 1, "any": [{"type": "time", "v": 10}]}
     trades, _ = pipeline.run_trades(c2, RULE, exit_, "1D")
-    assert len(trades) > 0 and set(trades["symbol"]) <= free
+    xp = store.xsec_path(c2, "1D")
+    con_db = store.connect(c2)
+    con_db.register("trades", trades)
+    max_rank = con_db.execute(f"SELECT max(x.liq_rank) FROM trades t JOIN read_parquet('{xp}') x ON t.symbol = x.symbol AND t.signal_date = x.date").fetchone()[0]
+    assert len(trades) > 0 and max_rank <= c2.free_universe_size
     res = pipeline.backtest(c2, RULE, exit_, "1D")
     assert res["universe"] == "free" and res["universe_n"] == 8
 

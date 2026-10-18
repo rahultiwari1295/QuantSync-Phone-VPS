@@ -110,6 +110,11 @@ def cook(cfg: Config, tf: str = "1D", symbols: list[str] | None = None) -> dict:
         meta["snapshot"] = build_snapshot(cfg, tf)
     except Exception as e:  # noqa: BLE001 - scans fall back to the full store until the next successful build
         meta["snapshot"] = {"error": f"{type(e).__name__}: {e}"}
+    if tf == "1D":
+        try:
+            meta["xsec"] = build_xsec(cfg, tf)
+        except Exception as e:  # noqa: BLE001
+            meta["xsec"] = {"error": f"{type(e).__name__}: {e}"}
     return meta
 
 
@@ -172,6 +177,85 @@ def _glob(cfg: Config, tf: str) -> str:
     return str(cfg.tf_dir(tf) / "*.parquet")
 
 
+# ---- xsec: cross-sectional metrics (liq_rank, rs60_pct) for all stocks on each date -----------------------------
+def xsec_path(cfg: Config, tf: str = "1D") -> Path:
+    return cfg.features_dir / f"xsec_{tf}.parquet"
+
+
+def xsec_meta(cfg: Config, tf: str = "1D") -> dict | None:
+    p = cfg.features_dir / f"xsec_{tf}.json"
+    try:
+        return json.loads(p.read_text()) if p.exists() else None
+    except (OSError, ValueError):
+        return None
+
+
+def build_xsec(cfg: Config, tf: str = "1D") -> dict:
+    """Build cross-sectional metrics (liq_rank, rs60_pct) for all symbols on each date. Atomic."""
+    t0 = time.time()
+    parquet_files = list(cfg.tf_dir(tf).glob("*.parquet"))
+    if not parquet_files:
+        raise RuntimeError(f"no cooked symbols to build xsec for {tf}")
+
+    from .api import BENCH
+    bench_sym = None
+    for s in BENCH:
+        if (cfg.tf_dir(tf) / f"{s}.parquet").exists():
+            bench_sym = s
+            break
+
+    if bench_sym:
+        bench_p = str(cfg.tf_dir(tf) / f"{bench_sym}.parquet")
+        bench_join = f"LEFT JOIN (SELECT \"date\", \"ret_60\" AS bench_ret_60 FROM read_parquet('{bench_p}')) b ON f.\"date\" = b.\"date\""
+        rs_diff_expr = "CASE WHEN b.bench_ret_60 IS NOT NULL AND NOT isnan(b.bench_ret_60) THEN f.\"ret_60\" - b.bench_ret_60 ELSE f.\"ret_60\" END"
+    else:
+        import logging
+        logging.getLogger(__name__).warning("build_xsec: no benchmark symbol found in %s; using ret_60 alone", BENCH)
+        bench_join = ""
+        rs_diff_expr = 'f."ret_60"'
+
+    con = connect(cfg)
+    out = xsec_path(cfg, tf)
+    tmp = out.with_suffix(".tmp")
+    tmp.unlink(missing_ok=True)
+
+    sql = f"""
+    WITH base AS (
+        SELECT
+            f."symbol",
+            f."date",
+            f."turnover_med_20",
+            {rs_diff_expr} AS rs_diff
+        FROM read_parquet('{_glob(cfg, tf)}') f
+        {bench_join}
+    )
+    SELECT
+        "date",
+        "symbol",
+        CASE WHEN "turnover_med_20" IS NOT NULL AND NOT isnan("turnover_med_20") AND "turnover_med_20" > 0
+             THEN CAST(rank() OVER (PARTITION BY "date", ("turnover_med_20" IS NOT NULL AND NOT isnan("turnover_med_20") AND "turnover_med_20" > 0) ORDER BY "turnover_med_20" DESC) AS INT)
+             ELSE NULL END AS liq_rank,
+        CASE WHEN rs_diff IS NOT NULL AND NOT isnan(rs_diff)
+             THEN CAST(percent_rank() OVER (PARTITION BY "date", (rs_diff IS NOT NULL AND NOT isnan(rs_diff)) ORDER BY rs_diff ASC) * 100.0 AS FLOAT)
+             ELSE NULL END AS rs60_pct
+    FROM base
+    ORDER BY "date", "symbol"
+    """
+    try:
+        con.execute(f"COPY ({sql}) TO '{tmp}' (FORMAT PARQUET, COMPRESSION ZSTD)")
+        tmp.replace(out)
+        rows = pq.ParquetFile(out).metadata.num_rows
+    finally:
+        con.close()
+        tmp.unlink(missing_ok=True)
+
+    m = meta(cfg, tf) or {}
+    info = {"tf": tf, "as_of": m.get("as_of"), "rows": int(rows), "bench": bench_sym,
+            "built_at": time.time(), "seconds": round(time.time() - t0, 1)}
+    (cfg.features_dir / f"xsec_{tf}.json").write_text(json.dumps(info))
+    return info
+
+
 def signals(cfg: Config, rule: dict, tf: str, start: str | None = None, end: str | None = None,
             only_last: bool = False, columns: str = '"symbol","date","close"') -> pd.DataFrame:
     """Rows where the rule is true. `only_last` restricts to the latest bar of the store (the live scan)."""
@@ -179,7 +263,12 @@ def signals(cfg: Config, rule: dict, tf: str, start: str | None = None, end: str
     con = connect(cfg)
     try:
         fast = only_last and not start and not end and snapshot_fresh(cfg, tf)
-        src = f"read_parquet('{snap_path(cfg, tf)}')" if fast else f"read_parquet('{_glob(cfg, tf)}')"
+        raw_src = f"read_parquet('{snap_path(cfg, tf)}')" if fast else f"read_parquet('{_glob(cfg, tf)}')"
+        xsec_p = xsec_path(cfg, tf)
+        if xsec_p.exists():
+            src = f"(SELECT s.*, x.liq_rank, x.rs60_pct FROM {raw_src} s LEFT JOIN read_parquet('{xsec_p}') x ON s.symbol = x.symbol AND s.date = x.date)"
+        else:
+            src = raw_src
         lo = ""
         m = meta(cfg, tf) if only_last else None
         as_of = m.get("as_of") if m else None
