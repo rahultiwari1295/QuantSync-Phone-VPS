@@ -330,4 +330,20 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
   - Cron automation in `crontab.txt`: Scheduled 1st of month 03:15 IST `ai-check --stale` and Sunday 03:15 IST `ai-check --rescore`.
   - Test suite in `tests/test_auto_ai.py`: 4 tests covering DB migration idempotency, `ai-check --stale` queuing deduplication, `paused_live` condition, and dual live tracking. Full test suite: 72 passed.
 
+- **Phase 5 (API and Website)**:
+  - Backend API (`lab/api.py` and `lab/service.py`):
+    - Added `"ai"` metadata block to `_card()` returning `status`, `verdict`, `kind`, `gate`, `default` ("ai" only when `verdict == "improved"`), `plain` stats, `enhanced` stats, `valid`, `blind`, and `checked_at`.
+    - Updated `strategy_backtest` (`GET /strategies/{sid}/backtest?variant=ai|plain`) and `service.ensure_backtest` to look up and cache the requested variant.
+    - Updated `GET /strategies/{sid}/enhancement` to expose `kind`, `protocol`, `verdict`, `as_of`, `reason`, and full result schema to any user with view access.
+    - Added test `test_phase5_api_endpoints` in `tests/test_auto_ai.py`. All 73 tests in `quantsync-lab` green.
+  - Website (`RSITradingPlatform` branch `lab-ui`):
+    - Fixed ownership check in `views/strategy.js`: Anyone can view existing AI coach results; only the "Start the AI coach" button is restricted to the owner (`s.mine`).
+    - Prebuilt library / flagship strategies show `"AI-checked by QuantSync · <date>"`, verdict banner, and a `"Make my copy"` button with copy attribution guidance.
+    - Rendered 3-column stage table in AI coach view: "Learned on 2022–24" / "Checked on 2025" / "Blind test 2026", comparing "Plain rules" and "With AI filter" across trades, ended higher %, and avg return.
+    - Added verdict banner copy: `improved` ("The AI filter kept the stronger matches in years it never saw."), `no_edge` ("AI tested, no improvement. The plain rules are shown."), `insufficient` ("Not enough past trades for the AI to learn from."), and `paused_live` ("AI filter paused: it stopped beating the plain rules in live tracking.").
+    - Added interactive `Plain | AI` segmented switch in both the Test tab (`views/strategy.js`) and library cards (`views/strategies.js`) when verdict is `improved` (default AI), dynamically switching backtests and tile metrics; grey chip `"AI tested · no gain"` when verdict is `no_edge`. Preferences persisted per strategy in `localStorage`.
+    - Updated `data.js` `strategyBacktest(id, variant)` and bumped cache keys `lab.css?v=22`, `data.js?v=11` in `public/app/index.html`.
+
+
+
 

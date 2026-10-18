@@ -104,10 +104,25 @@ def run_gated_backtest(cfg, con, e, x, tf, gate: int, enh_id: str, version_id=""
     return out
 
 
-def ensure_backtest(con, s, v) -> dict:
+def ensure_backtest(con, s, v, variant: str | None = None) -> dict:
     """Cached past test, or a queued system job computing it (one per version). Never needs a signed-in user."""
     e, x = json.loads(v["entry_json"]), json.loads(v["exit_json"])
-    gate, enh = (v["ai_gate"], v["ai_enhancement_id"]) if v["ai_gate"] and v["ai_enhancement_id"] else (None, None)
+    if variant == "plain":
+        gate, enh = None, None
+    elif variant == "ai":
+        enh_row = con.execute("SELECT * FROM ai_enhancements WHERE version_id=? OR id=? ORDER BY created_at DESC LIMIT 1",
+                              (v["id"], v["ai_enhancement_id"])).fetchone()
+        if not enh_row:
+            return {"status": "none", "error": "No AI enhancement found."}
+        if enh_row["status"] in ("queued", "running"):
+            return {"status": "running", "job_id": enh_row["id"]}
+        if enh_row["status"] == "failed":
+            return {"status": "failed", "error": enh_row["reason"] or "AI check failed."}
+        res_json = json.loads(enh_row["result_json"]) if enh_row["result_json"] else {}
+        gate = res_json.get("gate", v["ai_gate"] or 60)
+        enh = enh_row["id"]
+    else:
+        gate, enh = (v["ai_gate"], v["ai_enhancement_id"]) if v["ai_gate"] and v["ai_enhancement_id"] else (None, None)
     res = cached_backtest(con, s["tf"], e, x, gate, enh)
     if res:
         return {"status": "done", "result": res}

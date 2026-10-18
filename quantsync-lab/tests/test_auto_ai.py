@@ -169,3 +169,50 @@ def test_update_live_plain_and_ai_variants(cfg):
     assert isinstance(s_plain, dict) and "trades" in s_plain
     assert isinstance(s_ai, dict) and "trades" in s_ai
 
+
+def test_phase5_api_endpoints(cfg):
+    """Verify Phase 5 API: /enhancement schema, /strategies card AI block, and /backtest?variant=ai|plain."""
+    from fastapi.testclient import TestClient
+    from lab import api
+    client = TestClient(api.create_app(cfg))
+    con = db.connect(cfg)
+    res = service.create_strategy(con, cfg, None, "API Phase 5 Test", "1D", RULE["entry"], RULE["exit"], kind="system", visibility="public")
+    sid, vid = res["id"], res["version_id"]
+
+    res_json = {
+        "verdict": "improved",
+        "gate": 60,
+        "valid": {"plain": {"trades": 50, "win_rate": 52.0, "avg_ret": 1.5}, "ai": {"trades": 35, "win_rate": 62.0, "avg_ret": 2.8}},
+        "blind": {"plain": {"trades": 20, "win_rate": 50.0, "avg_ret": 1.2}, "ai": {"trades": 15, "win_rate": 66.0, "avg_ret": 3.1}},
+        "checked_at": 1760000000,
+    }
+    con.execute("""INSERT INTO ai_enhancements(id, version_id, status, kind, protocol, verdict, as_of, result_json, created_at)
+                   VALUES(?,?,?,?,?,?,?,?,?)""",
+                ("enh_p5", vid, "done", "system", "v2", "improved", "2026-04-01", json.dumps(res_json), time.time()))
+
+    # 1. Test GET /strategies/{sid}/enhancement
+    r_enh = client.get(f"/lab/v1/strategies/{sid}/enhancement").json()
+    assert r_enh["status"] == "done"
+    assert r_enh["kind"] == "system"
+    assert r_enh["protocol"] == "v2"
+    assert r_enh["verdict"] == "improved"
+    assert r_enh["as_of"] == "2026-04-01"
+    assert r_enh["result"]["gate"] == 60
+
+    # 2. Test card in GET /strategies/{sid}
+    r_strat = client.get(f"/lab/v1/strategies/{sid}").json()
+    assert "ai" in r_strat
+    ai_b = r_strat["ai"]
+    assert ai_b["status"] == "done"
+    assert ai_b["verdict"] == "improved"
+    assert ai_b["default"] == "ai"
+    assert ai_b["gate"] == 60
+    assert ai_b["enhanced"]["win_rate"] == 62.0
+
+    # 3. Test backtest with variant=plain and variant=ai
+    r_bt_plain = client.get(f"/lab/v1/strategies/{sid}/backtest?variant=plain").json()
+    assert r_bt_plain["status"] in ("running", "done")
+    r_bt_ai = client.get(f"/lab/v1/strategies/{sid}/backtest?variant=ai").json()
+    assert r_bt_ai["status"] in ("running", "done")
+
+

@@ -196,13 +196,35 @@ def _card(con, s, uid=None, cfg: Config | None = None) -> dict:
     v = con.execute("SELECT * FROM strategy_versions WHERE id=?", (s["current_version"],)).fetchone()
     owner = con.execute("SELECT handle FROM users WHERE uid=?", (s["owner_uid"],)).fetchone() if s["owner_uid"] else None
     followers = con.execute("SELECT count(*) FROM follows WHERE strategy_id=? AND uid IS NOT ?", (s["id"], s["owner_uid"])).fetchone()[0]
-    enh = con.execute("SELECT id,status FROM ai_enhancements WHERE version_id=? OR id=? ORDER BY created_at DESC LIMIT 1",
+    enh = con.execute("SELECT * FROM ai_enhancements WHERE version_id=? OR id=? ORDER BY created_at DESC LIMIT 1",
                       (v["id"], v["ai_enhancement_id"])).fetchone()
+    ai_block = None
+    if enh:
+        res_json = json.loads(enh["result_json"]) if enh["result_json"] else {}
+        verdict = enh["verdict"] or res_json.get("verdict")
+        gate = res_json.get("gate", v["ai_gate"] or 60)
+        default_mode = "ai" if verdict == "improved" else "plain"
+        plain_dict = (res_json.get("valid") or {}).get("plain") or res_json.get("plain")
+        enhanced_dict = (res_json.get("valid") or {}).get("ai")
+        ai_block = {
+            "status": enh["status"],
+            "verdict": verdict,
+            "kind": enh["kind"] or "user",
+            "gate": gate,
+            "default": default_mode,
+            "plain": {k: plain_dict.get(k) for k in ("trades", "win_rate", "avg_ret")} if plain_dict else None,
+            "enhanced": {k: enhanced_dict.get(k) for k in ("trades", "win_rate", "avg_ret")} if enhanced_dict else None,
+            "valid": res_json.get("valid"),
+            "blind": res_json.get("blind"),
+            "checked_at": res_json.get("checked_at") or int(enh["finished_at"] or enh["created_at"] or 0),
+        }
+
     card = {"id": s["id"], "name": s["name"], "tf": s["tf"], "kind": s["kind"], "visibility": s["visibility"],
             "owner": owner[0] if owner and owner[0] else ("QuantSync" if s["kind"] == "flagship" else None), "mine": bool(uid and uid == s["owner_uid"]),
             "followers": followers, "version": v["n"], "live_from": v["live_from"], "ai_gate": v["ai_gate"],
             "enhanced": bool(v["ai_gate"]), "exit_choice": v["exit_choice"],
             "enhancement": {"id": enh["id"], "status": enh["status"]} if enh else None,
+            "ai": ai_block,
             "stats": service.live_stats(con, v["id"]), "source": "lab"}
     if s["kind"] == "library":
         from .library import meta_for
@@ -272,7 +294,7 @@ def get_strategy(sid: str, request: Request, uid: str | None = Depends(optional_
 
 
 @router.get("/strategies/{sid}/backtest")
-def strategy_backtest(sid: str, request: Request, uid: str | None = Depends(optional_uid), con=Depends(get_con)):
+def strategy_backtest(sid: str, request: Request, variant: str | None = None, uid: str | None = Depends(optional_uid), con=Depends(get_con)):
     s = _visible(con, sid, uid)
     eng = _engine(request, s)
     if eng:
@@ -281,7 +303,7 @@ def strategy_backtest(sid: str, request: Request, uid: str | None = Depends(opti
             return {"status": "done", "result": res}
     v = con.execute("SELECT * FROM strategy_versions WHERE id=?", (s["current_version"],)).fetchone()
     try:
-        return service.ensure_backtest(con, s, v)
+        return service.ensure_backtest(con, s, v, variant=variant)
     except jobs.QueueError as e:
         return {"status": "failed", "error": e.msg}
 
@@ -476,8 +498,18 @@ def enhancement(sid: str, uid: str | None = Depends(optional_uid), con=Depends(g
                     (s["current_version"], s["current_version"])).fetchone()
     if not r:
         return {"status": "none"}
-    return {"id": r["id"], "status": r["status"], "reason": r["reason"], "result": json.loads(r["result_json"]) if r["result_json"] else None,
-            "exit": json.loads(r["exit_result_json"]) if r["exit_result_json"] else None}
+    res_json = json.loads(r["result_json"]) if r["result_json"] else None
+    return {
+        "id": r["id"],
+        "status": r["status"],
+        "kind": r["kind"] or "user",
+        "protocol": r["protocol"] or "v1",
+        "verdict": r["verdict"] or (res_json.get("verdict") if res_json else None),
+        "as_of": r["as_of"],
+        "reason": r["reason"],
+        "result": res_json,
+        "exit": json.loads(r["exit_result_json"]) if r["exit_result_json"] else None,
+    }
 
 
 @router.post("/strategies/{sid}/ai-gate")
