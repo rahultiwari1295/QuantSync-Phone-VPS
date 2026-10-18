@@ -80,7 +80,7 @@ def main(argv=None, cfg=None):
             SELECT s.id as strategy_id, s.name, s.tf, s.kind, v.id as version_id
             FROM strategies s
             JOIN strategy_versions v ON v.id = s.current_version
-            WHERE s.archived = 0 AND (s.kind IN ('flagship', 'system') OR s.visibility = 'public' OR s.owner_uid IS NULL)
+            WHERE s.archived = 0 AND (s.kind IN ('flagship', 'system', 'library') OR s.visibility = 'public' OR s.owner_uid IS NULL)
         """).fetchall()
 
         if a.name:
