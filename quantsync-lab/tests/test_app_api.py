@@ -21,9 +21,10 @@ def test_analytics_shape_and_math():
                       "exit_date": pd.to_datetime(["2024-01-10", "2024-01-10", "2024-02-05", "2024-02-06"]),
                       "ret_pct": [10.0, -4.0, 5.0, -2.0], "exit_reason": ["target_pct", "stop_pct", "time", "stop_pct"], "is_open": [False] * 4})
     a = metrics.analytics(t)
-    assert a["equity"][0]["v"] == 100.0
-    # day 1: mean(10,-4)=3% -> 103; then +5% -> 108.15; then -2% -> 105.99
-    assert a["equity"][-1]["v"] == pytest.approx(105.99, abs=0.01)
+    assert a["equity"][0]["v"] == 100000.0
+    # 4 trades in 10 slots: 10k each. Jan 10: +1k-400=+600 -> 100,600; Feb 5: +500 -> 101,100; Feb 6: -200 -> 100,900
+    assert a["equity"][-1]["v"] == pytest.approx(100900.0, abs=1.0)
+    assert a["portfolio"]["taken"] == 4
     assert [m["month"] for m in a["monthly"]] == ["2024-01", "2024-02"]
     assert a["monthly"][0]["ret"] == pytest.approx(3.0) and a["monthly"][1]["ret"] == pytest.approx(2.9, abs=0.01)
     assert sum(b["n"] for b in a["dist"]) == 4

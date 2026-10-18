@@ -298,4 +298,11 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
 
 ## 9. Implementation notes and parity results (fill in while working)
 
-- …
+- **Phase 1 (Honest equity curve & portfolio simulation)**:
+  - Added `metrics.portfolio(trades, slots=10, capital=100_000, seed=7) -> dict` implementing slot allocation, deterministic seeded random shuffling for day-level ties, realized equity marking upon exit dates, max drawdown computation from running peak, CAGR, and downsampled equity curves (400 points).
+  - Updated `metrics.summarize()` to include `"portfolio": port` and set `max_dd` from `portfolio["max_dd"]`.
+  - Updated `metrics.analytics()` to use `portfolio["equity"]` and `portfolio["spark"]`.
+  - Added `portfolio_slots: int = 10` to `Config` in `lab/config.py` and passed it from `pipeline.summarise_trades`.
+  - Updated website (`parts.js` and `views/strategies.js`) to display "₹1,00,000 split across up to 10 trades at a time", show CAGR and "Taken X of Y matches", handle equity scaling, and display honest max drawdown.
+  - Test suite: Added `tests/test_portfolio.py` (5 tests covering two-trade hand example, 1000 overlapping trades, max_dd bounds, determinism, summarize/analytics integration). Updated `test_app_api.py::test_analytics_shape_and_math` for new portfolio equity. All 60 tests passed.
+

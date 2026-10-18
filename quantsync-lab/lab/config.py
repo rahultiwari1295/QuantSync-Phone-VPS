@@ -32,6 +32,7 @@ class Config:
     universe_min_price: float = 20.0
     snapshot_bars: int = 30             # last N bars per stock kept in one small file for instant scans
     engine_api: str = "http://127.0.0.1:8000"  # live QuantSync engine (flagship trades); "" disables
+    portfolio_slots: int = 10           # slots for honest portfolio simulation
     extra: dict = field(default_factory=dict)
 
     @property
