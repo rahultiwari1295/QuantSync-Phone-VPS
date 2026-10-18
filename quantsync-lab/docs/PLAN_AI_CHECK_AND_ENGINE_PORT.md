@@ -342,8 +342,19 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
     - Rendered 3-column stage table in AI coach view: "Learned on 2022–24" / "Checked on 2025" / "Blind test 2026", comparing "Plain rules" and "With AI filter" across trades, ended higher %, and avg return.
     - Added verdict banner copy: `improved` ("The AI filter kept the stronger matches in years it never saw."), `no_edge` ("AI tested, no improvement. The plain rules are shown."), `insufficient` ("Not enough past trades for the AI to learn from."), and `paused_live` ("AI filter paused: it stopped beating the plain rules in live tracking.").
     - Added interactive `Plain | AI` segmented switch in both the Test tab (`views/strategy.js`) and library cards (`views/strategies.js`) when verdict is `improved` (default AI), dynamically switching backtests and tile metrics; grey chip `"AI tested · no gain"` when verdict is `no_edge`. Preferences persisted per strategy in `localStorage`.
-    - Updated `data.js` `strategyBacktest(id, variant)` and bumped cache keys `lab.css?v=22`, `data.js?v=11` in `public/app/index.html`.
-
-
-
-
+- **Phase 6 (Port QuantSync engine strategies and exits into Lab)**:
+  - Exit rules & validator in `lab/rules.py` and `lab/catalog.py`: Added support and validation for engine exit types: `breakeven` (`[trigger_pct, lock_pct]`), `scale_out` (`[target_pct, fraction, lock_pct]`), `stop_field` (`field`), `target_r` (`v`), and `trail_close_below` (`field, min_bars, only_if_profit`).
+  - Feature calculations in `lab/features.py`: Added `sma_7`, `above_ema200_50`, `dist_ema_50_pct`, `dist_ema_200_pct`, and vectorized DNA matrix indicators (`is_churn`, `rsi_bear_div`, `dna_health`).
+  - Pattern and champion signals in `lab/signals.py`:
+    - Ported v3 4-champion sequential detection (`HTF -> Darvas -> 52W -> Base`) and setup metrics (`v3_risk_pct`, `v3_conviction`).
+    - Ported `sig_v3_rs_refined` (using cross-sectional `rs60_pct >= 95`).
+    - Ported `sig_v4_f3` + `v4_pattern` via `ClassicalPatternAnalystDNA.analyze()` on candidate breakout bars.
+  - Simulator enhancements in `lab/simulator.py`: Implemented intra-bar exit ordering: stop first, scale-out with stop ratchet, target, breakeven trigger/lock, trail close below MA, and weighted average exit returns.
+  - Pick ranking & dynamic columns in `lab/pipeline.py`, `lab/db.py`, and `lab/service.py`:
+    - Dynamic indicator loading via `_sim_cols(exit_)` to load moving averages or stop fields required by exit rules.
+    - Added `pick` support (`max_per_day` ranked by feature, e.g. `v3_conviction`) and persisted `pick_json` in `strategy_versions`.
+    - Handled empty trades/signals gracefully in `_dataset()` and `enhance()`.
+  - Strategy catalog in `lab/library.py` and `lab/flagship.py`:
+    - Added 11 QuantSync engine strategies under family `"QuantSync engines"` (v3 4-champions, v3 individual patterns, v3 RS refined leader, v4 classical chart patterns, and v5 pullback/trend/dip models).
+    - Updated flagships "AI Alpha" and "AI Pattern".
+  - Test suite in `tests/test_phase6.py`: Added 5 unit tests verifying breakeven stop ratchet, scale-out exit blending, stop_field & target_r risk multipliers, trail_close_below next-open fills, and pick ranking deduplication. Full test suite: 78 passed.

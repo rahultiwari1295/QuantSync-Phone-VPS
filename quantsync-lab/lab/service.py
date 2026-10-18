@@ -19,8 +19,8 @@ from .rules import normalise, normalise_exit, rule_hash
 log = logging.getLogger("qslab")
 
 
-def create_strategy(con, cfg: Config, uid: str | None, name: str, tf: str, entry: dict, exit_: dict | None,
-                    kind: str = "user", visibility: str = "private", copied_from: str | None = None) -> dict:
+def create_strategy(con, cfg, uid: str | None, name: str, tf: str, entry: dict, exit_: dict,
+                    kind="user", visibility="private", copied_from: str | None = None, pick: dict | None = None) -> dict:
     if tf not in ("1D", "1W"):
         raise ValueError("tf must be 1D or 1W")
     entry, exit_ = normalise(entry), normalise_exit(exit_)
@@ -29,6 +29,7 @@ def create_strategy(con, cfg: Config, uid: str | None, name: str, tf: str, entry
         raise ValueError("name too short")
     sid, vid = new_id("stg"), new_id("ver")
     live_from = (store.meta(cfg, tf) or {}).get("as_of") or time.strftime("%Y-%m-%d")
+    pick_json = jdump(pick) if pick else None
     with tx(con):
         if uid:
             n = con.execute("SELECT count(*) FROM strategies WHERE owner_uid=? AND archived=0", (uid,)).fetchone()[0]
@@ -36,8 +37,8 @@ def create_strategy(con, cfg: Config, uid: str | None, name: str, tf: str, entry
                 raise ValueError("strategy limit (100) reached")
         con.execute("INSERT INTO strategies(id,owner_uid,kind,name,tf,visibility,current_version,copied_from,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
                     (sid, uid, kind, name, tf, visibility, vid, copied_from, time.time(), time.time()))
-        con.execute("INSERT INTO strategy_versions(id,strategy_id,n,entry_json,exit_json,rule_hash,fsv,live_from,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
-                    (vid, sid, 1, jdump(entry), jdump(exit_), rule_hash(entry, tf), FSV, live_from, time.time()))
+        con.execute("INSERT INTO strategy_versions(id,strategy_id,n,entry_json,exit_json,rule_hash,fsv,live_from,pick_json,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                    (vid, sid, 1, jdump(entry), jdump(exit_), rule_hash(entry, tf), FSV, live_from, pick_json, time.time()))
     return {"id": sid, "version_id": vid}
 
 
@@ -48,10 +49,10 @@ def new_version(con, sid: str, **changes) -> str:
     d.update(changes)
     vid = new_id("ver")
     with tx(con):
-        con.execute("""INSERT INTO strategy_versions(id,strategy_id,n,entry_json,exit_json,rule_hash,fsv,ai_enhancement_id,ai_gate,exit_choice,live_from,created_at)
-                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+        con.execute("""INSERT INTO strategy_versions(id,strategy_id,n,entry_json,exit_json,rule_hash,fsv,ai_enhancement_id,ai_gate,exit_choice,live_from,pick_json,created_at)
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                     (vid, sid, cur["n"] + 1, d["entry_json"], d["exit_json"], d["rule_hash"], FSV, d["ai_enhancement_id"],
-                     d["ai_gate"], d["exit_choice"], d.get("live_from_new") or time.strftime("%Y-%m-%d"), time.time()))
+                     d["ai_gate"], d["exit_choice"], d.get("live_from_new") or time.strftime("%Y-%m-%d"), d.get("pick_json"), time.time()))
         con.execute("UPDATE strategies SET current_version=?, updated_at=? WHERE id=?", (vid, time.time(), sid))
     return vid
 
@@ -61,26 +62,31 @@ def _ctx(con, sid):
     return r, json.loads(r["entry_json"]), json.loads(r["exit_json"])
 
 
-def run_backtest(cfg, con, e, x, tf, version_id="", prog=lambda pct, st: None) -> dict:
+def _gate_key(x, gate, enh_id, pick=None) -> str:
+    base = pipeline.exit_hash(x)
+    if pick:
+        base += f"|pk_{pipeline.canonical(pick)}"
+    if gate and enh_id:
+        base += f"|g{gate}|{enh_id}"
+    return base
+
+
+def run_backtest(cfg, con, e, x, tf, version_id="", prog=lambda pct, st: None, pick: dict | None = None) -> dict:
     """Backtest with a cache keyed on (rule, exit, data as-of)."""
-    key = (rule_hash(e, tf), pipeline.exit_hash(x), f'{(store.meta(cfg, tf) or {}).get("as_of", "")}|m{metrics.METRICS_V}')
+    key = (rule_hash(e, tf), _gate_key(x, None, None, pick), f'{(store.meta(cfg, tf) or {}).get("as_of", "")}|m{metrics.METRICS_V}')
     hit = con.execute("SELECT summary_json FROM backtest_runs WHERE rule_hash=? AND exit_hash=? AND as_of=?", key).fetchone()
     if hit:
         return json.loads(hit[0])
-    res = pipeline.backtest(cfg, e, x, tf, prog)
+    res = pipeline.backtest(cfg, e, x, tf, prog, pick=pick)
     con.execute("INSERT INTO backtest_runs(id,version_id,rule_hash,exit_hash,as_of,summary_json,created_at) VALUES(?,?,?,?,?,?,?)",
                 (new_id("bt"), version_id, *key, jdump(res), time.time()))
     return res
 
 
-def _gate_key(x, gate, enh_id) -> str:
-    return pipeline.exit_hash(x) + (f"|g{gate}|{enh_id}" if gate and enh_id else "")
-
-
-def cached_backtest(con, tf, e, x, gate=None, enh_id=None) -> dict | None:
+def cached_backtest(con, tf, e, x, gate=None, enh_id=None, pick: dict | None = None) -> dict | None:
     """Newest past test computed with the current metric definitions (older ones are recomputed, never shown)."""
     r = con.execute("SELECT summary_json FROM backtest_runs WHERE rule_hash=? AND exit_hash=? AND as_of LIKE ? ORDER BY created_at DESC LIMIT 1",
-                    (rule_hash(e, tf), _gate_key(x, gate, enh_id), f"%|m{metrics.METRICS_V}")).fetchone()
+                    (rule_hash(e, tf), _gate_key(x, gate, enh_id, pick), f"%|m{metrics.METRICS_V}")).fetchone()
     return json.loads(r[0]) if r else None
 
 
@@ -107,6 +113,7 @@ def run_gated_backtest(cfg, con, e, x, tf, gate: int, enh_id: str, version_id=""
 def ensure_backtest(con, s, v, variant: str | None = None) -> dict:
     """Cached past test, or a queued system job computing it (one per version). Never needs a signed-in user."""
     e, x = json.loads(v["entry_json"]), json.loads(v["exit_json"])
+    pick = json.loads(v["pick_json"]) if ("pick_json" in v.keys() and v["pick_json"]) else None
     if variant == "plain":
         gate, enh = None, None
     elif variant == "ai":
@@ -123,7 +130,7 @@ def ensure_backtest(con, s, v, variant: str | None = None) -> dict:
         enh = enh_row["id"]
     else:
         gate, enh = (v["ai_gate"], v["ai_enhancement_id"]) if v["ai_gate"] and v["ai_enhancement_id"] else (None, None)
-    res = cached_backtest(con, s["tf"], e, x, gate, enh)
+    res = cached_backtest(con, s["tf"], e, x, gate, enh, pick=pick)
     if res:
         return {"status": "done", "result": res}
     kind = "gated_backtest" if gate else "backtest"
@@ -134,6 +141,8 @@ def ensure_backtest(con, s, v, variant: str | None = None) -> dict:
     if j and j["status"] == "failed" and time.time() - (j["finished_at"] or 0) < 600:  # don't hammer a failing rule
         return {"status": "failed", "error": j["error"]}
     p = {"tf": s["tf"], "entry": e, "exit": x, "version_id": v["id"]}
+    if pick:
+        p["pick"] = pick
     if gate:
         p.update(gate=gate, enhancement_id=enh)
     jid = jobs.enqueue(con, kind, None, p, queue_cap=10_000)
@@ -145,7 +154,7 @@ def handle(cfg: Config, con: sqlite3.Connection, job: sqlite3.Row) -> dict:
     p = json.loads(job["payload_json"])
     prog = lambda pct, st: jobs.progress(con, job["id"], pct, st)
     if job["kind"] == "backtest":
-        return run_backtest(cfg, con, normalise(p["entry"]), normalise_exit(p.get("exit")), p["tf"], p.get("version_id") or "", prog)
+        return run_backtest(cfg, con, normalise(p["entry"]), normalise_exit(p.get("exit")), p["tf"], p.get("version_id") or "", prog, pick=p.get("pick"))
     if job["kind"] == "gated_backtest":
         return run_gated_backtest(cfg, con, normalise(p["entry"]), normalise_exit(p.get("exit")), p["tf"], int(p["gate"]), p["enhancement_id"],
                                   p.get("version_id") or "", prog)
@@ -160,9 +169,10 @@ def handle(cfg: Config, con: sqlite3.Connection, job: sqlite3.Row) -> dict:
 
 def _enhance(cfg, con, p, prog):
     r, entry, exit_ = _ctx(con, p["strategy_id"])
+    pick = json.loads(r["pick_json"]) if ("pick_json" in r.keys() and r["pick_json"]) else None
     aid = p["enhancement_id"]
     as_of = (store.meta(cfg, r["tf"]) or {}).get("as_of", "")
-    res = pipeline.enhance(cfg, entry, exit_, r["tf"], prog)
+    res = pipeline.enhance(cfg, entry, exit_, r["tf"], prog, pick=pick)
     public = {k: v for k, v in res.items() if not k.startswith("_")}
     if res["status"] == "done":
         cfg.models_dir.mkdir(parents=True, exist_ok=True)
@@ -216,7 +226,8 @@ def _ai_check(cfg: Config, con: sqlite3.Connection, p: dict, prog) -> dict:
 
     # Full AI check
     prog(10, "Running trade simulation")
-    res = pipeline.enhance(cfg, entry, exit_, r["tf"], prog)
+    pick = json.loads(r["pick_json"]) if ("pick_json" in r.keys() and r["pick_json"]) else None
+    res = pipeline.enhance(cfg, entry, exit_, r["tf"], prog, pick=pick)
     aid = p.get("enhancement_id") or new_id("enh")
     public = {k: v for k, v in res.items() if not k.startswith("_")}
     model_path = str(cfg.models_dir / aid) if res["status"] == "done" and res.get("_scorer") else None
@@ -287,9 +298,10 @@ def update_live(cfg: Config, con: sqlite3.Connection) -> int:
             e = con.execute("SELECT exit_result_json FROM ai_enhancements WHERE id=?", (v["ai_enhancement_id"],)).fetchone()
             ex = json.loads(e[0]).get("best_exit") if e and e[0] else None
             exit_ = ex or exit_
+        pick = json.loads(v["pick_json"]) if ("pick_json" in v.keys() and v["pick_json"]) else None
         try:
             start = str((pd.Timestamp(v["live_from"]) - pd.Timedelta(days=200 if tf == "1D" else 900)).date()) if v["live_from"] else None
-            trades, sg = pipeline.run_trades(cfg, entry, exit_, tf, start=start)
+            trades, sg = pipeline.run_trades(cfg, entry, exit_, tf, start=start, pick=pick)
         except Exception:
             log.exception("live update failed for %s", v["id"]); continue
 

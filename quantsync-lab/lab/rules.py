@@ -203,6 +203,46 @@ def normalise_exit(exit_: dict | None) -> dict:
             if not lo <= v <= hi:
                 raise RuleError(f"{t} must be {lo}..{hi}")
             out.append({"type": t, "v": int(v) if t == "time" else v})
+        elif t == "breakeven":
+            v = it.get("v")
+            if not isinstance(v, (list, tuple)) or len(v) < 2:
+                raise RuleError("breakeven requires [trigger, lock]")
+            out.append({"type": "breakeven", "v": [float(v[0]), float(v[1])] + list(v[2:])})
+        elif t == "scale_out":
+            v = it.get("v")
+            if not isinstance(v, (list, tuple)) or len(v) < 2:
+                raise RuleError("scale_out requires [target_pct, fraction]")
+            tgt, frac = float(v[0]), float(v[1])
+            if not (0 < frac <= 1.0):
+                raise RuleError("scale_out fraction must be between 0 and 1")
+            rest = [float(x) for x in v[2:]]
+            out.append({"type": "scale_out", "v": [tgt, frac] + rest})
+        elif t == "stop_field":
+            fld = it.get("field") or it.get("v")
+            if not isinstance(fld, str):
+                raise RuleError("stop_field requires feature name")
+            out.append({"type": "stop_field", "field": fld, "v": fld})
+        elif t == "target_r":
+            v = _num(it.get("v"), t)
+            if v <= 0:
+                raise RuleError("target_r must be positive")
+            out.append({"type": "target_r", "v": float(v)})
+        elif t == "trail_close_below":
+            if "field" in it:
+                fld = it["field"]
+                mb = int(it.get("min_bars", 1))
+                oip = bool(it.get("only_in_profit", False))
+            elif isinstance(it.get("v"), (list, tuple)):
+                fld = it["v"][0]
+                mb = int(it["v"][1]) if len(it["v"]) > 1 else 1
+                oip = bool(it["v"][2]) if len(it["v"]) > 2 else False
+            elif isinstance(it.get("v"), str):
+                fld = it["v"]
+                mb = 1
+                oip = False
+            else:
+                raise RuleError("trail_close_below requires field name")
+            out.append({"type": "trail_close_below", "field": str(fld), "min_bars": mb, "only_in_profit": oip, "v": [str(fld), mb, oip]})
         else:
             raise RuleError("unknown exit type")
         if t in seen:

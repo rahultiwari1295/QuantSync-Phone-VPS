@@ -15,26 +15,58 @@ from .rules import normalise, normalise_exit, rule_hash
 
 _sig = lambda k: {"l": {"f": k}, "op": "is_true"}
 FLAGSHIPS = {
-    "AI Alpha": {"tf": "1D",
-                 "entry": {"v": 1, "any": [_sig("sig_rs_leader"), _sig("sig_stage2_base"), _sig("sig_power_gap")]},
-                 "exit": {"v": 1, "any": [{"type": "stop_pct", "v": 6}, {"type": "trail_atr", "v": 3}, {"type": "time", "v": 40}]}},
-    "AI Pattern": {"tf": "1D",
-                   "entry": {"v": 1, "any": [_sig("sig_apex_base"), _sig("sig_high_tight_flag")]},
-                   "exit": {"v": 1, "any": [{"type": "stop_pct", "v": 5.5}, {"type": "target_pct", "v": 12}, {"type": "time", "v": 40}]}},
+    "AI Alpha": {
+        "tf": "1D",
+        "entry": {"v": 1, "any": [
+            _sig("sig_apex_base"), _sig("sig_power_gap"), _sig("sig_high_tight_flag"),
+            _sig("sig_rs_leader"), _sig("sig_stage2_base")
+        ]},
+        "exit": {"v": 1, "any": [
+            {"type": "stop_pct", "v": 6.5},
+            {"type": "breakeven", "v": [12, 4]},
+            {"type": "scale_out", "v": [15, 0.5, 5]},
+            {"type": "trail_close_below", "field": "sma_7", "min_bars": 5},
+            {"type": "time", "v": 50}
+        ]},
+    },
+    "AI Pattern": {
+        "tf": "1D",
+        "entry": {"v": 1, "all": [
+            {"any": [_sig("sig_v3_htf"), _sig("sig_v3_darvas"), _sig("sig_v3_52wh"), _sig("sig_v3_base")]},
+            {"l": {"f": "is_green"}, "op": "is_true"},
+            {"l": {"f": "turnover"}, "op": "between", "r": {"list": [1.5e7, 2.5e9]}},
+            {"l": {"f": "ret_1"}, "op": ">=", "r": {"c": 4.0}},
+            {"l": {"f": "vol_surge"}, "op": ">=", "r": {"c": 2.5}},
+            {"l": {"f": "close_loc"}, "op": ">=", "r": {"c": 85.0}},
+            {"l": {"f": "upper_wick_pct"}, "op": "<=", "r": {"c": 10.0}},
+            {"l": {"f": "ret_60"}, "op": ">=", "r": {"c": 15.0}},
+            {"l": {"f": "dist_hh52_pct"}, "op": ">=", "r": {"c": -20.0}},
+        ]},
+        "exit": {"v": 1, "any": [
+            {"type": "stop_pct", "v": 8.0},
+            {"type": "stop_field", "field": "v3_risk_pct"},
+            {"type": "target_r", "v": 1.8},
+            {"type": "breakeven", "v": [0.8, 0.0]},
+            {"type": "time", "v": 60}
+        ]},
+        "pick": {"max_per_day": 2, "rank_by": "v3_conviction", "desc": True},
+    },
 }
 
 
 def ensure(cfg, con, name: str) -> str:
     """Create the flagship if missing; start a new version if its rules changed. Returns the strategy id."""
     spec = FLAGSHIPS[name]
+    pick = spec.get("pick")
     entry, exit_ = normalise(spec["entry"]), normalise_exit(spec["exit"])
     row = con.execute("SELECT id, current_version FROM strategies WHERE kind='flagship' AND name=? AND archived=0", (name,)).fetchone()
     if not row:
-        return service.create_strategy(con, cfg, None, name, spec["tf"], entry, exit_, kind="flagship", visibility="public")["id"]
-    cur = con.execute("SELECT entry_json, exit_json FROM strategy_versions WHERE id=?", (row["current_version"],)).fetchone()
-    if json.loads(cur["entry_json"]) != entry or json.loads(cur["exit_json"]) != exit_:
+        return service.create_strategy(con, cfg, None, name, spec["tf"], entry, exit_, kind="flagship", visibility="public", pick=pick)["id"]
+    cur = con.execute("SELECT entry_json, exit_json, pick_json FROM strategy_versions WHERE id=?", (row["current_version"],)).fetchone()
+    cur_pick = json.loads(cur["pick_json"]) if ("pick_json" in cur.keys() and cur["pick_json"]) else None
+    if json.loads(cur["entry_json"]) != entry or json.loads(cur["exit_json"]) != exit_ or cur_pick != pick:
         service.new_version(con, row["id"], entry_json=jdump(entry), exit_json=jdump(exit_), rule_hash=rule_hash(entry, spec["tf"]),
-                            ai_enhancement_id=None, ai_gate=None)
+                            pick_json=jdump(pick) if pick else None, ai_enhancement_id=None, ai_gate=None)
     return row["id"]
 
 

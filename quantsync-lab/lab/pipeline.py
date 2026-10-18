@@ -54,8 +54,27 @@ def scan(cfg: Config, entry: dict, tf: str, limit: int = 200, extra: list[str] |
             "rows": clean}
 
 
+def _sim_cols(exit_: dict | None) -> list[str]:
+    cols = list(SIM_COLS)
+    for it in (exit_ or {}).get("any", []):
+        t = it.get("type")
+        if t == "stop_field":
+            fld = it.get("field") or it.get("v")
+            if fld and fld not in cols:
+                cols.append(fld)
+        elif t == "trail_close_below":
+            fld = it.get("field") or (it.get("v")[0] if isinstance(it.get("v"), (list, tuple)) else it.get("v"))
+            if fld and fld not in cols:
+                cols.append(fld)
+    return cols
+
+
 def _signal_frame(cfg, entry, tf, extra_cols=(), start=None):
-    cols = '"symbol","date","close",' + ",".join(f'"{c}"' for c in MODEL_FEATURES)
+    all_cols = ["symbol", "date", "close"] + [c for c in MODEL_FEATURES if c not in ("symbol", "date", "close")]
+    for ec in extra_cols:
+        if ec not in all_cols:
+            all_cols.append(ec)
+    cols = ",".join(f'"{c}"' for c in all_cols)
     return store.signals(cfg, entry, tf, start=start or cfg.train_start, columns=cols)
 
 
@@ -69,21 +88,28 @@ def _rule_exit_arrays(cfg, exit_, tf, bars, start=None):
 
 
 def run_trades(cfg: Config, entry: dict, exit_: dict, tf: str, sg: pd.DataFrame | None = None, progress: Progress = _noop,
-               start: str | None = None):
+               start: str | None = None, pick: dict | None = None):
     """start: only simulate from this date (live tracking needs months, not 8 years)."""
     entry, exit_ = normalise(entry), normalise_exit(exit_)
     progress(10, "Finding entries")
-    sg = universe.restrict_asof(cfg, _signal_frame(cfg, entry, tf, start=start), tf=tf) if sg is None else sg   # heavy work: liquid universe only
+    extra_cols = [pick["rank_by"]] if (pick and "rank_by" in pick) else ()
+    sg = universe.restrict_asof(cfg, _signal_frame(cfg, entry, tf, extra_cols=extra_cols, start=start), tf=tf) if sg is None else sg   # heavy work: liquid universe only
     if not len(sg):
         return pd.DataFrame(columns=simulator.TRADE_COLS), sg
-    bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=start or cfg.train_start, columns=SIM_COLS)
+    if pick and "max_per_day" in pick and "rank_by" in pick:
+        rank_col = pick["rank_by"]
+        if rank_col in sg.columns:
+            desc = pick.get("desc", True)
+            sg = sg.sort_values(["date", rank_col], ascending=[True, not desc]).groupby("date", as_index=False).head(pick["max_per_day"])
+    sim_cols = _sim_cols(exit_)
+    bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=start or cfg.train_start, columns=sim_cols)
     progress(40, "Simulating trades")
     trades = simulator.simulate(bars, simulator.sig_arrays(sg, bars), exit_, tf, _rule_exit_arrays(cfg, exit_, tf, bars, start))
     return trades, sg
 
 
-def backtest(cfg: Config, entry: dict, exit_: dict, tf: str, progress: Progress = _noop) -> dict:
-    trades, _ = run_trades(cfg, entry, exit_, tf, progress=progress)
+def backtest(cfg: Config, entry: dict, exit_: dict, tf: str, progress: Progress = _noop, pick: dict | None = None) -> dict:
+    trades, _ = run_trades(cfg, entry, exit_, tf, progress=progress, pick=pick)
     progress(90, "Summarising")
     return summarise_trades(cfg, trades, tf)
 
@@ -118,18 +144,29 @@ def recent_trades(t: pd.DataFrame, n: int = 300) -> list[dict]:
 
 
 def _dataset(trades: pd.DataFrame, sg: pd.DataFrame) -> pd.DataFrame:
-    t = trades[~trades["is_open"]].copy()
-    f = sg.rename(columns={"date": "signal_date"}).drop(columns=["close"])
+    if trades.empty or sg.empty:
+        return pd.DataFrame()
+    t = trades[~trades["is_open"].astype(bool)].copy()
+    if t.empty:
+        return pd.DataFrame()
+    f = sg.rename(columns={"date": "signal_date"})
+    if "close" in f.columns:
+        f = f.drop(columns=["close"])
     ds = t.merge(f, on=["symbol", "signal_date"], how="left")
     ds["y"] = (ds["ret_pct"] > 0).astype(int)
     return ds.sort_values("entry_date").reset_index(drop=True)
 
 
-def enhance(cfg: Config, entry: dict, exit_: dict, tf: str, progress: Progress = _noop, extra: pd.DataFrame | None = None) -> dict:
+def enhance(cfg: Config, entry: dict, exit_: dict, tf: str, progress: Progress = _noop, extra: pd.DataFrame | None = None,
+            pick: dict | None = None) -> dict:
     progress(5, "Collecting past trades")
-    trades, sg = run_trades(cfg, entry, exit_, tf, progress=lambda p, s: progress(5 + p // 5, s))
+    trades, sg = run_trades(cfg, entry, exit_, tf, progress=lambda p, s: progress(5 + p // 5, s), pick=pick)
+    if not len(trades) or trades.empty:
+        return {"status": "insufficient", "reason": "Not enough past results to score."}
     progress(30, "Preparing features")
     ds = _dataset(trades, sg)
+    if len(ds) < 40:
+        return {"status": "insufficient", "reason": "Not enough past results to score."}
     progress(45, "Training and testing gates")
     res = ai.enhance_entry(ds, report_years=report_years(cfg), extra=extra)
     if res["status"] != "done":

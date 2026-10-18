@@ -34,10 +34,13 @@ def compute(df: pd.DataFrame, tf: str = "1D") -> pd.DataFrame:
     f["ret_5"] = (c / c.shift(5) - 1) * 100
     f["ret_20"] = (c / c.shift(20) - 1) * 100
     f["rsi_14"] = rsi(c, 14)
-    for n in (10, 20, 50, 100, 150, 200):
+    for n in (7, 10, 20, 50, 100, 150, 200):
         f[f"sma_{n}"] = c.rolling(n, min_periods=n).mean()
     for n in (9, 10, 20, 21, 50, 100, 200):
         f[f"ema_{n}"] = c.ewm(span=n, adjust=False, min_periods=n).mean()
+    f["above_ema200_50"] = (c > f["ema_200"]).astype("float64").rolling(50, min_periods=1).sum()
+    f["dist_ema_50_pct"] = (c / f["ema_50"] - 1) * 100
+    f["dist_ema_200_pct"] = (c / f["ema_200"] - 1) * 100
     f["rsi_ema_10"] = f["rsi_14"].ewm(span=10, adjust=False, min_periods=10).mean()   # smoothed RSI: "EMA 10 of RSI 14"
     f["rsi_sma_10"] = f["rsi_14"].rolling(10, min_periods=10).mean()
     ema12, ema26 = c.ewm(span=12, adjust=False, min_periods=26).mean(), c.ewm(span=26, adjust=False, min_periods=26).mean()
@@ -107,6 +110,54 @@ def compute(df: pd.DataFrame, tf: str = "1D") -> pd.DataFrame:
     dn = (c < pc).astype(int)
     f["down_streak"] = dn.groupby((dn != dn.shift()).cumsum()).cumsum() * dn
     f.loc[pc.isna(), ["is_nr7"]] = np.nan
+
+    # DNA forensic matrix and Wyckoff VSA per bar (1D only)
+    if tf == "1D":
+        n_bars = len(c)
+        spread_dna = (h - l).clip(lower=1e-4)
+        avg_spread_dna = spread_dna.rolling(20, min_periods=20).mean()
+        vr_dna = v / f["vol_sma_20"].replace(0, np.nan)
+        is_churn = ((vr_dna >= 2.5) & (spread_dna < avg_spread_dna * 0.75)).astype("float64")
+
+        # RSI Bearish Regular Divergence (rolling 20-bar lookback for peaks)
+        h_arr = h.to_numpy("float64")
+        r_arr = f["rsi_14"].to_numpy("float64")
+        rsi_bear_div = np.zeros(n_bars, dtype="float64")
+        for i_b in range(25, n_bars):
+            win_h = h_arr[max(0, i_b - 20):i_b - 2]
+            if len(win_h) > 0:
+                pk_idx = int(np.argmax(win_h)) + max(0, i_b - 20)
+                if h_arr[i_b] >= h_arr[pk_idx] * 0.99 and r_arr[i_b] < r_arr[pk_idx] - 5.0:
+                    rsi_bear_div[i_b] = 1.0
+
+        # Health score computation
+        score = pd.Series(50.0, index=df.index)
+        st2 = (c > f["ema_50"]) & (f["ema_50"] > f["ema_200"])
+        st4 = (c < f["ema_50"]) & (f["ema_50"] < f["ema_200"])
+        st3 = (c < f["ema_50"]) & (c > f["ema_200"])
+        score = score + np.where(st2, 25.0, np.where(st4, -30.0, np.where(st3, 0.0, 10.0)))
+
+        cir_dna = (c - l) / spread_dna
+        is_abs = (vr_dna >= 2.0) & (cir_dna >= 0.75)
+        score = score + np.where(is_abs, 15.0, 0.0)
+
+        rec5_v = v.rolling(5, min_periods=5).mean()
+        is_dry = rec5_v < (f["vol_sma_20"] * 0.70)
+        score = score + np.where(is_dry, 10.0, 0.0)
+
+        score = score - (is_churn * 20.0)
+        score = score - (pd.Series(rsi_bear_div, index=df.index) * 25.0)
+        score = score + np.where((f["rsi_14"] >= 50.0) & (f["rsi_14"] <= 72.0), 10.0, 0.0)
+        dna_health = score.clip(10.0, 98.0).round().astype("float64")
+
+        f["is_churn"] = is_churn
+        f["rsi_bear_div"] = pd.Series(rsi_bear_div, index=df.index)
+        f["dna_health"] = dna_health
+    else:
+        f["is_churn"] = np.nan
+        f["rsi_bear_div"] = np.nan
+        f["dna_health"] = np.nan
+
     add_signals(f, tf)
     cols = [k for k in f.columns if k != "date"]
     f[cols] = f[cols].replace([np.inf, -np.inf], np.nan).astype("float32")

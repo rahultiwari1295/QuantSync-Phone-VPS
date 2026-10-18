@@ -17,6 +17,7 @@ sig = lambda f: {"l": {"f": f}, "op": "is_true"}
 btw = lambda f, a, b: {"l": {"f": f}, "op": "between", "r": {"list": [a, b]}}
 ALL = lambda *x: {"v": 1, "all": list(x)}
 ANY = lambda *x: {"v": 1, "any": list(x)}
+any_group = lambda *x: {"any": list(x)}
 EXIT = lambda stop, target, days, trail=None: {"v": 1, "any": [{"type": "stop_pct", "v": stop}, {"type": "target_pct", "v": target},
                                                                 *([{"type": "trail_atr", "v": trail}] if trail else []), {"type": "time", "v": days}]}
 
@@ -84,20 +85,76 @@ LIBRARY: dict[str, tuple] = {
                   ALL(c("pe", "<", 15), c("pe", ">", 0), c("roe", ">", 15), ff("close", "crosses_above", "sma_50")), EXIT(8, 18, 60)),
     "lib-postres": ("Post-results breakout", "Within 5 days of results, closing at a 20-day high on volume.", "Events", "1D",
                     ALL(c("days_since_results", "<=", 5), ff("close", ">", "hh_20"), c("vol_ratio", ">", 1.5)), EXIT(6, 14, 25)),
+
+    # QuantSync Engines Port
+    "lib-v3-htf": ("QS v3 · High-tight flag Ultra", "High-tight bull flag with v3 institutional quality guards.", "QuantSync engines", "1D",
+                   ALL(sig("sig_v3_htf"), sig("is_green"), btw("turnover", 1.5e7, 2.5e9), c("ret_1", ">=", 4.0),
+                       c("vol_surge", ">=", 2.5), c("close_loc", ">=", 85.0), c("upper_wick_pct", "<=", 10.0),
+                       c("ret_60", ">=", 15.0), c("dist_hh52_pct", ">=", -20.0)),
+                   {"v": 1, "any": [{"type": "stop_pct", "v": 8.0}, {"type": "stop_field", "field": "v3_risk_pct"}, {"type": "target_r", "v": 1.8}, {"type": "breakeven", "v": [0.8, 0.0]}, {"type": "time", "v": 60}]}),
+    "lib-v3-darvas": ("QS v3 · Darvas box Ultra", "Nicolas Darvas box breakout within 10% of 52-week high.", "QuantSync engines", "1D",
+                      ALL(sig("sig_v3_darvas"), sig("is_green"), btw("turnover", 1.5e7, 2.5e9), c("ret_1", ">=", 4.0),
+                          c("vol_surge", ">=", 2.5), c("close_loc", ">=", 85.0), c("upper_wick_pct", "<=", 10.0),
+                          c("ret_60", ">=", 15.0), c("dist_hh52_pct", ">=", -20.0)),
+                      {"v": 1, "any": [{"type": "stop_pct", "v": 8.0}, {"type": "stop_field", "field": "v3_risk_pct"}, {"type": "target_r", "v": 1.8}, {"type": "breakeven", "v": [0.8, 0.0]}, {"type": "time", "v": 60}]}),
+    "lib-v3-52wh": ("QS v3 · 52-week high Ultra", "52-week high momentum breakout in strong structural uptrend.", "QuantSync engines", "1D",
+                    ALL(sig("sig_v3_52wh"), sig("is_green"), btw("turnover", 1.5e7, 2.5e9), c("ret_1", ">=", 4.0),
+                        c("vol_surge", ">=", 2.5), c("close_loc", ">=", 85.0), c("upper_wick_pct", "<=", 10.0),
+                        c("ret_60", ">=", 15.0), c("dist_hh52_pct", ">=", -20.0)),
+                    {"v": 1, "any": [{"type": "stop_pct", "v": 8.0}, {"type": "stop_field", "field": "v3_risk_pct"}, {"type": "target_r", "v": 1.8}, {"type": "breakeven", "v": [0.8, 0.0]}, {"type": "time", "v": 60}]}),
+    "lib-v3-base": ("QS v3 · Ultra base breakout", "Multi-week base breakout with institutional volume expansion.", "QuantSync engines", "1D",
+                    ALL(sig("sig_v3_base"), sig("is_green"), btw("turnover", 1.5e7, 2.5e9), c("ret_1", ">=", 4.0),
+                        c("vol_surge", ">=", 2.5), c("close_loc", ">=", 85.0), c("upper_wick_pct", "<=", 10.0),
+                        c("ret_60", ">=", 15.0), c("dist_hh52_pct", ">=", -20.0)),
+                    {"v": 1, "any": [{"type": "stop_pct", "v": 8.0}, {"type": "stop_field", "field": "v3_risk_pct"}, {"type": "target_r", "v": 1.8}, {"type": "breakeven", "v": [0.8, 0.0]}, {"type": "time", "v": 60}]}),
+    "lib-v3-all": ("QS v3 · All champions (engine twin)", "All 4 champion patterns combined, picking top 2 daily by conviction.", "QuantSync engines", "1D",
+                   ALL(any_group(sig("sig_v3_htf"), sig("sig_v3_darvas"), sig("sig_v3_52wh"), sig("sig_v3_base")),
+                       sig("is_green"), btw("turnover", 1.5e7, 2.5e9), c("ret_1", ">=", 4.0),
+                       c("vol_surge", ">=", 2.5), c("close_loc", ">=", 85.0), c("upper_wick_pct", "<=", 10.0),
+                       c("ret_60", ">=", 15.0), c("dist_hh52_pct", ">=", -20.0)),
+                   {"v": 1, "any": [{"type": "stop_pct", "v": 8.0}, {"type": "stop_field", "field": "v3_risk_pct"}, {"type": "target_r", "v": 1.8}, {"type": "breakeven", "v": [0.8, 0.0]}, {"type": "time", "v": 60}]},
+                   {"max_per_day": 2, "rank_by": "v3_conviction", "desc": True}),
+    "lib-v3-rs": ("QS v3 · RS leader refined", "Top 5% 60-bar relative strength momentum leader breakout.", "QuantSync engines", "1D",
+                  ALL(sig("sig_v3_rs_refined")),
+                  {"v": 1, "any": [{"type": "stop_pct", "v": 8.0}, {"type": "target_r", "v": 2.5}, {"type": "trail_close_below", "field": "ema_20", "min_bars": 3}, {"type": "time", "v": 60}]}),
+    "lib-v2-rs": ("QS v2 · RS leader (engine exits)", "P1 RS leader breakout with structural setup stop and EMA 20 runner exit.", "QuantSync engines", "1D",
+                  ALL(sig("sig_rs_leader")),
+                  {"v": 1, "any": [{"type": "stop_field", "field": "p1_risk_pct"}, {"type": "trail_close_below", "field": "ema_20", "min_bars": 3, "only_in_profit": True}, {"type": "time", "v": 60}]}),
+    "lib-v2-apex": ("QS v2 · Apex base (engine exits)", "P2 apex base breakout with 50% scale out at +12% and breakeven lock.", "QuantSync engines", "1D",
+                    ALL(sig("sig_apex_base"), c("vol_surge", ">=", 2.5), c("close_loc", ">=", 90.0), c("upper_wick_pct", "<=", 5.0), c("dist_ath_pct", ">=", -35.0)),
+                    {"v": 1, "any": [{"type": "stop_pct", "v": 4.5}, {"type": "breakeven", "v": [5.0, 1.5]}, {"type": "scale_out", "v": [12.0, 0.5, 6.0]}, {"type": "trail_pct", "v": 7.0}, {"type": "trail_close_below", "field": "ema_20", "min_bars": 10, "only_in_profit": True}, {"type": "time", "v": 50}]}),
+    "lib-v2-htf": ("QS v2 · High tight flag (engine exits)", "P5 high tight flag with 2.5 Cr turnover, CIR >= 65%, and engine exits.", "QuantSync engines", "1D",
+                   ALL(sig("sig_high_tight_flag"), c("turnover", ">=", 2.5e7), c("close_loc", ">=", 65.0), c("upper_wick_pct", "<=", 20.0)),
+                   {"v": 1, "any": [{"type": "stop_pct", "v": 6.5}, {"type": "breakeven", "v": [12.0, 4.0]}, {"type": "scale_out", "v": [15.0, 0.5, 5.0]}, {"type": "trail_close_below", "field": "sma_7", "min_bars": 5}, {"type": "time", "v": 50}]}),
+    "lib-v2-stage2": ("QS v2 · Stage-2 base (engine exits)", "P9 stage-2 base with 2.5 Cr turnover, CIR >= 65%, and engine exits.", "QuantSync engines", "1D",
+                      ALL(sig("sig_stage2_base"), c("turnover", ">=", 2.5e7), c("close_loc", ">=", 65.0), c("upper_wick_pct", "<=", 20.0)),
+                      {"v": 1, "any": [{"type": "stop_pct", "v": 6.5}, {"type": "breakeven", "v": [12.0, 4.0]}, {"type": "scale_out", "v": [15.0, 0.5, 5.0]}, {"type": "trail_close_below", "field": "sma_7", "min_bars": 5}, {"type": "time", "v": 50}]}),
+    "lib-v2-pgap": ("QS v2 · Power gap (engine exits)", "P4 power earnings gap with 2.5 Cr turnover, CIR >= 65%, and engine exits.", "QuantSync engines", "1D",
+                    ALL(sig("sig_power_gap"), c("turnover", ">=", 2.5e7), c("close_loc", ">=", 65.0), c("upper_wick_pct", "<=", 20.0)),
+                    {"v": 1, "any": [{"type": "stop_pct", "v": 6.5}, {"type": "breakeven", "v": [12.0, 4.0]}, {"type": "scale_out", "v": [15.0, 0.5, 5.0]}, {"type": "trail_close_below", "field": "sma_7", "min_bars": 5}, {"type": "time", "v": 50}]}),
+    "lib-v4-f3": ("QS v4 · F3 classical pattern + stage 2", "F3 Moonbag: classical chart pattern breakout in confirmed Stage 2 uptrend.", "QuantSync engines", "1D",
+                  ALL(sig("sig_v4_f3")),
+                  {"v": 1, "any": [{"type": "stop_pct", "v": 7.0}, {"type": "scale_out", "v": [14.0, 0.5, 1.0]}, {"type": "trail_pct", "v": 6.0}, {"type": "trail_atr", "v": 1.5}, {"type": "rule", "rule": {"v": 1, "all": [{"l": {"f": "ret_1"}, "op": "<", "r": {"c": 0}}, {"l": {"f": "vol_ratio"}, "op": ">", "r": {"c": 1.6}}]}}, {"type": "time", "v": 35}]}),
+    "lib-v5-apex": ("QS v5 · Apex base with DNA", "Apex compression breakout with Stan Weinstein Stage 2 and DNA health score >= 65.", "QuantSync engines", "1D",
+                    ALL(c("close_loc", ">=", 90.0), c("upper_wick_pct", "<=", 5.0), c("vol_surge", ">=", 2.5), c("dist_hh52_pct", ">=", -35.0), ff("close", ">", "ema_50"), c("dna_health", ">=", 65.0), {"l": {"f": "rsi_bear_div"}, "op": "==", "r": {"c": 0}}),
+                    {"v": 1, "any": [{"type": "stop_pct", "v": 4.5}, {"type": "breakeven", "v": [4.5, 0.0]}, {"type": "scale_out", "v": [12.0, 0.5]}, {"type": "target_pct", "v": 25.0}, {"type": "time", "v": 40}]}),
 }
 META = {k: {"about": v[1], "family": v[2]} for k, v in LIBRARY.items()}
 
 
 def ensure(cfg, con, key: str) -> str:
-    name, about, family, tf, entry, exit_ = LIBRARY[key]
+    item = LIBRARY[key]
+    name, about, family, tf, entry, exit_ = item[:6]
+    pick = item[6] if len(item) > 6 else None
     entry, exit_ = normalise(entry), normalise_exit(exit_)
     row = con.execute("SELECT id, current_version FROM strategies WHERE kind='library' AND name=? AND archived=0", (name,)).fetchone()
     if not row:
-        return service.create_strategy(con, cfg, None, name, tf, entry, exit_, kind="library", visibility="public")["id"]
-    cur = con.execute("SELECT entry_json, exit_json FROM strategy_versions WHERE id=?", (row["current_version"],)).fetchone()
-    if json.loads(cur["entry_json"]) != entry or json.loads(cur["exit_json"]) != exit_:
+        return service.create_strategy(con, cfg, None, name, tf, entry, exit_, kind="library", visibility="public", pick=pick)["id"]
+    cur = con.execute("SELECT entry_json, exit_json, pick_json FROM strategy_versions WHERE id=?", (row["current_version"],)).fetchone()
+    cur_pick = json.loads(cur["pick_json"]) if ("pick_json" in cur.keys() and cur["pick_json"]) else None
+    if json.loads(cur["entry_json"]) != entry or json.loads(cur["exit_json"]) != exit_ or cur_pick != pick:
         service.new_version(con, row["id"], entry_json=jdump(entry), exit_json=jdump(exit_), rule_hash=rule_hash(entry, tf),
-                            ai_enhancement_id=None, ai_gate=None)
+                            pick_json=jdump(pick) if pick else None, ai_enhancement_id=None, ai_gate=None)
     return row["id"]
 
 
@@ -111,11 +168,13 @@ def meta_for(name: str) -> dict:
 def build(cfg, con, log=print) -> list[dict]:
     """Create/refresh every library strategy and compute its past test (cached per data date)."""
     out = []
-    for key, (name, _about, _fam, tf, *_r) in LIBRARY.items():
+    for key, item in LIBRARY.items():
+        name, _about, _fam, tf = item[:4]
         try:
             sid = ensure(cfg, con, key)
             v = con.execute("SELECT v.* FROM strategies s JOIN strategy_versions v ON v.id=s.current_version WHERE s.id=?", (sid,)).fetchone()
-            bt = service.run_backtest(cfg, con, json.loads(v["entry_json"]), json.loads(v["exit_json"]), tf, v["id"])
+            pick = json.loads(v["pick_json"]) if ("pick_json" in v.keys() and v["pick_json"]) else None
+            bt = service.run_backtest(cfg, con, json.loads(v["entry_json"]), json.loads(v["exit_json"]), tf, v["id"], pick=pick)
             a = (bt.get("summary") or {}).get("All") or {}
             out.append({"key": key, "id": sid, "name": name, "trades": a.get("trades", 0), "win_rate": a.get("win_rate"), "ok": True})
         except Exception as e:  # noqa: BLE001 - one entry must never stop the rest

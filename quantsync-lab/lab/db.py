@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS strategy_versions(
   id TEXT PRIMARY KEY, strategy_id TEXT NOT NULL REFERENCES strategies(id), n INTEGER NOT NULL,
   entry_json TEXT NOT NULL, exit_json TEXT NOT NULL, rule_hash TEXT NOT NULL, fsv INTEGER NOT NULL,
   ai_enhancement_id TEXT, ai_gate INTEGER, exit_choice TEXT NOT NULL DEFAULT 'user',  -- user | ai
-  live_from TEXT, created_at REAL NOT NULL, UNIQUE(strategy_id, n));
+  live_from TEXT, pick_json TEXT, created_at REAL NOT NULL, UNIQUE(strategy_id, n));
 CREATE TABLE IF NOT EXISTS backtest_runs(
   id TEXT PRIMARY KEY, version_id TEXT NOT NULL, rule_hash TEXT NOT NULL, exit_hash TEXT NOT NULL,
   as_of TEXT NOT NULL, summary_json TEXT NOT NULL, trades_path TEXT, created_at REAL NOT NULL);
@@ -99,6 +99,11 @@ def migrate(cfg: Config) -> None:
         con.execute("ALTER TABLE ai_enhancements ADD COLUMN verdict TEXT")
     if "as_of" not in cols:
         con.execute("ALTER TABLE ai_enhancements ADD COLUMN as_of TEXT")
+
+    # Migration for strategy_versions pick_json
+    sv_cols = {row["name"] for row in con.execute("PRAGMA table_info(strategy_versions)").fetchall()}
+    if "pick_json" not in sv_cols:
+        con.execute("ALTER TABLE strategy_versions ADD COLUMN pick_json TEXT")
 
     # 2. live_trades table rebuild to support variant and UNIQUE(version_id, variant, symbol, signal_date)
     lt_cols = {row["name"] for row in con.execute("PRAGMA table_info(live_trades)").fetchall()}
