@@ -229,18 +229,25 @@ def _card(con, s, uid=None, cfg: Config | None = None) -> dict:
     if s["kind"] == "library":
         from .library import meta_for
         card.update(meta_for(s["name"]), owner="QuantSync library")
+    lab_bt = service.cached_backtest(con, s["tf"], json.loads(v["entry_json"]), json.loads(v["exit_json"]),
+                                     v["ai_gate"] if v["ai_enhancement_id"] else None, v["ai_enhancement_id"] if v["ai_gate"] else None)
+    lab_rec = _record(lab_bt, "Lab past test 2023–26") if lab_bt else None
+
     eng = _engine(cfg, s) if cfg else None
     if eng:  # flagships show the live engine's own record
         card.update(stats=engine_feed.stats(cfg, eng), source="engine", ai_gate=None, enhanced=False, enhancement=None,
                     live_from=(engine_feed.feed(cfg) or {}).get("live_since"))
         bt = engine_feed.backtest(cfg, eng)
-        card["record"] = _record(bt, "Full record") if bt else None
-        card["spark"] = ((bt or {}).get("analytics") or {}).get("spark") or []
+        eng_rec = _record(bt, "Live engine record") if bt else None
+        card["record"] = eng_rec or lab_rec
+        card["engine_record"] = eng_rec
+        card["lab_record"] = lab_rec
+        card["spark"] = ((bt or {}).get("analytics") or {}).get("spark") or (((lab_bt or {}).get("analytics") or {}).get("spark") or [])
     else:
-        bt = service.cached_backtest(con, s["tf"], json.loads(v["entry_json"]), json.loads(v["exit_json"]),
-                                     v["ai_gate"] if v["ai_enhancement_id"] else None, v["ai_enhancement_id"] if v["ai_gate"] else None)
-        card["record"] = _record(bt, "Past test 2023–26") if bt else None
-        card["spark"] = ((bt or {}).get("analytics") or {}).get("spark") or []
+        card["record"] = lab_rec
+        card["lab_record"] = lab_rec
+        card["engine_record"] = None
+        card["spark"] = ((lab_bt or {}).get("analytics") or {}).get("spark") or []
     return card
 
 
