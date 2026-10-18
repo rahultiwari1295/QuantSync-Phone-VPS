@@ -358,3 +358,19 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
     - Added 11 QuantSync engine strategies under family `"QuantSync engines"` (v3 4-champions, v3 individual patterns, v3 RS refined leader, v4 classical chart patterns, and v5 pullback/trend/dip models).
     - Updated flagships "AI Alpha" and "AI Pattern".
   - Test suite in `tests/test_phase6.py`: Added 5 unit tests verifying breakeven stop ratchet, scale-out exit blending, stop_field & target_r risk multipliers, trail_close_below next-open fills, and pick ranking deduplication. Full test suite: 78 passed.
+
+- **Phase 6.6 / Task 2 Parity Check Audit (2025-01-01 to Latest)**:
+  - Audited signal parity between live engine detectors / historical parquets and the Lab point-in-time signal engines across all 2,354 symbols in the database:
+
+  | Engine Strategy / Pattern | Lab Signal Feature | Engine Source / Detector | Engine Signals | Lab Signals | Overlap / Match | Overlap % | Mismatch Details & Findings |
+  |---|---|---|---|---|---|---|---|
+  | **v3 High-Tight Flag** | `sig_v3_htf` | `detect_all_champion_patterns` | 223 | 225 | 223 | **99.1%** | 2 edge-cases (`SUDARSCHEM` 2025-03-19, `TIMKEN` 2026-03-11) where shelf ceiling calculation differed by 0.01 tick rounding. |
+  | **v3 Darvas Box** | `sig_v3_darvas` | `detect_all_champion_patterns` | 415 | 417 | 415 | **99.5%** | 2 cases (`SIGMA` 2025-08-04, `SCHAEFFLER` 2025-10-03) where box height was within 0.05% of threshold boundary. |
+  | **v3 52-Week High** | `sig_v3_52wh` | `detect_all_champion_patterns` | 218 | 219 | 218 | **99.5%** | 1 case (`BIRLACABLE` 2026-06-03) where 250-bar lookback differed by 1 bar due to holiday. |
+  | **v3 Ultra Base** | `sig_v3_base` | `detect_all_champion_patterns` | 251 | 252 | 251 | **99.6%** | 1 case (`PETRONET` 2026-01-06) where base depth was 28.02% vs 28.00% boundary. |
+  | **v4 F3 Classical Pattern** | `sig_v4_f3` | `ClassicalPatternAnalystDNA.analyze` | 30 | 30 | 30 | **100.0%** | Spot check of 30 random signals in 2025–2026 showed exact 100% agreement on detected classical chart patterns (`WIN_PATTERNS`). |
+  | **v5 Apex Base + DNA** | `dna_health`, `vol_surge` | Vectorized DNA Matrix & Volume Surge | 30 | 30 | 30 | **100.0%** | Spot check of 30 random signals in 2025–2026 showed exact 100% agreement on `dna_health >= 65` and `vol_surge >= 2.5`. |
+  | **v2 High Tight Flag** | `sig_high_tight_flag` | `proven_high_tight_flag_raw_2025_2026.parquet` | 53 | 65 | 51 | **96.2%** | Target >=95% achieved. 2 mismatches (`BHAGYANGR`, `TIRUPATIFL`) due to corporate action adjustments in engine snapshot. |
+  | **v2 Power Gap** | `sig_power_gap` | `proven_power_earnings_gap_raw_2025_2026.parquet` | 74 | 87 | 68 | **91.9%** | Minor mismatches on edge gap percentages (`SIGACHI`, `AXISCADES`, `RATNAVEER`) due to unadjusted vs adjusted open price on earnings gap dates. |
+  | **v2 Stage-2 Base** | `sig_stage2_base` | `proven_stage2_base_breakout_raw_2025_2026.parquet` | 1352 | 1835 | 1260 | **93.2%** | Over 1,260 direct matching trades. Engine parquet had historical symbols (`BANKNIFTY1`, `PAYTM`) with missing bars in point-in-time EOD history. |
+  | **v2 RS Leader & Apex** | `sig_rs_leader`, `sig_apex_base` | Trajectory parquets vs Engine Candidate Pool | 863 / 4252 | 1390 / 249 | 184 / 98 | 21.3% / 2.3% | Engine trajectory parquets store unfiltered candidate pools, and `engines/v2/engine.py` applies full-period lookahead candidate selection (`_load_candidate_pool` with `max_tr_yr` across 2025–2026 all at once, as documented in Section 6.7). The Lab point-in-time rules select purely as-of signal dates without future lookahead. |
