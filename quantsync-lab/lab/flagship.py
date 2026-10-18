@@ -23,7 +23,7 @@ FLAGSHIPS = {
         ]},
         "exit": {"v": 1, "any": [
             {"type": "stop_pct", "v": 6.5},
-            {"type": "breakeven", "v": [12, 4]},
+            {"type": "breakeven", "v": [12.0, 4.0], "unit": "pct"},
             {"type": "scale_out", "v": [15, 0.5, 5]},
             {"type": "trail_close_below", "field": "sma_7", "min_bars": 5},
             {"type": "time", "v": 50}
@@ -46,7 +46,7 @@ FLAGSHIPS = {
             {"type": "stop_pct", "v": 8.0},
             {"type": "stop_field", "field": "v3_risk_pct"},
             {"type": "target_r", "v": 1.8},
-            {"type": "breakeven", "v": [0.8, 0.0]},
+            {"type": "breakeven", "v": [0.8, 0.0], "unit": "R"},
             {"type": "time", "v": 60}
         ]},
         "pick": {"max_per_day": 2, "rank_by": "v3_conviction", "desc": True},

@@ -25,7 +25,7 @@ def _spec(exit_: dict | None, tf: str):
         t = it.get("type")
         if t == "rule":
             continue
-        elif t == "trail_close_below":
+        elif t in ("trail_close_below", "breakeven"):
             s[t] = it
         elif t in s:
             s[t] = it.get("v")
@@ -100,8 +100,15 @@ def simulate_symbol(symbol: str, b: pd.DataFrame, sig: np.ndarray, exit_: dict |
         be_lock_p = None
         be_activated = False
         if sp["breakeven"]:
-            be_trig, be_lock = float(sp["breakeven"][0]), float(sp["breakeven"][1])
-            if sp.get("target_r") is not None and be_trig <= 3.0:
+            be_spec = sp["breakeven"]
+            if isinstance(be_spec, dict):
+                be_v = be_spec.get("v", [])
+                be_unit = be_spec.get("unit", "pct")
+            else:
+                be_v = be_spec
+                be_unit = "pct"
+            be_trig, be_lock = float(be_v[0]), float(be_v[1])
+            if be_unit == "R":
                 be_trigger_p = ep + be_trig * risk_amt
                 be_lock_p = ep + be_lock * risk_amt
             else:

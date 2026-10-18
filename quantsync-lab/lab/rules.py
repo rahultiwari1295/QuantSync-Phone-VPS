@@ -204,10 +204,15 @@ def normalise_exit(exit_: dict | None) -> dict:
                 raise RuleError(f"{t} must be {lo}..{hi}")
             out.append({"type": t, "v": int(v) if t == "time" else v})
         elif t == "breakeven":
+            if set(it) - {"type", "v", "unit"}:
+                raise RuleError("breakeven exit malformed")
             v = it.get("v")
             if not isinstance(v, (list, tuple)) or len(v) < 2:
                 raise RuleError("breakeven requires [trigger, lock]")
-            out.append({"type": "breakeven", "v": [float(v[0]), float(v[1])] + list(v[2:])})
+            unit = it.get("unit", "pct")
+            if unit not in ("R", "pct"):
+                raise RuleError("breakeven unit must be 'R' or 'pct'")
+            out.append({"type": "breakeven", "v": [float(v[0]), float(v[1])] + list(v[2:]), "unit": unit})
         elif t == "scale_out":
             v = it.get("v")
             if not isinstance(v, (list, tuple)) or len(v) < 2:

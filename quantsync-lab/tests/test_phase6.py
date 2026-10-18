@@ -31,6 +31,49 @@ def test_breakeven_exit():
     assert t["entry_price"] == 100.0
 
 
+def test_breakeven_unit_r():
+    # Signal at bar 0, entry at bar 1 open (100)
+    # stop_field: v3_risk_pct = 5.0% -> risk_amt = 5.0
+    # breakeven unit="R": trigger 0.8 R (104.0), lock 0.0 R (100.0)
+    b = _make_bars([
+        {"date": pd.Timestamp("2024-01-01"), "open": 100, "high": 101, "low": 99, "close": 100, "v3_risk_pct": 5.0},
+        {"date": pd.Timestamp("2024-01-02"), "open": 100, "high": 105, "low": 99, "close": 103, "v3_risk_pct": 5.0},  # high 105 >= 104 -> stop moved to 100
+        {"date": pd.Timestamp("2024-01-03"), "open": 102, "high": 103, "low": 99.5, "close": 101, "v3_risk_pct": 5.0},  # low 99.5 hits 100.0 stop
+    ])
+    sig = np.array([True, False, False])
+    ex = {"v": 1, "any": [
+        {"type": "stop_field", "field": "v3_risk_pct"},
+        {"type": "breakeven", "v": [0.8, 0.0], "unit": "R"},
+        {"type": "time", "v": 10}
+    ]}
+    norm = rules.normalise_exit(ex)
+    assert any(it.get("unit") == "R" for it in norm["any"])
+    trades = simulator.simulate_symbol("TEST", b, sig, norm, "1D")
+    assert len(trades) == 1
+    t = trades[0]
+    assert t["exit_reason"] == "stop"
+    assert t["exit_price"] == pytest.approx(100.0)
+    assert t["entry_price"] == 100.0
+
+
+def test_breakeven_validation():
+    # Valid unit 'R'
+    r1 = rules.normalise_exit({"v": 1, "any": [{"type": "breakeven", "v": [0.8, 0], "unit": "R"}]})
+    assert r1["any"][0]["unit"] == "R"
+
+    # Default unit 'pct'
+    r2 = rules.normalise_exit({"v": 1, "any": [{"type": "breakeven", "v": [5.0, 1.0]}]})
+    assert r2["any"][0]["unit"] == "pct"
+
+    # Invalid unit raises RuleError
+    with pytest.raises(rules.RuleError, match="breakeven unit must be 'R' or 'pct'"):
+        rules.normalise_exit({"v": 1, "any": [{"type": "breakeven", "v": [0.8, 0], "unit": "points"}]})
+
+    # Extra malformed key raises RuleError
+    with pytest.raises(rules.RuleError, match="breakeven exit malformed"):
+        rules.normalise_exit({"v": 1, "any": [{"type": "breakeven", "v": [0.8, 0], "unit": "R", "extra": 1}]})
+
+
 def test_scale_out_exit():
     # Signal at bar 0, entry at bar 1 open (100)
     # scale_out: at +10%, sell 50%, lock remaining at +2%
