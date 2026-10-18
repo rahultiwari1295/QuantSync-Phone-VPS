@@ -131,7 +131,7 @@ def enhance(cfg: Config, entry: dict, exit_: dict, tf: str, progress: Progress =
     progress(30, "Preparing features")
     ds = _dataset(trades, sg)
     progress(45, "Training and testing gates")
-    res = ai.enhance_entry(ds, report_years(cfg), extra=extra)
+    res = ai.enhance_entry(ds, report_years=report_years(cfg), extra=extra)
     if res["status"] != "done":
         return res
     progress(90, "Finishing")
@@ -141,27 +141,35 @@ def enhance(cfg: Config, entry: dict, exit_: dict, tf: str, progress: Progress =
 
 def enhance_exit(cfg: Config, entry: dict, exit_: dict, tf: str, gate_scores: pd.Series, ds: pd.DataFrame, gate: int,
                  progress: Progress = _noop) -> dict:
-    """Re-simulate gated entries under each candidate exit; choose on 2020-22, report on report years."""
+    """Re-simulate gated entries under each candidate exit; choose on 2022-24, report on 2025 and 2026."""
     keep = ds[gate_scores >= gate]
     sg = keep[["symbol", "signal_date"]].rename(columns={"signal_date": "date"})
     sg["close"] = 0.0
     bars = store.bars(cfg, tf, symbols=list(sg["symbol"].unique()), start=cfg.train_start, columns=SIM_COLS)
     arr = simulator.sig_arrays(sg, bars)
     ry = report_years(cfg)
+    tune_years = getattr(cfg, "ai_tune_years", [2022, 2023, 2024])
+    valid_yr = getattr(cfg, "ai_valid_year", 2025)
+    blind_yr = getattr(cfg, "ai_blind_year", 2026)
     cands = [normalise_exit(exit_)] + ai.exit_candidates()
     rows = []
     for i, ex in enumerate(cands):
         progress(10 + int(80 * i / len(cands)), "Testing exits")
         t = simulator.simulate(bars, arr, ex, tf, _rule_exit_arrays(cfg, ex, tf, bars))
         t = t[~t["is_open"]] if len(t) else t
-        sel = t[t.entry_date.dt.year.isin([2020, 2021, 2022])] if len(t) else t
+        sel = t[t.entry_date.dt.year.isin(tune_years)] if len(t) else t
+        v25 = t[t.entry_date.dt.year == valid_yr] if len(t) else t
+        b26 = t[t.entry_date.dt.year == blind_yr] if len(t) else t
         rep = t[t.entry_date.dt.year.isin(ry)] if len(t) else t
-        rows.append({"exit": ex, "select": metrics.summarize(sel), "report": metrics.summarize(rep)})
+        rows.append({"exit": ex, "select": metrics.summarize(sel), "valid_2025": metrics.summarize(v25),
+                     "blind_2026": metrics.summarize(b26), "report": metrics.summarize(rep)})
     base, rest = rows[0], rows[1:]
     ok = [r for r in rest if r["select"]["trades"] >= 20 and r["select"]["avg_ret"] is not None]
     best = max(ok, key=lambda r: r["select"]["avg_ret"], default=None)
     better = bool(best and base["select"]["avg_ret"] is not None and best["select"]["avg_ret"] > base["select"]["avg_ret"]
-                  and best["report"]["avg_ret"] is not None and base["report"]["avg_ret"] is not None
-                  and best["report"]["avg_ret"] >= base["report"]["avg_ret"])
+                  and best["valid_2025"]["avg_ret"] is not None and base["valid_2025"]["avg_ret"] is not None
+                  and best["valid_2025"]["avg_ret"] >= base["valid_2025"]["avg_ret"])
     return {"yours": base["report"], "best": best["report"] if best else None, "best_exit": best["exit"] if best else None,
-            "improved": better, "tested": len(rest)}
+            "improved": better, "tested": len(rest),
+            "valid_2025": {"yours": base["valid_2025"], "best": best["valid_2025"] if best else None},
+            "blind_2026": {"yours": base["blind_2026"], "best": best["blind_2026"] if best else None}}

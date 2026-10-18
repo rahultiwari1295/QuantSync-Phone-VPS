@@ -312,6 +312,13 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
   - Added `universe.restrict_asof(cfg, sg, tf="1D")` to filter past signals by `liq_rank <= cfg.free_universe_size` on the exact signal date. Replaced `universe.restrict()` in `pipeline.run_trades()`. Updated label text to `"the 500 most traded stocks on each day"`.
   - Exposed `liq_rank` and `rs60_pct` under group `"Market"` in `catalog.py`. Joined `xsec` in `store.signals()` (for both full history and fast snapshot scans).
   - Verified `StockHistory` delisted count on phone VPS: 0 symbols with no bars in last 30 days (all 2371 symbols active). Added survivorship bias note to `HONEST` notice in `public/app/js/parts.js`.
-  - Test suite: Added `tests/test_xsec.py` (3 tests verifying point-in-time invariance across date appends, elimination of selection bias on a 2019 illiquid / 2026 liquid stock, and catalog/signals integration). Updated `tests/test_board.py` for as-of liquidity rank. All 63 tests passed.
+- **Phase 3 (3-Stage AI Check Protocol v2)**:
+  - Added `ai_tune_years = [2022, 2023, 2024]`, `ai_valid_year = 2025`, `ai_blind_year = 2026` to `Config` in `lab/config.py`.
+  - Defined 25 scale-free features `AI_FEATURES_25` in `lab/ai.py` (including log turnover, daily liquidity rank, 60-bar relative strength vs Nifty, and market regime return/distance to SMA 200).
+  - Implemented 6 candidate models: `lgbm_default`, `lgbm_shallow`, `lgbm_compact` (top 10 gain features on <= 2021 trades), `xgboost` (optional with graceful fallback), `logreg` (liblinear solver with RobustScaler), and `ensemble` (weighted average of best tree and logreg).
+  - Created `Scorer` class with probability prediction, calibration percentile scoring, pickle/json serialization, and ensemble column routing.
+  - Implemented `ai.check()`: Stage A (tuning tournament on <= 2024 across models and gates 50, 60, 70), Stage B (validation on 2025), Stage C (blind test on 2026), label-shuffled leak check, and plain-English feature drivers. Added strict assertion `assert ds_tune.empty or ds_tune.entry_date.max() < pd.Timestamp("2025-01-01")`.
+  - Added `tests/test_ai_check.py` covering planted edge, pure noise no_edge, spy test proving zero 2025+ trades reach tuning loop, determinism, and missing xgboost handling.
+  - Maintained full backward compatibility with `pipeline.enhance()`, `pipeline.enhance_exit()`, and legacy gates/tournament UI payloads. All 68 tests passing.
 
 
