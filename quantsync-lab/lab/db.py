@@ -35,6 +35,7 @@ CREATE INDEX IF NOT EXISTS ix_bt_cache ON backtest_runs(rule_hash, exit_hash, as
 CREATE TABLE IF NOT EXISTS ai_enhancements(
   id TEXT PRIMARY KEY, version_id TEXT NOT NULL, status TEXT NOT NULL,       -- queued|running|done|failed|insufficient
   candidate TEXT, model_path TEXT, result_json TEXT, exit_result_json TEXT, reason TEXT,
+  kind TEXT NOT NULL DEFAULT 'user', protocol TEXT, verdict TEXT, as_of TEXT,
   created_at REAL NOT NULL, finished_at REAL);
 CREATE TABLE IF NOT EXISTS jobs(
   id TEXT PRIMARY KEY, kind TEXT NOT NULL, lane TEXT NOT NULL, uid TEXT, payload_json TEXT NOT NULL,
@@ -43,11 +44,10 @@ CREATE TABLE IF NOT EXISTS jobs(
   created_at REAL NOT NULL, started_at REAL, finished_at REAL);
 CREATE INDEX IF NOT EXISTS ix_jobs_q ON jobs(lane, status, created_at);
 CREATE TABLE IF NOT EXISTS live_trades(
-  id INTEGER PRIMARY KEY AUTOINCREMENT, version_id TEXT NOT NULL, symbol TEXT NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT, version_id TEXT NOT NULL, variant TEXT NOT NULL DEFAULT 'plain', symbol TEXT NOT NULL,
   signal_date TEXT NOT NULL, entry_date TEXT, entry_price REAL, exit_date TEXT, exit_price REAL,
   exit_reason TEXT, ret_pct REAL, is_open INTEGER NOT NULL DEFAULT 1, score REAL,
-  UNIQUE(version_id, symbol, signal_date));
-CREATE INDEX IF NOT EXISTS ix_live_v ON live_trades(version_id, is_open);
+  UNIQUE(version_id, variant, symbol, signal_date));
 CREATE TABLE IF NOT EXISTS follows(uid TEXT NOT NULL, strategy_id TEXT NOT NULL, alerts INTEGER NOT NULL DEFAULT 0,
   created_at REAL NOT NULL, PRIMARY KEY(uid, strategy_id));
 CREATE TABLE IF NOT EXISTS alerts_log(id INTEGER PRIMARY KEY AUTOINCREMENT, uid TEXT, strategy_id TEXT,
@@ -88,6 +88,38 @@ def connect(cfg: Config) -> sqlite3.Connection:
 def migrate(cfg: Config) -> None:
     con = connect(cfg)
     con.executescript(SCHEMA)
+
+    # 1. ai_enhancements column additions
+    cols = {row["name"] for row in con.execute("PRAGMA table_info(ai_enhancements)").fetchall()}
+    if "kind" not in cols:
+        con.execute("ALTER TABLE ai_enhancements ADD COLUMN kind TEXT NOT NULL DEFAULT 'user'")
+    if "protocol" not in cols:
+        con.execute("ALTER TABLE ai_enhancements ADD COLUMN protocol TEXT")
+    if "verdict" not in cols:
+        con.execute("ALTER TABLE ai_enhancements ADD COLUMN verdict TEXT")
+    if "as_of" not in cols:
+        con.execute("ALTER TABLE ai_enhancements ADD COLUMN as_of TEXT")
+
+    # 2. live_trades table rebuild to support variant and UNIQUE(version_id, variant, symbol, signal_date)
+    lt_cols = {row["name"] for row in con.execute("PRAGMA table_info(live_trades)").fetchall()}
+    if "variant" not in lt_cols:
+        with tx(con):
+            con.execute("""
+            CREATE TABLE live_trades_new(
+              id INTEGER PRIMARY KEY AUTOINCREMENT, version_id TEXT NOT NULL, variant TEXT NOT NULL DEFAULT 'plain', symbol TEXT NOT NULL,
+              signal_date TEXT NOT NULL, entry_date TEXT, entry_price REAL, exit_date TEXT, exit_price REAL,
+              exit_reason TEXT, ret_pct REAL, is_open INTEGER NOT NULL DEFAULT 1, score REAL,
+              UNIQUE(version_id, variant, symbol, signal_date))
+            """)
+            con.execute("""
+            INSERT INTO live_trades_new(id, version_id, variant, symbol, signal_date, entry_date, entry_price, exit_date, exit_price, exit_reason, ret_pct, is_open, score)
+            SELECT id, version_id, 'plain', symbol, signal_date, entry_date, entry_price, exit_date, exit_price, exit_reason, ret_pct, is_open, score
+            FROM live_trades
+            """)
+            con.execute("DROP TABLE live_trades")
+            con.execute("ALTER TABLE live_trades_new RENAME TO live_trades")
+            con.execute("CREATE INDEX IF NOT EXISTS ix_live_v ON live_trades(version_id, variant, is_open)")
+
     con.execute("INSERT OR REPLACE INTO meta VALUES('schema_version',?)", (str(SCHEMA_VERSION),))
     con.close()
 

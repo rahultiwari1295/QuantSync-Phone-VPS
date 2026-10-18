@@ -321,4 +321,13 @@ Phases 1, 2 and the exit types of 6.2 can be done in parallel.
   - Added `tests/test_ai_check.py` covering planted edge, pure noise no_edge, spy test proving zero 2025+ trades reach tuning loop, determinism, and missing xgboost handling.
   - Maintained full backward compatibility with `pipeline.enhance()`, `pipeline.enhance_exit()`, and legacy gates/tournament UI payloads. All 68 tests passing.
 
+- **Phase 4 (Automatic AI Check for QuantSync Strategies)**:
+  - Database schema & idempotent migration in `lab/db.py`: Added `kind` (`user`|`system`), `protocol` (`v2`), `verdict`, and `as_of` to `ai_enhancements`. Rebuilt `live_trades` to include `variant` (`plain`|`ai`) with composite unique constraint `UNIQUE(version_id, variant, symbol, signal_date)`.
+  - Enqueueing & job handling in `lab/jobs.py` and `lab/service.py`: Registered `"ai_check": "ai"` lane in `jobs.LANE`. Added `_ai_check` handler in `service.py` to run system checks, store models, and automatically cache gated backtest (`run_gated_backtest`) when verdict is `improved`.
+  - Live performance re-check (Phase 4.7): `_ai_check` inspects closed live trades over the last 6 months; if AI variant has >= 20 trades and underperforms plain rules, verdict transitions to `paused_live` ("AI filter paused: it stopped beating the plain rules in live tracking.").
+  - Dual live tracker in `service.update_live`: Concurrently writes and maintains `variant='plain'` and `variant='ai'` positions for improved/flagship strategies using the point-in-time stored model and gate.
+  - CLI `lab.cli ai-check`: Added subcommands `--stale` (default, skips completed checks matching current month), `--all`, `--rescore` (Sunday blind year re-scoring with stored model), and `--name`.
+  - Cron automation in `crontab.txt`: Scheduled 1st of month 03:15 IST `ai-check --stale` and Sunday 03:15 IST `ai-check --rescore`.
+  - Test suite in `tests/test_auto_ai.py`: 4 tests covering DB migration idempotency, `ai-check --stale` queuing deduplication, `paused_live` condition, and dual live tracking. Full test suite: 72 passed.
+
 

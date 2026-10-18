@@ -8,7 +8,7 @@ from statistics import median
 
 from .db import jdump, new_id, tx
 
-LANE = {"scan": "fast", "backtest": "fast", "gated_backtest": "ai", "pattern": "fast", "enhance": "ai", "enhance_exit": "ai"}
+LANE = {"scan": "fast", "backtest": "fast", "gated_backtest": "ai", "pattern": "fast", "enhance": "ai", "enhance_exit": "ai", "ai_check": "ai"}
 TIMEOUT = {"fast": 180, "ai": 600}
 MAX_ATTEMPTS = 2
 

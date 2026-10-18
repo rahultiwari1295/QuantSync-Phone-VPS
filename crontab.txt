@@ -58,3 +58,6 @@
 */30 * * * *      cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli board >> /root/quantsync/logs/lab_board.log 2>&1
 # The 500 most-traded stocks that get the heavy work: re-ranked on the 1st of each month.
 30 7 1 * *        cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli universe >> /root/quantsync/logs/lab_board.log 2>&1
+# Lab 3-stage AI check: monthly stale retrain on 1st, weekly Sunday rescore of blind year
+15 3 1 * *        cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli ai-check --stale >> /root/quantsync/logs/lab_ai_check.log 2>&1
+15 3 * * 0        cd /opt/quantsync-lab && QSLAB_CONFIG=/opt/quantsync-lab/config.yaml ./venv/bin/python -m lab.cli ai-check --rescore >> /root/quantsync/logs/lab_ai_check.log 2>&1
