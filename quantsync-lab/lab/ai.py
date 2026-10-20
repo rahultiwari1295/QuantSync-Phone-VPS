@@ -576,22 +576,28 @@ def check(ds: pd.DataFrame, cfg: Config, strategy_id: str | None = None, as_of: 
     improved = True
     fail_reasons = []
 
-    if ai_2025["avg_ret"] is None or plain_2025["avg_ret"] is None or ai_2025["avg_ret"] <= plain_2025["avg_ret"]:
+    if ai_2025["avg_ret"] is None or ai_2025["avg_ret"] <= 0:
         improved = False
-        fail_reasons.append("2025 gated average return did not beat plain return")
+        fail_reasons.append("2025 gated average return must be > 0")
+    if ai_2025["avg_ret"] is None or plain_2025["avg_ret"] is None or (ai_2025["avg_ret"] - plain_2025["avg_ret"]) < 0.3:
+        improved = False
+        fail_reasons.append("2025 gated average return did not beat plain return by at least 0.3 pp")
     if ai_2025["win_rate"] is None or plain_2025["win_rate"] is None or ai_2025["win_rate"] < plain_2025["win_rate"]:
         improved = False
         fail_reasons.append("2025 gated win rate lower than plain win rate")
     if ai_2025["trades"] < 30 or (plain_2025["trades"] > 0 and ai_2025["trades"] < 0.20 * plain_2025["trades"]):
         improved = False
         fail_reasons.append("2025 gated kept fewer than 30 trades or < 20% of plain trades")
-    if comb_z < 1.5:
+    if comb_z < 2.0:
         improved = False
-        fail_reasons.append(f"Combined 2025-2026 win-rate lift z-score ({comb_z}) below 1.5")
+        fail_reasons.append(f"Combined 2025-2026 win-rate lift z-score ({comb_z}) below 2.0")
     if not leak_res["passed"]:
         improved = False
         fail_reasons.append("Leak check failed")
     if ai_2026["trades"] >= 20:
+        if ai_2026["avg_ret"] is None or ai_2026["avg_ret"] <= 0:
+            improved = False
+            fail_reasons.append("2026 gated average return must be > 0 (>= 20 trades)")
         if plain_2026["avg_ret"] is not None and ai_2026["avg_ret"] is not None:
             if ai_2026["avg_ret"] < plain_2026["avg_ret"] - 0.25:
                 improved = False

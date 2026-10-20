@@ -129,3 +129,22 @@ def test_missing_xgboost_handled_gracefully(monkeypatch):
     if res["tune"] and "candidates" in res["tune"]:
         xgb_entries = [c for c in res["tune"]["candidates"] if c["name"] == "xgboost"]
         assert len(xgb_entries) == 0
+
+
+def test_stricter_improved_rule_negative_avg_ret():
+    """AI going from -0.3% to -0.2% in 2025 must NOT produce verdict='improved'."""
+    ds = _make_ai_ds(n_per_year=120, planted=True, seed=7)
+    mask_2025 = ds.entry_date.dt.year == 2025
+    pos = mask_2025 & (ds["rsi_14"] > 0)
+    neg = mask_2025 & (ds["rsi_14"] <= 0)
+    ds.loc[pos, "ret_pct"] = -0.2
+    ds.loc[pos, "y"] = 0
+    ds.loc[neg, "ret_pct"] = -0.4
+    ds.loc[neg, "y"] = 0
+
+    cfg = Config()
+    res = ai.check(ds, cfg)
+    assert res["verdict"] == "no_edge"
+    assert "2025 gated average return must be > 0" in res["reason"]
+    assert "2025 gated average return did not beat plain return by at least 0.3 pp" in res["reason"]
+
