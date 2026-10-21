@@ -21,7 +21,7 @@ from typing import Dict, List, Any, Optional
 logger = logging.getLogger("ProdVPS.Notifier")
 
 _COMMON_DIR = os.path.dirname(os.path.abspath(__file__))
-_PROD_ROOT = os.path.dirname(_COMMON_DIR)
+_PROD_ROOT = _COMMON_DIR if os.path.exists(os.path.join(_COMMON_DIR, "config.json")) else os.path.dirname(_COMMON_DIR)
 
 
 def get_tg_creds(engine_version: Optional[str] = None) -> Dict[str, Any]:
