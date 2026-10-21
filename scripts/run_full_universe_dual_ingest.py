@@ -297,7 +297,7 @@ def main():
     with open(CONFIG_PATH) as f:
         cfg = json.load(f)
 
-    broker1 = AngelBrokerSession("Broker-1 (S817363)", cfg.get("broker", {}))
+    broker1 = AngelBrokerSession("Broker-1 (S817363)", cfg.get("broker_vps1", cfg.get("broker", {})))
     broker2 = AngelBrokerSession("Broker-2 (R281124)", cfg.get("broker2", {}))
 
     log("Authenticating Broker 1 and Broker 2...")
@@ -313,7 +313,7 @@ def main():
     # 2. Date Range Configuration (1,950 calendar days ~ 5.34 years, maximum single window)
     now = datetime.datetime.now()
     to_date = now.strftime("%Y-%m-%d 15:30")
-    from_date = (now - datetime.timedelta(days=1950)).strftime("%Y-%m-%d 09:15")
+    from_date = (now - datetime.timedelta(days=2000)).strftime("%Y-%m-%d 09:15")
     log(f"Candle Data Window: {from_date} -> {to_date}")
 
     # 3. Load Master Scrip List for token fallback
