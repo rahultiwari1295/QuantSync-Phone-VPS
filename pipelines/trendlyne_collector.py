@@ -4,6 +4,16 @@ trendlyne_collector.py — Trendlyne Market Intelligence Database & Ingestion En
 Collects Sector/Industry/Index Day & Week performance and Market Insights into SQLite.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import sys
 import json
@@ -21,7 +31,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("TrendlyneCollector")
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Determine DB path (supports both VPS and local repo layouts)
 DEFAULT_DB_DIR = os.path.join(SCRIPT_DIR, "Data")
 if not os.path.exists(DEFAULT_DB_DIR):

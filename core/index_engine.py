@@ -19,7 +19,7 @@ import pandas as pd
 
 logger = logging.getLogger("IndexEngine")
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STOCK_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "stock_history.db")
 CHART_DIR = os.path.join(SCRIPT_DIR, "Data", "dna_charts")
 

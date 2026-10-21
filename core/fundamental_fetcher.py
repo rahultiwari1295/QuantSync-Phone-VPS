@@ -24,7 +24,7 @@ try:
 except ImportError:
     HAS_BS4 = False
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "fundamental_cache.db")
 
 HEADERS = {

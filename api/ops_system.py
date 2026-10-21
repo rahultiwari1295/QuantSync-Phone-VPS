@@ -29,7 +29,7 @@ import ops_track
 from collectors.admin import auth as _auth
 
 IST = ZoneInfo("Asia/Kolkata")
-ROOT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.environ.get("QS_DATA_DIR", os.path.join(ROOT, "Data"))
 LOGS = os.environ.get("QS_LOG_DIR", os.path.join(ROOT, "logs"))
 SCHED_LOGS = os.path.join(DATA, "logs")
@@ -675,7 +675,7 @@ def _lab(*args: str) -> Dict[str, Any]:
 
 RUNNABLE: Dict[str, Dict[str, Any]] = {
     "watchdog": {"label": "Data freshness check + heal", **_app("eod_freshness_watchdog.py", "--heal")},
-    "sched-eod": {"label": "End-of-day pipeline", "cwd": ROOT, "cmd": ["flock", "-n", "/tmp/quantsync_eod_pipeline.lock", _py(), "eod_pipeline_orchestrator.py"], "env": {}, "heavy": True},
+    "sched-eod": {"label": "End-of-day pipeline", "cwd": ROOT, "cmd": ["flock", "-n", "/tmp/quantsync_eod_pipeline.lock", _py(), "pipelines/eod_pipeline_orchestrator.py"], "env": {}, "heavy": True},
     "sched-sweep": {"label": "Pre-close quote sweep", **_app("scheduler.py", "--now", "sweep")},
     "sched-sync": {"label": "Official end-of-day candles", **_app("scheduler.py", "--now", "sync"), "heavy": True},
     "sched-delivery": {"label": "NSE delivery % file", **_app("scheduler.py", "--now", "delivery")},

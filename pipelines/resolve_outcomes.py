@@ -20,6 +20,16 @@ What it does:
   Writes results back to resolved_outcome column.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import sqlite3
 import json
 import os
@@ -28,7 +38,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE_DB   = os.path.join(SCRIPT_DIR, "Data", "stock_dna_cache.db")
 HIST_DB    = os.path.join(SCRIPT_DIR, "Data", "stock_history.db")
 LOG_DIR    = "/var/log/quantsync"

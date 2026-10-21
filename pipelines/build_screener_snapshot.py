@@ -11,6 +11,16 @@ Strict NULL Policy:
 - Zero fabricated constants. Zero synthetic overrides.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import sys
 import json
@@ -18,7 +28,7 @@ import sqlite3
 import datetime
 from typing import Optional, Dict, Any, List, Tuple
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "stock_history.db")
 CACHE_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "stock_dna_cache.db")
 

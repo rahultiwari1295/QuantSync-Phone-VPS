@@ -15,20 +15,20 @@
 # 0 9-16 * * 1-5 cd /root/quantsync && ./venv/bin/python3 home_automation.py --mode news >> logs/home_automation.log 2>&1
 
 # 4. Hourly Screener Snapshot Pre-Computation (During Market Hours: 9:30 AM - 3:30 PM IST)
-30 9-15 * * 1-5 cd /root/quantsync && ./venv/bin/python3 build_screener_snapshot.py >> logs/screener_snapshot.log 2>&1
+30 9-15 * * 1-5 cd /root/quantsync && ./venv/bin/python3 pipelines/build_screener_snapshot.py >> logs/screener_snapshot.log 2>&1
 
 # 5. Master EOD Pipeline Orchestrator (Single Chained Sequential Pipeline with flock protection)
-55 15 * * 1-5 cd /root/quantsync && flock -n /tmp/quantsync_eod_pipeline.lock ./venv/bin/python3 eod_pipeline_orchestrator.py >> logs/eod_pipeline_orchestrator.log 2>&1
+55 15 * * 1-5 cd /root/quantsync && flock -n /tmp/quantsync_eod_pipeline.lock ./venv/bin/python3 pipelines/eod_pipeline_orchestrator.py >> logs/eod_pipeline_orchestrator.log 2>&1
 
 # 6. Autonomous Data Freshness Watchdog & Auto-Healing (16:35 IST post-market & 09:00 AM pre-market)
-35 16 * * 1-5 cd /root/quantsync && ./venv/bin/python3 eod_freshness_watchdog.py --heal >> logs/freshness_watchdog.log 2>&1
-00 09 * * 1-5 cd /root/quantsync && ./venv/bin/python3 eod_freshness_watchdog.py --heal >> logs/freshness_watchdog.log 2>&1
+35 16 * * 1-5 cd /root/quantsync && ./venv/bin/python3 pipelines/eod_freshness_watchdog.py --heal >> logs/freshness_watchdog.log 2>&1
+00 09 * * 1-5 cd /root/quantsync && ./venv/bin/python3 pipelines/eod_freshness_watchdog.py --heal >> logs/freshness_watchdog.log 2>&1
 
 # 7. Continuous News & Reports [PAUSED - Not displayed on frontend UI]
 # */15 * * * * cd /root/quantsync && ./venv/bin/python3 news_aggregator.py >> /root/quantsync/logs/news_aggregator.log 2>&1 && ./venv/bin/python3 day_reports.py >> /root/quantsync/logs/day_reports.log 2>&1
 
 # 8. Nightly Signal Outcome Resolution Job (4:30 AM IST / 23:00 UTC)
-0 23 * * * cd /root/quantsync && ./venv/bin/python3 resolve_outcomes.py >> logs/resolve_outcomes.log 2>&1
+0 23 * * * cd /root/quantsync && ./venv/bin/python3 pipelines/resolve_outcomes.py >> logs/resolve_outcomes.log 2>&1
 
 # 9. Weekly honest pattern ledger (point-in-time, all stocks) + pattern_edge + ML gate retrain (Saturday 06:00 IST)
 0 6 * * 6 cd /root/quantsync && LEDGER_WORKERS=3 ./venv/bin/python3 scripts/build_historical_breakout_ledger.py >> logs/breakout_ledger.log 2>&1 && ./venv/bin/python3 scripts/train_breakout_ml_gates.py >> logs/breakout_ledger.log 2>&1

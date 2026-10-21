@@ -1,19 +1,21 @@
 """
-Prod_VPS/common/__init__.py
+QuantSync Production Framework
+==============================
+Initializes Python path to include all core packages:
+  - common/
+  - core/
+  - api/
+  - pipelines/
+  - engines/
+  - collectors/
+  - intel/
 """
-from common.cost_model import TransactionCostModel, FrictionScenario
-from common.storage import MasterStorage
-from common.notifier import send_message, notify_buy, notify_exit, notify_eod_summary, notify_audit_proof
-import common.broker as broker
+import os, sys
 
-__all__ = [
-    "TransactionCostModel",
-    "FrictionScenario",
-    "MasterStorage",
-    "send_message",
-    "notify_buy",
-    "notify_exit",
-    "notify_eod_summary",
-    "notify_audit_proof",
-    "broker"
-]
+_ROOT = os.path.dirname(os.path.abspath(__file__))
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)

@@ -26,6 +26,16 @@ Usage:
   python daily_processor.py  # defaults to today IST
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import sys
 import json
@@ -39,7 +49,7 @@ from collections import defaultdict
 from typing import Dict, List, Any, Optional, Set
 
 # ── Path Setup ─────────────────────────────────────────────────────────────────
-_PROD_ROOT = os.path.dirname(os.path.abspath(__file__))
+_PROD_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _PROD_ROOT not in sys.path:
     sys.path.insert(0, _PROD_ROOT)
 

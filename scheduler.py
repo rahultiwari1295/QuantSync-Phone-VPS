@@ -34,6 +34,11 @@ _PROD_ROOT = os.path.dirname(os.path.abspath(__file__))
 if _PROD_ROOT not in sys.path:
     sys.path.insert(0, _PROD_ROOT)
 
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_PROD_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 from engines.registry import EngineRegistry
 from common.storage import MasterStorage
 from common.notifier import (

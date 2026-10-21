@@ -21,6 +21,16 @@ Auto-Healing:
   Can trigger missing steps via `eod_pipeline_orchestrator.py` if --heal is specified.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import sys
 import json
@@ -31,7 +41,7 @@ import datetime
 import sqlite3
 from typing import Dict, Any, Optional, List
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROD_ROOT = SCRIPT_DIR
 sys.path.insert(0, PROD_ROOT)
 

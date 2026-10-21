@@ -27,7 +27,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "stock_history.db")
 MASTER_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "quantsync_master.db")
 CACHE_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "stock_dna_cache.db")
@@ -2779,9 +2779,9 @@ def calculate_dna_report(symbol: str, force_refresh: bool = False, generate_char
             "pro_analysis": {
                 "macro_regime": macro_regime,
                 "chart_pattern_detected": pattern_name,
-                "momentum_state": f"Daily RSI at {rsi} · Price is {round(((curr_price - ema200)/ema200)*100, 1)}% vs 200 EMA · Volume {f"{vol_mult}× 20-DMA" if vol_mult is not None else "pending official data"} · {rs_info.get('headline')}",
+                "momentum_state": f"Daily RSI at {rsi} · Price is {round(((curr_price - ema200)/ema200)*100, 1)}% vs 200 EMA · Volume {'pending official data' if vol_mult is None else f'{vol_mult}× 20-DMA'} · {rs_info.get('headline')}",
                 "key_triggers": f"Breakout validation requires sustained daily close above ₹{round(curr_price * 1.015, 1)} with volume > 1.5× average.",
-                "volume_footprint": f"{acc_days} institutional accumulation days vs {dist_days} distribution days in last 20 sessions (Pullback volume ratio: {f"{pullback_vol_ratio}x" if pullback_vol_ratio is not None else "n/a"})" + (f" · Delivery: {deliv_info.get('latest_deliv_pct')}% (20d avg: {deliv_info.get('avg_20d_deliv_pct')}%)" if deliv_info.get("latest_deliv_pct") is not None else ""),
+                "volume_footprint": f"{acc_days} institutional accumulation days vs {dist_days} distribution days in last 20 sessions (Pullback volume ratio: {'n/a' if pullback_vol_ratio is None else f'{pullback_vol_ratio}x'})" + (f" · Delivery: {deliv_info.get('latest_deliv_pct')}% (20d avg: {deliv_info.get('avg_20d_deliv_pct')}%)" if deliv_info.get("latest_deliv_pct") is not None else ""),
                 "fibonacci_confluence": f"0.382: ₹{fib_382} · 0.50: ₹{fib_500} · 0.618 Golden Pocket: ₹{fib_618}"
             },
             "trade_execution_card": {

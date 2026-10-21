@@ -29,7 +29,7 @@ from typing import Optional, Dict, Any, Tuple
 
 logger = logging.getLogger("QuantSync_SnapshotManager")
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(APP_DIR, "Data")
 MASTER_DB_PATH = os.path.join(DATA_DIR, "quantsync_master.db")
 

@@ -6,6 +6,16 @@ Leverages Python multiprocessing to batch-compute Stock DNA reports,
 across all 1,318 universe stocks.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import sys
 import json
@@ -16,7 +26,7 @@ from collections import Counter
 from multiprocessing import Pool, cpu_count
 import dna_engine
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST_DB = os.path.join(SCRIPT_DIR, "Data", "stock_history.db")
 CACHE_DB = os.path.join(SCRIPT_DIR, "Data", "stock_dna_cache.db")
 REPORT_OUT = os.path.join(SCRIPT_DIR, "Data", "universe_dna_evaluation.json")

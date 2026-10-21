@@ -13,7 +13,7 @@ import sqlite3
 import time
 from typing import Any, Callable, Optional
 
-_ROOT = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.environ.get("QS_DATA_DIR", os.path.join(_ROOT, "Data"))
 RUNS_DB = os.environ.get("QS_OPS_RUNS_DB", os.path.join(DATA_DIR, "ops_runs.db"))
 KEEP_DAYS = 14

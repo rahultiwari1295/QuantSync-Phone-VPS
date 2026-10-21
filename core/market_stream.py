@@ -30,7 +30,7 @@ from typing import Any
 from fastapi import WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger("QuantSync_MarketStream")
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST_DB_PATH = os.path.join(APP_DIR, "Data", "stock_history.db")
 MAX_SET_SIZE = 900
 REST_CHUNK_SIZE = 50

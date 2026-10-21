@@ -12,6 +12,16 @@ Provides automated stock ticker tagging, category classification, sentiment anal
 and relative time calculation.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import re
 import sys
@@ -27,7 +37,7 @@ from typing import Dict, List, Any, Optional
 
 logger = logging.getLogger("NewsAggregator")
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "market_intel.db")
 
 RSS_FEEDS = [

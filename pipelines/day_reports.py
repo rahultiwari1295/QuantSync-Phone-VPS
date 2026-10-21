@@ -7,6 +7,16 @@ Provides authentic top gainers/losers with genuine corporate catalysts.
 Zero hardcoded stale text.
 """
 
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+for _sub in ("common", "core", "api", "pipelines", "engines", "collectors", "intel"):
+    _p = os.path.join(_ROOT, _sub)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+
 import os
 import sys
 import json
@@ -17,7 +27,7 @@ from typing import Dict, List, Any, Optional
 
 logger = logging.getLogger("DayReports")
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DB_PATH = os.path.join(SCRIPT_DIR, "Data", "market_intel.db")
 
 
