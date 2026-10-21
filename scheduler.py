@@ -632,10 +632,15 @@ class MultiEngineScheduler:
 
 
 def setup_schedules(sched: MultiEngineScheduler):
+    try:                                   # records each run for the private /rahul page; never changes what a job does
+        from ops_track import track as _t
+    except Exception:                      # noqa: BLE001
+        def _t(_name, fn):
+            return fn
     # Overnight DNA warm-cache & Screener build
-    schedule.every().day.at("03:00").do(sched.job_dna_batch_warmcache)
+    schedule.every().day.at("03:00").do(_t("job_dna_batch_warmcache", sched.job_dna_batch_warmcache))
     # Overnight historical outcome evaluation
-    schedule.every().day.at("04:00").do(sched.job_resolve_screener_outcomes)
+    schedule.every().day.at("04:00").do(_t("job_resolve_screener_outcomes", sched.job_resolve_screener_outcomes))
 
     # LTP sync scheduled strictly during market hours (09:15 to 15:25)
     _market_ltp_slots = []
@@ -647,36 +652,36 @@ def setup_schedules(sched: MultiEngineScheduler):
                 continue
             _market_ltp_slots.append(f"{_h:02d}:{_m:02d}")
     for _slot in _market_ltp_slots:
-        schedule.every().day.at(_slot).do(sched.job_ltp_sync)
+        schedule.every().day.at(_slot).do(_t("job_ltp_sync", sched.job_ltp_sync))
     logger.info(f"LTP Sync scheduled for {len(_market_ltp_slots)} market-hours slots (Mon-Fri)")
 
     # Market sweeps
-    schedule.every().day.at("14:30").do(sched.job_market_sweep)
-    schedule.every().day.at("15:00").do(sched.job_market_sweep)
-    schedule.every().day.at("15:10").do(sched.job_market_sweep)
+    schedule.every().day.at("14:30").do(_t("job_market_sweep", sched.job_market_sweep))
+    schedule.every().day.at("15:00").do(_t("job_market_sweep", sched.job_market_sweep))
+    schedule.every().day.at("15:10").do(_t("job_market_sweep", sched.job_market_sweep))
 
     # Decision cycle
-    schedule.every().day.at("15:15").do(sched.job_decision_1515)
+    schedule.every().day.at("15:15").do(_t("job_decision_1515", sched.job_decision_1515))
 
     # Official EOD candle ingestion
-    schedule.every().day.at("15:35").do(sched.job_1535_candle_sync)
+    schedule.every().day.at("15:35").do(_t("job_1535_candle_sync", sched.job_1535_candle_sync))
 
     # EOD finalize
-    schedule.every().day.at("15:45").do(sched.job_finalize_1545)
+    schedule.every().day.at("15:45").do(_t("job_finalize_1545", sched.job_finalize_1545))
 
     # Master EOD Pipeline Orchestrator (15:55 IST):
     # Runs Candle Sync, Settlement, Technicals, DNA, Screener Rows, V3 Patterns, Snapshots, and Cache Invalidation
-    schedule.every().day.at("15:55").do(sched.job_master_eod_pipeline)
+    schedule.every().day.at("15:55").do(_t("job_master_eod_pipeline", sched.job_master_eod_pipeline))
 
     # Freshness Watchdog (16:35 IST post-market audit & 09:00 AM IST pre-market verification):
-    schedule.every().day.at("16:35").do(sched.job_freshness_watchdog)
-    schedule.every().day.at("09:00").do(sched.job_freshness_watchdog)
+    schedule.every().day.at("16:35").do(_t("job_freshness_watchdog", sched.job_freshness_watchdog))
+    schedule.every().day.at("09:00").do(_t("job_freshness_watchdog", sched.job_freshness_watchdog))
 
     # Daily 18:30 IST official NSE Delivery % CSV Ingestion
-    schedule.every().day.at("18:30").do(sched.job_fetch_nse_delivery_data)
+    schedule.every().day.at("18:30").do(_t("job_fetch_nse_delivery_data", sched.job_fetch_nse_delivery_data))
 
     # Weekend history sync
-    schedule.every().saturday.at("10:00").do(sched.job_history_sync)
+    schedule.every().saturday.at("10:00").do(_t("job_history_sync", sched.job_history_sync))
 
 
 def main():

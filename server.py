@@ -92,6 +92,15 @@ try:
 except Exception as e:
     logger.error(f"Failed to load ops admin API: {e}")
 
+# ── Owner control room (/rahul): machine health, services, schedule, data freshness. Owner-only; everyone else gets 404. ──
+try:
+    from ops_system import router as ops_sys_router, start_sampler as ops_start_sampler
+    app.include_router(ops_sys_router)
+    ops_start_sampler()
+    logger.info("Ops control room mounted at /api/admin/sys (owner token required).")
+except Exception as e:
+    logger.error(f"Failed to load ops control room: {e}")
+
 # ── QuantSync Community Chat Engine ──────────────────────────────────────────
 try:
     import chat_engine
