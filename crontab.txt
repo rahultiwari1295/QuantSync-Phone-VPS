@@ -4,6 +4,7 @@
 # 1. Dynamic DNS Keep-Alive
 */5 * * * * /root/duckdns/duck.sh >/dev/null 2>&1
 @reboot /root/duckdns/duck.sh >/dev/null 2>&1
+@reboot /root/quantsync/start_quantsync_vps.sh >/root/quantsync/logs/startup.log 2>&1
 
 # 2. Fundamentals & Trendlyne Sync (Every 2 Hours)
 0 */2 * * * /root/quantsync/scripts/sync_trendlyne.sh
