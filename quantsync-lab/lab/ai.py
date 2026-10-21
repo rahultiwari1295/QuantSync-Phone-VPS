@@ -383,7 +383,11 @@ def prepare_dataset(ds: pd.DataFrame, cfg: Config | None = None) -> pd.DataFrame
             b_bars = store.bars(cfg, "1D", [bench_sym], columns=["date", "ret_20", "dist_sma_200_pct"]).get(bench_sym)
             if b_bars is not None and len(b_bars):
                 mkt = b_bars.rename(columns={"date": "signal_date", "ret_20": "mkt_ret_20", "dist_sma_200_pct": "mkt_dist_sma_200_pct"})
-                d = d.merge(mkt[["signal_date", "mkt_ret_20", "mkt_dist_sma_200_pct"]], on="signal_date", how="left")
+                if 'signal_date' in d.columns:
+                    d = d.merge(mkt[['signal_date', 'mkt_ret_20', 'mkt_dist_sma_200_pct']], on='signal_date', how='left')
+                elif 'date' in d.columns:
+                    mkt = mkt.rename(columns={'signal_date': 'date'})
+                    d = d.merge(mkt[['date', 'mkt_ret_20', 'mkt_dist_sma_200_pct']], on='date', how='left')
 
     for col in AI_FEATURES_25:
         if col not in d.columns:

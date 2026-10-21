@@ -169,6 +169,9 @@ def run(budget_s: int = 1500, limit: int = 40, log=print) -> dict:
                     done += 1
                 else:
                     con.execute("UPDATE events SET ai_status='skipped', ai_json=? WHERE id=?", (db.jdump(res), ev["id"]))
+            except requests.RequestException as e:
+                log(f"ollama connection error during {ev['symbol']}: {e}; leaving pending to retry later")
+                break
             except Exception as e:  # noqa: BLE001
                 failed += 1
                 con.execute("UPDATE events SET ai_status='failed', ai_json=? WHERE id=?", (db.jdump({"error": str(e)[:300]}), ev["id"]))

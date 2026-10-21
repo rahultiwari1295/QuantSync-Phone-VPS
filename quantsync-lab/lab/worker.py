@@ -1,3 +1,7 @@
+import fcntl
+import os
+import subprocess
+from datetime import datetime, timedelta
 """Queue workers. `python -m lab.worker fast|ai`. The AI lane yields to cooks and to the live engine."""
 from __future__ import annotations
 
@@ -12,10 +16,55 @@ from .config import Config, load_config
 log = logging.getLogger("qslab.worker")
 
 
+def _is_market_hours_ist() -> bool:
+    try:
+        from zoneinfo import ZoneInfo
+        now = datetime.now(ZoneInfo(Asia/Kolkata))
+    except Exception:
+        now = datetime.utcnow() + timedelta(hours=5, minutes=30)
+    return (now.hour > 9 or (now.hour == 9 and now.minute >= 0)) and now.hour < 16
+
+
+def _eod_pipeline_running() -> bool:
+    lock_file = /tmp/quantsync_eod_pipeline.lock
+    if os.path.exists(lock_file):
+        try:
+            with open(lock_file, r) as f:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(f, fcntl.LOCK_UN)
+        except (BlockingIOError, OSError):
+            return True
+    try:
+        res = subprocess.run([pgrep, -f, eod_pipeline_orchestrator], capture_output=True)
+        if res.returncode == 0:
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _cook_running(cfg: Config) -> bool:
+    if (cfg.run_dir / cook.lock).exists():
+        return True
+    try:
+        res = subprocess.run([pgrep, -f, lab.cli cook], capture_output=True)
+        if res.returncode == 0:
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def busy(cfg: Config, lane: str) -> bool:
-    return lane == "ai" and ((cfg.run_dir / "cook.lock").exists() or (cfg.run_dir / "live-busy").exists())
-
-
+    if lane != ai:
+        return False
+    if (cfg.run_dir / live-busy).exists():
+        return True
+    if _is_market_hours_ist():
+        return True
+    if _cook_running(cfg) or _eod_pipeline_running():
+        return True
+    return False
 def run_one(cfg: Config, con, lane: str) -> bool:
     jobs.recover_stuck(con)
     if busy(cfg, lane):
